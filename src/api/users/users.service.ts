@@ -3,6 +3,8 @@ import { hashPassword } from "../../utils/password";
 import { AppError } from "../../middlewares/error.middleware";
 import { prisma } from "../../config/database";
 import * as notificationService from "../notifications/notifications.service";
+import { logger } from "../../config/logger";
+import { clearCacheByPattern } from "../../middlewares/cache.middleware";
 
 export interface CreateUserDTO {
   email: string;
@@ -175,6 +177,8 @@ export const followUser = async (
     },
   });
 
+  logger.info("cac");
+
   // Create notification for the followed user
   await notificationService.createNotification(
     followingId,
@@ -186,6 +190,10 @@ export const followUser = async (
       followerUsername: users[0].username,
     }
   );
+
+  // Delete cache
+  await clearCacheByPattern(`user:${followingId}:/api/followers`);
+  await clearCacheByPattern(`user:${followingId}:/api/following`);
 };
 
 export const unfollowUser = async (
@@ -215,6 +223,9 @@ export const unfollowUser = async (
       },
     },
   });
+  // Delete cache
+  await clearCacheByPattern(`user:${followingId}:/api/followers`);
+  await clearCacheByPattern(`user:${followingId}:/api/following`);
 };
 
 export const getUserFollowers = async (
