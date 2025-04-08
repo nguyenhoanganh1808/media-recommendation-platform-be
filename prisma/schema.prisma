@@ -1,0 +1,310 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// User model
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  username          String    @unique
+  password          String
+  firstName         String?
+  lastName          String?
+  bio               String?
+  avatar            String?
+  isActive          Boolean   @default(true)
+  role              Role      @default(USER)
+  lastLogin         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  mediaRatings      MediaRating[]
+  mediaReviews      MediaReview[]
+  mediaLists        MediaList[]
+  userPreferences   UserPreference[]
+  notifications     Notification[]
+  refreshTokens     RefreshToken[]
+
+  // Follow system
+  following         Follow[]         @relation("Follower")
+  followers         Follow[]         @relation("Following")
+
+  @@map("users")
+}
+
+// User roles
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+// Media types
+enum MediaType {
+  MOVIE
+  GAME
+  MANGA
+}
+
+// Media status
+enum MediaStatus {
+  UPCOMING
+  RELEASED
+  DISCONTINUED
+}
+
+// Base media model
+model Media {
+  id              String        @id @default(uuid())
+  title           String
+  originalTitle   String?
+  description     String?
+  releaseDate     DateTime?
+  mediaType       MediaType
+  status          MediaStatus   @default(RELEASED)
+  coverImage      String?
+  backdropImage   String?
+  
+  // Common attributes
+  popularity      Float         @default(0)
+  averageRating   Float         @default(0)
+  ratingsCount    Int           @default(0)
+  
+  // Only for games
+  developer       String?
+  publisher       String?
+  platforms       Platform[]
+  
+  // Only for movies
+  duration        Int?          // in minutes
+  director        String?
+  
+  // Only for manga
+  author          String?
+  artist          String?
+  volumeCount     Int?
+  isCompleted     Boolean?
+
+  // Common for all
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  genres          GenreOnMedia[]
+  ratings         MediaRating[]
+  reviews         MediaReview[]
+  listItems       MediaListItem[]
+  
+  // External IDs for APIs
+  externalIds     ExternalMediaId[]
+
+  @@map("media")
+}
+
+// Platform for games
+model Platform {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  media     Media[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("platforms")
+}
+
+// Genre model
+model Genre {
+  id          String         @id @default(uuid())
+  name        String         @unique
+  description String?
+  media       GenreOnMedia[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@map("genres")
+}
+
+// Many-to-many relationship between genres and media
+model GenreOnMedia {
+  genreId     String
+  mediaId     String
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  genre       Genre   @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  media       Media   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([genreId, mediaId])
+  @@map("genre_on_media")
+}
+
+// Rating model
+model MediaRating {
+  id          String    @id @default(uuid())
+  userId      String
+  mediaId     String
+  rating      Float     // 1 to 10 scale
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mediaId])
+  @@map("media_ratings")
+}
+
+// Review model
+model MediaReview {
+  id          String    @id @default(uuid())
+  userId      String
+  mediaId     String
+  content     String
+  containsSpoilers Boolean   @default(false)
+  isVisible   Boolean   @default(true)
+  likesCount  Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@map("media_reviews")
+}
+
+// User preference for recommendation system
+model UserPreference {
+  id          String    @id @default(uuid())
+  userId      String
+  genreId     String?
+  mediaTypePreference MediaType?
+  preferenceStrength Float     @default(1.0) // 0 to 1 scale for preference strength
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+// Media lists (Watch later, favorites, etc.)
+model MediaList {
+  id          String          @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  isPublic    Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relations
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       MediaListItem[]
+
+  @@map("media_lists")
+}
+
+// Media list items
+model MediaListItem {
+  id          String    @id @default(uuid())
+  listId      String
+  mediaId     String
+  notes       String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  list        MediaList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@map("media_list_items")
+}
+
+// Follow system
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@map("follows")
+}
+
+// Notification model
+model Notification {
+  id          String            @id @default(uuid())
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  isRead      Boolean           @default(false)
+  data        Json?             // Additional data about the notification
+  createdAt   DateTime          @default(now())
+  
+  // Relations
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+// Notification types
+enum NotificationType {
+  NEW_RECOMMENDATION
+  NEW_FOLLOWER
+  NEW_RATING
+  NEW_REVIEW
+  LIST_SHARE
+  SYSTEM_NOTIFICATION
+}
+
+// External Media IDs for integration with external APIs
+model ExternalMediaId {
+  id          String    @id @default(uuid())
+  mediaId     String
+  source      String    // e.g., "TMDB", "IGDB", "MyAnimeList"
+  externalId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([mediaId, source])
+  @@map("external_media_ids")
+}
+
+// Refresh token for auth
+model RefreshToken {
+  id          String    @id @default(uuid())
+  userId      String
+  token       String    @unique
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}

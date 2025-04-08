@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15
+    hostname: postgres_db
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - media-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+
+  redis:
+    image: redis:7
+    hostname: redis_cache
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - media-network
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  media-network:
+    name: media-network

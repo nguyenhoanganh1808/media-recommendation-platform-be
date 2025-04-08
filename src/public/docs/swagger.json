@@ -1,0 +1,3777 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Media Tracking and Recommendation API",
+    "version": "1.0.0",
+    "description": "API for discovering, rating, and getting recommendations for Movies, Games, and Manga",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "contact": {
+      "name": "API Support",
+      "email": "support@mediarecapi.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password (hashed, never returned in responses)"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "MODERATOR",
+              "ADMIN"
+            ]
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          },
+          "avatar": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "username",
+          "password",
+          "role"
+        ]
+      },
+      "Media": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "mediaType": {
+            "type": "string",
+            "enum": [
+              "MOVIE",
+              "GAME",
+              "MANGA"
+            ]
+          },
+          "externalIds": {
+            "type": "object",
+            "properties": {
+              "tmdb": {
+                "type": "string",
+                "nullable": true
+              },
+              "igdb": {
+                "type": "string",
+                "nullable": true
+              },
+              "mal": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "mediaType"
+        ]
+      },
+      "Rating": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mediaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "review": {
+            "type": "string",
+            "nullable": true
+          },
+          "likes": {
+            "type": "integer",
+            "default": 0
+          },
+          "isPublic": {
+            "type": "boolean",
+            "default": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "mediaId",
+          "score"
+        ]
+      },
+      "MediaList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPublic": {
+            "type": "boolean",
+            "default": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "notes": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "order": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "name"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Resource not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Validation error"
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "User management endpoints"
+    },
+    {
+      "name": "Media",
+      "description": "Media endpoints (movies, games, manga)"
+    },
+    {
+      "name": "Ratings",
+      "description": "Rating and review endpoints"
+    },
+    {
+      "name": "Lists",
+      "description": "Custom media lists endpoints"
+    },
+    {
+      "name": "Recommendations",
+      "description": "Recommendation endpoints"
+    },
+    {
+      "name": "Notifications",
+      "description": "Notification endpoints"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register a new user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "username": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "johndoe",
+                    "maxLength": 30
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "format": "password",
+                    "example": "StrongPass123"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "Doe"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "description": "JWT refresh token"
+                    },
+                    "accessToken": {
+                      "type": "string",
+                      "description": "JWT access token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "409": {
+            "description": "Email or username already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Email already in use"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Create a new user account with email, username, and password"
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "StrongPass123"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "description": "JWT refresh token"
+                    },
+                    "accessToken": {
+                      "type": "string",
+                      "description": "JWT access token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Account deactivated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Account is deactivated. Please contact support."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Authenticate a user and return access and refresh tokens"
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh access token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refreshToken"
+                ],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token refreshed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User logout",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Logout successful"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "description": "Invalidate the current refresh token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refreshToken"
+                ],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "description": "Current refresh token to be invalidated"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a list of users",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user (Admin only)",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "username": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 30
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8
+                  },
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "bio": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Retrieve a user by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Unique identifier of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update user profile",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the user"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "username": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 30
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Forbidden - Not authorized to update this user"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user (Admin only)",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the user"
+          }
+        ],
+        "responses": {
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "501": {
+            "description": "Not implemented"
+          }
+        }
+      }
+    },
+    "/api/media": {
+      "get": {
+        "tags": [
+          "Media"
+        ],
+        "summary": "Retrieve a list of media with optional filtering",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                "MOVIE",
+                "GAME",
+                "MANGA"
+              ],
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 50
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "type": "string",
+              "default": 10,
+              "enum": [
+                "MOVIE",
+                "GAME",
+                "MANGA"
+              ]
+            },
+            "description": "Filter media by type"
+          },
+          {
+            "in": "query",
+            "name": "genre",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter media by genre"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search media by title"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "popularity",
+                "releaseDate",
+                "averageRating",
+                "title"
+              ],
+              "default": "popularity"
+            },
+            "description": "Sort media by specified field"
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "description": "Sort order for media list"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful media retrieval",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "media": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Media"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Media"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        },
+        "description": "Fetch media with pagination, filtering by type, genre, and search"
+      },
+      "post": {
+        "summary": "Create a new media item",
+        "description": "Add a new media item (movies, games, manga)",
+        "tags": [
+          "Media"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "mediaType"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "releaseDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "mediaType": {
+                    "type": "string",
+                    "enum": [
+                      "MOVIE",
+                      "GAME",
+                      "MANGA"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "coverImage": {
+                    "type": "string",
+                    "format": "url"
+                  },
+                  "genres": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Media item created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Media"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/auth/refresh-token": {
+      "post": {
+        "summary": "Refresh access token",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Generate a new access token using a valid refresh token",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refreshToken"
+                ],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "description": "Valid refresh token"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token refreshed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string",
+                      "description": "New JWT access token"
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "description": "New JWT refresh token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/auth/profile": {
+      "get": {
+        "summary": "Get current user profile",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Retrieve the profile information of the authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "bio": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "avatar": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "USER",
+                        "MODERATOR",
+                        "ADMIN"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/auth/change-password": {
+      "post": {
+        "summary": "Change user password",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Change the password for the authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ],
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "Current user password"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "New password (must be at least 8 characters with upper, lower, and number)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Password changed successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/lists": {
+      "get": {
+        "summary": "Get all lists for the authenticated user",
+        "tags": [
+          "Lists"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user lists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "isPublic": {
+                            "type": "boolean"
+                          },
+                          "itemCount": {
+                            "type": "integer"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new list",
+        "tags": [
+          "Lists"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the list"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Optional description of the list"
+                  },
+                  "isPublic": {
+                    "type": "boolean",
+                    "description": "Whether the list is public or not"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "List created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "isPublic": {
+                      "type": "boolean"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/lists/{id}": {
+      "get": {
+        "summary": "Get a specific list by ID",
+        "tags": [
+          "Lists"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the list to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved list details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "isPublic": {
+                      "type": "boolean"
+                    },
+                    "userId": {
+                      "type": "string"
+                    },
+                    "itemCount": {
+                      "type": "integer"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "mediaId": {
+                            "type": "string"
+                          },
+                          "notes": {
+                            "type": "string"
+                          },
+                          "order": {
+                            "type": "integer"
+                          },
+                          "media": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "mediaType": {
+                                "type": "string"
+                              },
+                              "coverImage": {
+                                "type": "string"
+                              },
+                              "releaseDate": {
+                                "type": "string"
+                              },
+                              "averageRating": {
+                                "type": "number"
+                              },
+                              "genres": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized to view this list"
+          },
+          "404": {
+            "description": "List not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a list",
+        "tags": [
+          "Lists"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the list to update"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "New name for the list"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "New description for the list"
+                  },
+                  "isPublic": {
+                    "type": "boolean",
+                    "description": "Whether the list should be public or not"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "isPublic": {
+                      "type": "boolean"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "List not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a list",
+        "tags": [
+          "Lists"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the list to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List deleted successfully"
+          },
+          "404": {
+            "description": "List not found"
+          }
+        }
+      }
+    },
+    "/api/lists/{listId}/items": {
+      "post": {
+        "summary": "Add an item to a list",
+        "tags": [
+          "Lists"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "listId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the list to add an item to"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mediaId": {
+                    "type": "string",
+                    "description": "ID of the media to add to the list"
+                  },
+                  "notes": {
+                    "type": "string",
+                    "description": "Optional notes for the list item"
+                  }
+                },
+                "required": [
+                  "mediaId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item added to list successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "listId": {
+                      "type": "string"
+                    },
+                    "mediaId": {
+                      "type": "string"
+                    },
+                    "notes": {
+                      "type": "string"
+                    },
+                    "order": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "List or media not found"
+          },
+          "409": {
+            "description": "Item already exists in the list"
+          }
+        }
+      }
+    },
+    "/api/lists/items/{itemId}": {
+      "put": {
+        "summary": "Update a list item",
+        "tags": [
+          "Lists"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "itemId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the list item to update"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "notes": {
+                    "type": "string",
+                    "description": "New notes for the list item"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "listId": {
+                      "type": "string"
+                    },
+                    "mediaId": {
+                      "type": "string"
+                    },
+                    "notes": {
+                      "type": "string"
+                    },
+                    "order": {
+                      "type": "integer"
+                    },
+                    "media": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized to update this list item"
+          },
+          "404": {
+            "description": "List item not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove an item from a list",
+        "tags": [
+          "Lists"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "itemId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the list item to remove"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item removed from list successfully"
+          },
+          "403": {
+            "description": "Unauthorized to remove this list item"
+          },
+          "404": {
+            "description": "List item not found"
+          }
+        }
+      }
+    },
+    "/api/lists/{listId}/reorder": {
+      "put": {
+        "summary": "Reorder list items",
+        "tags": [
+          "Lists"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "listId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the list to reorder items"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "order": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List items reordered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "listId": {
+                        "type": "string"
+                      },
+                      "mediaId": {
+                        "type": "string"
+                      },
+                      "notes": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid reorder request"
+          },
+          "403": {
+            "description": "Unauthorized to reorder list items"
+          }
+        }
+      }
+    },
+    "/api/lists/user/{userId}/public": {
+      "get": {
+        "summary": "Get public lists from a specific user",
+        "tags": [
+          "Lists"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the user whose public lists to retrieve"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved public lists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "itemCount": {
+                            "type": "integer"
+                          },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "username": {
+                                "type": "string"
+                              },
+                              "avatar": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/media/{id}": {
+      "get": {
+        "summary": "Retrieve a specific media item by ID",
+        "description": "Fetch detailed information about a specific media item",
+        "tags": [
+          "Media"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the media item"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful media retrieval",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Media"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an existing media item",
+        "description": "Update details of a specific media item",
+        "tags": [
+          "Media"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the media item to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "releaseDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "mediaType": {
+                    "type": "string",
+                    "enum": [
+                      "MOVIE",
+                      "GAME",
+                      "MANGA"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "coverImage": {
+                    "type": "string",
+                    "format": "url"
+                  },
+                  "genres": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Media item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Media"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a media item",
+        "description": "Remove a specific media item from the system",
+        "tags": [
+          "Media"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the media item to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Media item deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Media deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          }
+        }
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "summary": "Get all notifications for the logged-in user",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of notifications per page"
+          },
+          {
+            "in": "query",
+            "name": "includeRead",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Include read notifications in the response"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved notifications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "NEW_RECOMMENDATION",
+                              "NEW_FOLLOWER",
+                              "NEW_RATING",
+                              "NEW_REVIEW",
+                              "LIST_SHARE",
+                              "SYSTEM_NOTIFICATION"
+                            ]
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "isRead": {
+                            "type": "boolean"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/notifications/{id}/read": {
+      "patch": {
+        "summary": "Mark a specific notification as read",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the notification"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification marked as read successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "isRead": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/api/notifications/read-all": {
+      "patch": {
+        "summary": "Mark all notifications as read",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All notifications marked as read successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer",
+                          "description": "Number of notifications marked as read"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/notifications/read": {
+      "delete": {
+        "summary": "Delete all read notifications",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read notifications deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer",
+                          "description": "Number of read notifications deleted"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/notifications/{id}": {
+      "delete": {
+        "summary": "Delete a specific notification",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the notification"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Notification deleted successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/api/notifications/settings": {
+      "get": {
+        "summary": "Get notification settings",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved notification settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "newRecommendation": {
+                          "type": "boolean"
+                        },
+                        "newFollower": {
+                          "type": "boolean"
+                        },
+                        "newRating": {
+                          "type": "boolean"
+                        },
+                        "newReview": {
+                          "type": "boolean"
+                        },
+                        "listShare": {
+                          "type": "boolean"
+                        },
+                        "systemNotification": {
+                          "type": "boolean"
+                        },
+                        "emailNotifications": {
+                          "type": "boolean"
+                        },
+                        "pushNotifications": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update notification settings",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newRecommendation": {
+                    "type": "boolean"
+                  },
+                  "newFollower": {
+                    "type": "boolean"
+                  },
+                  "newRating": {
+                    "type": "boolean"
+                  },
+                  "newReview": {
+                    "type": "boolean"
+                  },
+                  "listShare": {
+                    "type": "boolean"
+                  },
+                  "systemNotification": {
+                    "type": "boolean"
+                  },
+                  "emailNotifications": {
+                    "type": "boolean"
+                  },
+                  "pushNotifications": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notification settings updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "newRecommendation": {
+                          "type": "boolean"
+                        },
+                        "newFollower": {
+                          "type": "boolean"
+                        },
+                        "newRating": {
+                          "type": "boolean"
+                        },
+                        "newReview": {
+                          "type": "boolean"
+                        },
+                        "listShare": {
+                          "type": "boolean"
+                        },
+                        "systemNotification": {
+                          "type": "boolean"
+                        },
+                        "emailNotifications": {
+                          "type": "boolean"
+                        },
+                        "pushNotifications": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/ratings": {
+      "post": {
+        "summary": "Create a new rating for a media item",
+        "tags": [
+          "Ratings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "mediaId",
+                  "rating"
+                ],
+                "properties": {
+                  "mediaId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Unique identifier of the media being rated"
+                  },
+                  "rating": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 10,
+                    "description": "Rating value between 1 and 10"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Rating created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rating"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/api/ratings/me": {
+      "get": {
+        "summary": "Get ratings for the authenticated user",
+        "tags": [
+          "Ratings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user ratings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ratings": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Rating"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/ratings/user/{userId}": {
+      "get": {
+        "summary": "Get ratings for a specific user",
+        "tags": [
+          "Ratings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the user"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user ratings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ratings": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Rating"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/api/ratings/media/{mediaId}": {
+      "get": {
+        "summary": "Get ratings for a specific media",
+        "tags": [
+          "Ratings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "mediaId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the media"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved media ratings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ratings": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Rating"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/api/ratings/{id}": {
+      "get": {
+        "summary": "Get a specific rating by ID",
+        "tags": [
+          "Ratings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the rating"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved rating",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rating"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a rating",
+        "tags": [
+          "Ratings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the rating to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "rating"
+                ],
+                "properties": {
+                  "rating": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 10,
+                    "description": "Updated rating value between 1 and 10"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rating updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rating"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Unauthorized to update this rating"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a rating",
+        "tags": [
+          "Ratings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the rating to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rating deleted successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Unauthorized to delete this rating"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/api/ratings/admin/{id}": {
+      "delete": {
+        "summary": "Force delete a rating (Admin only)",
+        "tags": [
+          "Ratings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the rating to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rating deleted successfully by admin"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Insufficient privileges"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/api/recommendations": {
+      "get": {
+        "summary": "Get personalized recommendations for authenticated user",
+        "tags": [
+          "Recommendations"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of recommendations to return"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "mediaType",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "MOVIE",
+                "GAME",
+                "MANGA"
+              ]
+            },
+            "description": "Filter recommendations by media type"
+          },
+          {
+            "in": "query",
+            "name": "includeRated",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Include media that user has already rated"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved personalized recommendations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Media"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Recommendations retrieved successfully"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/recommendations/trending": {
+      "get": {
+        "summary": "Get trending media recommendations",
+        "tags": [
+          "Recommendations"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of recommendations to return"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "mediaType",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "MOVIE",
+                "GAME",
+                "MANGA"
+              ]
+            },
+            "description": "Filter trending recommendations by media type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved trending recommendations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Media"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Trending recommendations retrieved successfully"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recommendations/media/{mediaId}": {
+      "get": {
+        "summary": "Get recommendations based on a specific media item",
+        "tags": [
+          "Recommendations"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "mediaId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the source media"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of recommendations to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved media-based recommendations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Media"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Media-based recommendations retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/api/recommendations/preferences/{userId}": {
+      "put": {
+        "summary": "Update user recommendation preferences",
+        "tags": [
+          "Recommendations"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the user whose preferences are being updated"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "genreIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "Array of genre IDs to update preferences"
+                  },
+                  "mediaTypePreferences": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "MOVIE",
+                            "GAME",
+                            "MANGA"
+                          ]
+                        },
+                        "strength": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1,
+                          "description": "Preference strength (0-1)"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated user preferences",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "userId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "genreId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "mediaTypePreference": {
+                            "type": "string",
+                            "enum": [
+                              "MOVIE",
+                              "GAME",
+                              "MANGA"
+                            ]
+                          },
+                          "preferenceStrength": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User preferences updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/follow": {
+      "post": {
+        "summary": "Follow a user",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the user to follow"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully followed the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User followed successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cannot follow self"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "409": {
+            "description": "Already following this user"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Unfollow a user",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the user to unfollow"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully unfollowed the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User unfollowed successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Not following this user"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/followers": {
+      "get": {
+        "summary": "Get a user's followers",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of followers retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/following": {
+      "get": {
+        "summary": "Get users that the specified user is following",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Unique identifier of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of followed users retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    }
+  }
+}
