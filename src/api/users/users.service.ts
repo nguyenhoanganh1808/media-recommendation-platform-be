@@ -177,8 +177,6 @@ export const followUser = async (
     },
   });
 
-  logger.info("cac");
-
   // Create notification for the followed user
   await notificationService.createNotification(
     followingId,

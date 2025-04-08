@@ -1,6 +1,6 @@
 // src/config/socket.ts
 import { Server as SocketServer } from "socket.io";
-import http from "http";
+import https from "https";
 import { logger } from "./logger";
 import { verifyToken } from "../utils/jwt";
 import { prisma } from "./database";
@@ -8,7 +8,7 @@ import { config } from "./env";
 
 let io: SocketServer;
 
-export function initializeSocket(server: http.Server) {
+export function initializeSocket(server: https.Server) {
   io = new SocketServer(server, {
     cors: {
       origin: config.CORS_ORIGIN,

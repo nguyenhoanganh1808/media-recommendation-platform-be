@@ -31,6 +31,7 @@ export function sendUserNotification(
   }
 ) {
   try {
+    logger.info("Sending notification to user:");
     const io = getSocketIO();
     io.to(`user:${userId}`).emit(SocketEvent.NOTIFICATION, notification);
 

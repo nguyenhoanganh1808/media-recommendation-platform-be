@@ -227,7 +227,6 @@ export async function createNotification(
     logger.info(`User ${userId} has disabled notifications of type: ${type}`);
     return null;
   }
-
   // Create notification
   const notification = await prisma.notification.create({
     data: {
@@ -239,12 +238,10 @@ export async function createNotification(
     },
   });
 
-  // Clear user-specific notification cache
-  await clearCacheByPattern(`user:${userId}:/api/notifications`);
-
   // TODO: Send push notification or email if enabled in settings
 
   // Send real-time notification via Socket.IO
+
   sendUserNotification(userId, {
     id: notification.id,
     type: notification.type,
@@ -254,6 +251,8 @@ export async function createNotification(
     createdAt: notification.createdAt,
   });
 
+  // Clear user-specific notification cache
+  await clearCacheByPattern(`user:${userId}:/api/notifications`);
   return notification;
 }
 
