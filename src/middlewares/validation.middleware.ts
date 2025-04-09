@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { validationResult, ValidationChain } from 'express-validator';
-import { AppError } from './error.middleware';
+import { Request, Response, NextFunction } from "express";
+import { validationResult, ValidationChain } from "express-validator";
+import { AppError } from "./error.middleware";
 
 // Middleware to validate request data
 export const validate = (validations: ValidationChain[]) => {
@@ -15,26 +15,23 @@ export const validate = (validations: ValidationChain[]) => {
     }
 
     // Format the validation errors
-    const extractedErrors = errors.array().reduce(
-      (acc, err) => {
-        // Check if err has a path property (express-validator v6+)
-        if (err.type === 'field') {
-          acc[err.path] = err.msg;
-        } else if ('param' in err) {
-          // Fallback for older express-validator versions
-          acc[err.param as any] = err.msg;
-        }
-        return acc;
-      },
-      {} as Record<string, string>
-    );
+    const extractedErrors = errors.array().reduce((acc, err) => {
+      // Check if err has a path property (express-validator v6+)
+      if (err.type === "field") {
+        acc[err.path] = err.msg;
+      } else if ("param" in err) {
+        // Fallback for older express-validator versions
+        acc[err.param as never] = err.msg;
+      }
+      return acc;
+    }, {} as Record<string, string>);
 
     // Return validation error response
     return next(
       new AppError(
-        'Validation failed. Please check your input.',
+        "Validation failed. Please check your input.",
         400,
-        'VALIDATION_ERROR',
+        "VALIDATION_ERROR",
         extractedErrors
       )
     );
@@ -44,14 +41,14 @@ export const validate = (validations: ValidationChain[]) => {
 // Middleware to sanitize request data
 export const sanitize = (req: Request, res: Response, next: NextFunction) => {
   // Remove any sensitive fields that should never be passed in
-  const sensitiveFields = ['password', 'passwordConfirm', 'token'];
+  const sensitiveFields = ["password", "passwordConfirm", "token"];
 
   if (req.body) {
     sensitiveFields.forEach((field) => {
       if (
         req.body[field] &&
-        field !== 'password' &&
-        field !== 'passwordConfirm'
+        field !== "password" &&
+        field !== "passwordConfirm"
       ) {
         delete req.body[field];
       }
@@ -64,7 +61,7 @@ export const sanitize = (req: Request, res: Response, next: NextFunction) => {
 // Middleware to validate content type
 export const validateContentType = (allowedTypes: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const contentType = req.get('Content-Type');
+    const contentType = req.get("Content-Type");
 
     if (
       !contentType ||
@@ -72,7 +69,9 @@ export const validateContentType = (allowedTypes: string[]) => {
     ) {
       return next(
         new AppError(
-          `Unsupported Content-Type. Supported types: ${allowedTypes.join(', ')}`,
+          `Unsupported Content-Type. Supported types: ${allowedTypes.join(
+            ", "
+          )}`,
           415
         )
       );
@@ -94,7 +93,9 @@ export const validateQueryParams = (allowedParams: string[]) => {
     if (invalidParams.length > 0) {
       return next(
         new AppError(
-          `Invalid query parameters: ${invalidParams.join(', ')}. Allowed parameters: ${allowedParams.join(', ')}`,
+          `Invalid query parameters: ${invalidParams.join(
+            ", "
+          )}. Allowed parameters: ${allowedParams.join(", ")}`,
           400
         )
       );
