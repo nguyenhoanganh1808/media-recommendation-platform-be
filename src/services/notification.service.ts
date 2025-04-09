@@ -1,6 +1,6 @@
-import * as notificationService from '../api/notifications/notifications.service';
-import { prisma } from '../config/database';
-import { logger } from '../config/logger';
+import * as notificationService from "../api/notifications/notifications.service";
+import { prisma } from "../config/database";
+import { logger } from "../config/logger";
 
 /**
  * Create a follow notification when a user follows another user
@@ -22,8 +22,8 @@ export async function createFollowNotification(
 
     return await notificationService.createNotification(
       followingId,
-      'NEW_FOLLOWER',
-      'New Follower',
+      "NEW_FOLLOWER",
+      "New Follower",
       `${follower.username} is now following you`,
       { followerId }
     );
@@ -67,8 +67,8 @@ export async function createRatingNotification(
     // Create notifications for all followers
     return await notificationService.createBulkNotifications(
       followerIds,
-      'NEW_RATING',
-      'New Rating',
+      "NEW_RATING",
+      "New Rating",
       `${user?.username} rated ${media.title} ${rating}/10`,
       { userId, mediaId, rating }
     );
@@ -112,8 +112,8 @@ export async function createReviewNotification(
     // Create notifications for all followers
     return await notificationService.createBulkNotifications(
       followerIds,
-      'NEW_REVIEW',
-      'New Review',
+      "NEW_REVIEW",
+      "New Review",
       `${user?.username} posted a review for ${media.title}`,
       { userId, mediaId, reviewId }
     );
@@ -150,8 +150,8 @@ export async function createListShareNotification(
 
     return await notificationService.createNotification(
       sharedWithUserId,
-      'LIST_SHARE',
-      'List Shared With You',
+      "LIST_SHARE",
+      "List Shared With You",
       `${sharedByUser?.username} shared their list "${list.name}" with you`,
       { listId, sharedByUserId }
     );
@@ -171,8 +171,8 @@ export async function createRecommendationNotification(
   try {
     return await notificationService.createNotification(
       userId,
-      'NEW_RECOMMENDATION',
-      'New Recommendations',
+      "NEW_RECOMMENDATION",
+      "New Recommendations",
       `We have ${recommendationCount} new recommendations for you`,
       { count: recommendationCount }
     );
@@ -188,7 +188,7 @@ export async function createRecommendationNotification(
 export async function createGlobalSystemNotification(
   title: string,
   message: string,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ) {
   return await notificationService.createSystemNotification(
     title,
