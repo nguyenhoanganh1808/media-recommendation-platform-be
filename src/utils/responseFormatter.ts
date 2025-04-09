@@ -10,9 +10,7 @@ export interface ApiResponse<T> {
   error?: {
     code: string;
     stack?: string;
-
-    // statusCode: number;
-    details?: any;
+    details?: unknown;
   };
   meta?: {
     pagination?: {
@@ -21,7 +19,7 @@ export interface ApiResponse<T> {
       totalItems: number;
       totalPages: number;
     };
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -68,7 +66,7 @@ export const sendError = (
   message = "Operation failed",
   statusCode = 400,
   errorCode = "BAD_REQUEST",
-  stack?: any,
+  stack?: unknown,
   details?: Record<string, string>
 ): void => {
   const response: ApiResponse<null> = {
@@ -99,7 +97,7 @@ export const createPagination = (
   page: number,
   limit: number,
   total: number
-): ApiResponse<any>["meta"] => {
+): ApiResponse<unknown>["meta"] => {
   const totalPages = Math.ceil(total / limit);
 
   return {

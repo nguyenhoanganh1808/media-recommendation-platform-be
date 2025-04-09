@@ -12,7 +12,7 @@ jest.mock("../../src/utils/responseFormatter");
 describe("Ratings Controller", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let mockNext: NextFunction = jest.fn();
+  const mockNext: NextFunction = jest.fn();
   let mockRating: any;
 
   beforeEach(() => {

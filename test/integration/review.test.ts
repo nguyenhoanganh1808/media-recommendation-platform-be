@@ -6,7 +6,7 @@ import { prisma } from "../../src/config/database";
 import app from "../../src/app";
 import { generateAccessToken } from "../../src/utils/jwt";
 
-let testUsers: any = {};
+const testUsers: any = {};
 let testMedia: any;
 let testReview: any;
 let regularUserToken: string;

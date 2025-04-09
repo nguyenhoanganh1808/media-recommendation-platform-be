@@ -6,14 +6,14 @@ import { generateAccessToken, generateRefreshToken } from '../../src/utils/jwt';
 import app from '../../src/app';
 
 let server: Express;
-let testUser = {
+const testUser = {
   email: 'test@example.com',
   username: 'testuser',
   password: 'TestPassword123',
   hashedPassword: '',
 };
-let accessToken = '';
-let refreshToken = '';
+const accessToken = '';
+const refreshToken = '';
 
 beforeAll(async () => {
   server = app;

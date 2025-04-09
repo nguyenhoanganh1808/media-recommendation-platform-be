@@ -86,10 +86,10 @@ export const errorHandler = (
   }
 
   const statusCode = error instanceof AppError ? error.statusCode : 500;
-  let message = error.message;
-  let errorCode =
+  const message = error.message;
+  const errorCode =
     error instanceof AppError ? error.errorCode : 'INTERNAL_ERROR';
-  let details = error instanceof AppError ? error.details : undefined;
+  const details = error instanceof AppError ? error.details : undefined;
 
   // Handle specific errors
   if (error instanceof PrismaClientKnownRequestError) {

@@ -5,7 +5,7 @@ import { hashPassword } from "../../src/utils/password";
 import app from "../../src/app";
 
 let server: Express;
-let testAuthUser = {
+const testAuthUser = {
   email: "testauth@example.com",
   username: "testAuthUser",
   password: "TestPassword123",

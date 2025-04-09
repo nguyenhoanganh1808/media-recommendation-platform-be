@@ -9,7 +9,7 @@ describe("User API", () => {
   let userToken: string;
   let adminToken: string;
 
-  let createdUserIds: string[] = []; // Track created users
+  const createdUserIds: string[] = []; // Track created users
 
   beforeAll(async () => {
     // Create test users

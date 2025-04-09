@@ -25,9 +25,9 @@ describe("Media API Routes", () => {
   let userToken: string;
   let testMedia: any;
   let testGenre: Genre;
-  let createdUserIds: string[] = [];
-  let createdGenreIds: string[] = [];
-  let createdMediaIds: string[] = [];
+  const createdUserIds: string[] = [];
+  const createdGenreIds: string[] = [];
+  const createdMediaIds: string[] = [];
 
   // Setup before tests
   beforeAll(async () => {
