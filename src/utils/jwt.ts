@@ -1,7 +1,7 @@
-import jwt from 'jsonwebtoken';
-import { User } from '@prisma/client';
-import { config } from '../config/env';
-import { randomUUID } from 'crypto';
+import jwt from "jsonwebtoken";
+import { User } from "@prisma/client";
+import { config } from "../config/env";
+import { randomUUID } from "crypto";
 
 /**
  * Payload type for JWT tokens
@@ -29,7 +29,7 @@ export const generateAccessToken = (user: User): string => {
   };
 
   return jwt.sign(payload, config.JWT_SECRET!, {
-    expiresIn: '1h',
+    expiresIn: "1h",
   });
 };
 
@@ -48,7 +48,7 @@ export const generateRefreshToken = (user: User): string => {
   };
   // Generate a random token
   return jwt.sign(payload, config.JWT_REFRESH_SECRET!, {
-    expiresIn: '7d',
+    expiresIn: "7d",
   });
 };
 
@@ -58,11 +58,11 @@ export const generateRefreshToken = (user: User): string => {
  * @param token The token to verify
  * @returns The decoded token payload or null if invalid
  */
-export const verifyToken = (token: string): TokenPayload | null => {
+export const verifyToken = (token: string): TokenPayload | Error => {
   try {
     return jwt.verify(token, config.JWT_SECRET!) as TokenPayload;
   } catch (error) {
-    return null;
+    return error as Error;
   }
 };
 
@@ -89,13 +89,13 @@ const parseTimeToMilliseconds = (timeString: string): number => {
   const value = parseInt(timeString.slice(0, -1));
 
   switch (unit) {
-    case 's':
+    case "s":
       return value * 1000;
-    case 'm':
+    case "m":
       return value * 60 * 1000;
-    case 'h':
+    case "h":
       return value * 60 * 60 * 1000;
-    case 'd':
+    case "d":
       return value * 24 * 60 * 60 * 1000;
     default:
       return value;
