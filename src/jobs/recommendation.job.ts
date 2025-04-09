@@ -1,5 +1,5 @@
 // src/jobs/recommendation.job.ts
-import { PrismaClient, MediaType, User } from "@prisma/client";
+import { PrismaClient, MediaType } from "@prisma/client";
 
 import { logger } from "../config/logger";
 import { RecommendationService } from "../api/recommendations/recommendations.service";

@@ -1,5 +1,5 @@
 // src/jobs/notification.job.ts
-import { Notification, PrismaClient, User } from "@prisma/client";
+import { Media, Notification, PrismaClient, User } from "@prisma/client";
 import { createTransport, Transporter } from "nodemailer";
 
 import { logger } from "../config/logger";
@@ -276,7 +276,15 @@ export class NotificationJob {
   /**
    * Send email notification
    */
-  private async sendEmailNotification(notification: any): Promise<void> {
+  private async sendEmailNotification(
+    notification: Notification & {
+      user: {
+        id: string;
+        username: string;
+        email: string;
+      };
+    },
+  ): Promise<void> {
     try {
       logger.debug(`Sending email notification to ${notification.user.email}`);
 
@@ -323,9 +331,17 @@ export class NotificationJob {
    * Send weekly digest email
    */
   private async sendDigestEmail(
-    user: any,
-    recommendations: any[],
-    followingActivity: any[],
+    user: Partial<User>,
+    recommendations: Media[],
+    followingActivity: {
+      following: {
+        username: string;
+        mediaRatings: {
+          rating: number; // Make sure this exists in your query
+          media: Media;
+        }[];
+      };
+    }[],
   ): Promise<void> {
     try {
       logger.debug(`Sending weekly digest to ${user.email}`);
@@ -350,7 +366,7 @@ export class NotificationJob {
         html += `<h2>Recent Activity from People You Follow</h2>`;
         followingActivity.forEach((activity) => {
           html += `<h3>${activity.following.username}'s Recent Ratings</h3><ul>`;
-          activity.following.mediaRatings.forEach((rating: any) => {
+          activity.following.mediaRatings.forEach((rating) => {
             html += `<li><strong>${rating.media.title}</strong> - Rated ${rating.rating}/10</li>`;
           });
           html += `</ul>`;
