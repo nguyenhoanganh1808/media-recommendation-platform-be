@@ -2,7 +2,7 @@ import { Router } from "express";
 import { Role } from "@prisma/client";
 
 import genreController from "./genres.controller";
-import genreValidation from "./genres.validation";
+import { genreValidation } from "./genres.validation";
 import { validate } from "../../middlewares/validation.middleware";
 import { authenticate, restrictTo } from "../../middlewares/auth.middleware";
 import { cacheMiddleware } from "../../middlewares/cache.middleware";

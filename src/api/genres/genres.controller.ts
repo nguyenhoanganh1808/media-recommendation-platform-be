@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 import genreService from "./genres.service";
-import asyncHandler from "../../utils/asyncHandler";
+import { asyncHandler } from "../../utils/asyncHandler";
 import { sendSuccess, createPagination } from "../../utils/responseFormatter";
 import { clearCacheByPattern } from "../../middlewares/cache.middleware";
 

@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import authController from "./auth.controller";
+import * as authController from "./auth.controller";
 import { validate } from "../../middlewares/validation.middleware";
-import authValidation from "./auth.validation";
+import * as authValidation from "./auth.validation";
 import {
   authenticate,
   authenticateRefreshToken,

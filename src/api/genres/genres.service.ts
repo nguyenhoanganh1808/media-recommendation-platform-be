@@ -1,4 +1,4 @@
-import { Genre, Prisma } from "@prisma/client";
+import { Genre, Media, MediaType, Prisma } from "@prisma/client";
 
 import { prisma } from "../../config/database";
 import { AppError } from "../../middlewares/error.middleware";
@@ -53,7 +53,7 @@ export class GenreService {
       where.media = {
         some: {
           media: {
-            mediaType: filter.mediaType as any,
+            mediaType: filter.mediaType as MediaType,
           },
         },
       };
@@ -95,7 +95,7 @@ export class GenreService {
     id: string,
     page = 1,
     limit = 20,
-  ): Promise<{ genre: Genre | null; media: any[]; totalMedia: number }> {
+  ): Promise<{ genre: Genre | null; media: Media[]; totalMedia: number }> {
     const genre = await prisma.genre.findUnique({
       where: { id },
     });

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
-import { sendSuccess, sendError } from "../../utils/responseFormatter";
-import authService from "./auth.service";
-import asyncHandler from "../../utils/asyncHandler";
+import { sendSuccess } from "../../utils/responseFormatter";
+import * as authService from "./auth.service";
+import { asyncHandler } from "../../utils/asyncHandler";
 import { AppError } from "../../middlewares/error.middleware";
 
 /**
