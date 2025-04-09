@@ -9,6 +9,12 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*", "src/types/**/*.d.ts", "test/**/*", "scripts"],
+  "include": [
+    "src/**/*",
+    "src/types/**/*.d.ts",
+    "test/**/*",
+    "scripts",
+    "eslint.config.mjs"
+  ],
   "exclude": ["node_modules"]
 }

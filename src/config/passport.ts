@@ -43,7 +43,6 @@ passport.use(
         if (!isPasswordValid) {
           return done(null, false, { message: "Incorrect email or password" });
         }
-
         // Return user without password
         const { password: _, ...userWithoutPassword } = user;
         return done(null, userWithoutPassword);
@@ -54,9 +53,14 @@ passport.use(
   ),
 );
 
-const cookieExtractor = (req: any) => {
-  if (req && req.body && req.body.refreshToken) {
-    return req.body.refreshToken;
+const cookieExtractor = (req: Request) => {
+  if (
+    req &&
+    req.body &&
+    typeof req.body === "object" &&
+    "refreshToken" in req.body
+  ) {
+    return (req.body as { refreshToken: string }).refreshToken;
   }
   return null;
 };
@@ -82,7 +86,7 @@ passport.use(
         }
 
         // Return user without password
-        const { password, ...userWithoutPassword } = user;
+        const { password: _, ...userWithoutPassword } = user;
         return done(null, userWithoutPassword);
       } catch (error) {
         return done(error, false);
@@ -113,9 +117,6 @@ passport.use(
             },
           },
         });
-        console.log("refreshToken: ", req.body.refreshToken);
-        console.log("refreshToken: ", refreshToken);
-        console.log("userId: ", jwtPayload);
 
         if (!refreshToken) {
           return done(null, false, { message: "Invalid refresh token" });
@@ -125,7 +126,6 @@ passport.use(
         const user = await prisma.user.findUnique({
           where: { id: jwtPayload.userId },
         });
-        console.log("user: ", user);
 
         // Check if user exists and is active
         if (!user || !user.isActive) {
@@ -133,7 +133,7 @@ passport.use(
         }
 
         // Return user without password
-        const { password, ...userWithoutPassword } = user;
+        const { password: _, ...userWithoutPassword } = user;
         return done(null, userWithoutPassword);
       } catch (error) {
         return done(error, false);

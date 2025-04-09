@@ -337,7 +337,7 @@ export class NotificationJob {
       following: {
         username: string;
         mediaRatings: {
-          rating: number; // Make sure this exists in your query
+          rating: number;
           media: Media;
         }[];
       };

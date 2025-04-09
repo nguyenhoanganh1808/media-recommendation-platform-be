@@ -1,14 +1,19 @@
+// eslint-disable-next-line import/no-unresolved
 import { defineConfig } from "eslint/config";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import globals from "globals";
-import tsParser from "@typescript-eslint/parser";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 // Setup directory resolution
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
+
+// Use require for problematic ESM packages
+const tsParser = require("@typescript-eslint/parser");
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -24,6 +29,9 @@ export default defineConfig([
     "plugin:import/typescript",
   ),
   {
+    plugins: {
+      "@typescript-eslint": require("@typescript-eslint/eslint-plugin"),
+    },
     languageOptions: {
       globals: {
         ...globals.node,
@@ -34,13 +42,18 @@ export default defineConfig([
         project: "./tsconfig.json",
         ecmaVersion: 2020,
         sourceType: "module",
+        tsconfigRootDir: __dirname,
       },
     },
     settings: {
       "import/resolver": {
-        typescript: {},
+        typescript: {
+          project: "./tsconfig.json",
+          alwaysTryTypes: true,
+        },
       },
     },
+    ignores: ["eslint.config.mjs"],
     rules: {
       "prettier/prettier": "error",
       "@typescript-eslint/explicit-function-return-type": "off",
@@ -48,7 +61,11 @@ export default defineConfig([
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": [
         "error",
-        { argsIgnorePattern: "^_" },
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
       ],
       "import/order": [
         "error",
