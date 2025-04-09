@@ -66,7 +66,7 @@ export const sendError = (
   message = "Operation failed",
   statusCode = 400,
   errorCode = "BAD_REQUEST",
-  stack?: unknown,
+  stack?: string | undefined,
   details?: Record<string, string>
 ): void => {
   const response: ApiResponse<null> = {
