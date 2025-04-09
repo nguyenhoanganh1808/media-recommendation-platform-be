@@ -206,7 +206,7 @@ export async function createNotification(
   type: NotificationType,
   title: string,
   message: string,
-  data?: Record<string, any>,
+  data?: Record<string, unknown>,
 ) {
   // Check if user exists
   const user = await prisma.user.findUnique({
@@ -265,7 +265,7 @@ export async function createBulkNotifications(
   type: NotificationType,
   title: string,
   message: string,
-  data?: Record<string, any>,
+  data?: Record<string, unknown>,
 ) {
   const notifications = [];
 
@@ -297,7 +297,7 @@ export async function createBulkNotifications(
 export async function createSystemNotification(
   title: string,
   message: string,
-  data?: Record<string, any>,
+  data?: Record<string, unknown>,
 ) {
   // Get all active users
   const users = await prisma.user.findMany({
@@ -320,7 +320,7 @@ export async function createSystemNotification(
  * Retrieve notification settings for a user
  */
 export async function getNotificationSettings(
-  userId: string,
+  _userId: string,
 ): Promise<NotificationSettings> {
   // In a real implementation, fetch from database
   return {
