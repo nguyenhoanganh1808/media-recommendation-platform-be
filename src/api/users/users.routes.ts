@@ -4,11 +4,7 @@ import { Role } from "@prisma/client";
 import * as userController from "./users.controller";
 import * as userValidation from "./users.validation";
 import { validate } from "../../middlewares/validation.middleware";
-import {
-  authenticate,
-  checkOwnership,
-  restrictTo,
-} from "../../middlewares/auth.middleware";
+import { authenticate, restrictTo } from "../../middlewares/auth.middleware";
 import { userCacheMiddleware } from "../../middlewares/cache.middleware";
 
 const router = Router();

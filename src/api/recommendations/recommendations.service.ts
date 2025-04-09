@@ -1,5 +1,5 @@
 // src/api/recommendations/recommendations.service.ts
-import { MediaType, Prisma } from "@prisma/client";
+import { MediaType, Prisma, UserPreference } from "@prisma/client";
 
 import { prisma } from "../../config/database";
 import { AppError } from "../../middlewares/error.middleware";
@@ -16,12 +16,6 @@ interface MediaBasedRecommendationOptions {
   userId: string;
   mediaId: string;
   limit?: number;
-}
-
-interface UserPreference {
-  genreId?: string;
-  mediaTypePreference?: MediaType;
-  preferenceStrength: number;
 }
 
 export class RecommendationService {
@@ -270,12 +264,27 @@ export class RecommendationService {
   }
 
   // Helper methods for recommendation algorithm
-  private calculateGenreScores(userRatings: any[], userPreferences: any[]) {
+  private calculateGenreScores(
+    userRatings: Prisma.MediaRatingGetPayload<{
+      include: {
+        media: {
+          include: {
+            genres: {
+              include: {
+                genre: true;
+              };
+            };
+          };
+        };
+      };
+    }>[],
+    userPreferences: UserPreference[],
+  ) {
     const genreScores: Record<string, number> = {};
 
     // Consider user's ratings
     userRatings.forEach((rating) => {
-      rating.media.genres.forEach((genreItem: any) => {
+      rating.media.genres.forEach((genreItem) => {
         const genreId = genreItem.genre.id;
 
         if (!genreScores[genreId]) {
@@ -302,7 +311,7 @@ export class RecommendationService {
     return genreScores;
   }
 
-  private getMediaTypePreferences(userPreferences: any[]) {
+  private getMediaTypePreferences(userPreferences: UserPreference[]) {
     const mediaTypePrefs: Record<string, number> = {};
 
     userPreferences
@@ -316,7 +325,15 @@ export class RecommendationService {
   }
 
   private calculateRecommendationScore(
-    media: any,
+    media: Prisma.MediaGetPayload<{
+      include: {
+        genres: {
+          include: {
+            genre: true;
+          };
+        };
+      };
+    }>,
     genreScores: Record<string, number>,
     mediaTypePreferences: Record<string, number>,
   ) {
@@ -326,7 +343,7 @@ export class RecommendationService {
     score += media.popularity * 0.3 + media.averageRating * 0.3;
 
     // Add genre preference score
-    media.genres.forEach((genreItem: any) => {
+    media.genres.forEach((genreItem) => {
       const genreId = genreItem.genre.id;
       if (genreScores[genreId]) {
         score += genreScores[genreId] * 0.3;

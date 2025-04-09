@@ -282,11 +282,7 @@ export class ReviewService {
   /**
    * Delete a review
    */
-  async deleteReview(
-    reviewId: string,
-    userId: string,
-    userRole: Role,
-  ): Promise<void> {
+  async deleteReview(reviewId: string): Promise<void> {
     // Get the review
     const review = await prisma.mediaReview.findUnique({
       where: { id: reviewId },

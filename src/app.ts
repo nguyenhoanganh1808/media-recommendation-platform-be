@@ -6,7 +6,6 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
 import passport from "./config/passport";
-
 // Import configurations
 import { config } from "./config/env";
 import { logger } from "./config/logger";
@@ -14,7 +13,6 @@ import { errorHandler } from "./middlewares/error.middleware";
 import { rateLimiter } from "./middlewares/rateLimiter.middleware";
 import { disconnectDB } from "./config/database";
 import { disconnectRedis } from "./config/redis";
-
 // Import routes
 import authRoutes from "./api/auth/auth.routes";
 import userRoutes from "./api/users/users.routes";

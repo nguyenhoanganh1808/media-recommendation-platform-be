@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import asyncHandler from "../../utils/asyncHandler";
+import { asyncHandler } from "../../utils/asyncHandler";
 import { sendSuccess } from "../../utils/responseFormatter";
 import * as userService from "./users.service";
 import { AppError } from "../../middlewares/error.middleware";
@@ -13,7 +13,7 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await userService.createUser(userData);
 
   // Don't return the password in the response
-  const { password, ...userWithoutPassword } = user;
+  const { password: _, ...userWithoutPassword } = user;
 
   sendSuccess(res, userWithoutPassword, "User created successfully", 201);
 });
@@ -41,7 +41,7 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const updatedUser = await userService.updateUser(userId, req.body);
 
   // Don't return the password
-  const { password, ...userWithoutPassword } = updatedUser;
+  const { password: _, ...userWithoutPassword } = updatedUser;
 
   sendSuccess(res, userWithoutPassword, "User updated successfully");
 });
@@ -74,7 +74,7 @@ export const getUserFollowers = asyncHandler(
 
     // Don't return passwords
     const followersWithoutPasswords = followers.map((follower) => {
-      const { password, ...userWithoutPassword } = follower;
+      const { password: _, ...userWithoutPassword } = follower;
       return userWithoutPassword;
     });
 
@@ -95,7 +95,7 @@ export const getUserFollowing = asyncHandler(
 
     // Don't return passwords
     const followingWithoutPasswords = following.map((user) => {
-      const { password, ...userWithoutPassword } = user;
+      const { password: _, ...userWithoutPassword } = user;
       return userWithoutPassword;
     });
 

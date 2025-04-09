@@ -4,6 +4,7 @@
     "healthcheck",
     "isready",
     "loglevel",
+    "Prefs",
     "Rengular",
     "testuser",
     "tsparser",

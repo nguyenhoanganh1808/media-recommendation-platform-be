@@ -2,7 +2,7 @@
 import { Request, Response, NextFunction } from "express";
 import { MediaType } from "@prisma/client";
 
-import asyncHandler from "../../utils/asyncHandler";
+import { asyncHandler } from "../../utils/asyncHandler";
 import { sendSuccess, createPagination } from "../../utils/responseFormatter";
 import recommendationService from "./recommendations.service";
 import { AppError } from "../../middlewares/error.middleware";
@@ -63,7 +63,7 @@ export const getMediaBasedRecommendations = asyncHandler(
 );
 
 export const getTrendingRecommendations = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const mediaType = req.query.mediaType as MediaType | undefined;
@@ -87,7 +87,7 @@ export const getTrendingRecommendations = asyncHandler(
 );
 
 export const updateUserPreferences = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     const { userId } = req.params;
     const { genreIds, mediaTypePreferences } = req.body;
 

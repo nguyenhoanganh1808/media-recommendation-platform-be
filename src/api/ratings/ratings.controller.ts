@@ -1,19 +1,18 @@
 import { Request, Response } from "express";
 
-import asyncHandler from "../../utils/asyncHandler";
+import { asyncHandler } from "../../utils/asyncHandler";
 import * as ratingsService from "./ratings.service";
 import { sendSuccess } from "../../utils/responseFormatter";
 
 export const createRating = asyncHandler(
   async (req: Request, res: Response) => {
-    const { mediaId, rating, review } = req.body;
+    const { mediaId, rating } = req.body;
     const userId = req.user!.id;
 
     const newRating = await ratingsService.createRating(
       userId,
       mediaId,
       rating,
-      review,
     );
 
     sendSuccess(res, newRating, "Rating created successfully", 201);
@@ -64,7 +63,7 @@ export const getUserRatings = asyncHandler(
       result.ratings,
       "User ratings retrieved successfully",
       200,
-      { pagination: result.pagination },
+      result.pagination,
     );
   },
 );
@@ -82,7 +81,7 @@ export const getMediaRatings = asyncHandler(
       result.ratings,
       "Media ratings retrieved successfully",
       200,
-      { pagination: result.pagination },
+      result.pagination,
     );
   },
 );

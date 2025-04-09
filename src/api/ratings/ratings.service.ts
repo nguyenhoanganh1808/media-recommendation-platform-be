@@ -1,11 +1,10 @@
 // src/api/ratings/ratings.service.ts
-import { MediaRating } from "@prisma/client";
+import { MediaRating, Prisma } from "@prisma/client";
 
 import { prisma } from "../../config/database";
 import { AppError } from "../../middlewares/error.middleware";
 import { clearCacheByPattern } from "../../middlewares/cache.middleware";
-import { createPagination } from "../../utils/responseFormatter";
-import { logger } from "../../config/logger";
+import { ApiResponse, createPagination } from "../../utils/responseFormatter";
 
 /**
  * Create a new media rating
@@ -14,7 +13,6 @@ export const createRating = async (
   userId: string,
   mediaId: string,
   rating: number,
-  review?: string,
 ): Promise<MediaRating> => {
   // Check if media exists
   const media = await prisma.media.findUnique({
@@ -247,7 +245,10 @@ export const getMediaRatings = async (
   mediaId: string,
   page: number = 1,
   limit: number = 10,
-): Promise<{ ratings: MediaRating[]; pagination: any }> => {
+): Promise<{
+  ratings: MediaRating[];
+  pagination: ApiResponse<unknown>["meta"];
+}> => {
   const skip = (page - 1) * limit;
 
   const [ratings, total] = await Promise.all([
@@ -284,7 +285,10 @@ export const getUserRatings = async (
   page: number = 1,
   limit: number = 10,
   mediaId?: string,
-): Promise<{ ratings: MediaRating[]; pagination: any }> => {
+): Promise<{
+  ratings: MediaRating[];
+  pagination: ApiResponse<unknown>["meta"];
+}> => {
   const skip = (page - 1) * limit;
 
   // Check if user exists
@@ -296,7 +300,7 @@ export const getUserRatings = async (
     throw new AppError("User not found", 404, "USER_NOT_FOUND");
   }
 
-  const whereClause: any = { userId };
+  const whereClause: Prisma.MediaRatingWhereInput = { userId };
   if (mediaId) {
     whereClause.mediaId = mediaId;
   }

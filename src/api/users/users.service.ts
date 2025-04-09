@@ -4,7 +4,6 @@ import { hashPassword } from "../../utils/password";
 import { AppError } from "../../middlewares/error.middleware";
 import { prisma } from "../../config/database";
 import * as notificationService from "../notifications/notifications.service";
-import { logger } from "../../config/logger";
 import { clearCacheByPattern } from "../../middlewares/cache.middleware";
 
 export interface CreateUserDTO {

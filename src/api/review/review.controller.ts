@@ -2,19 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import { Role } from "@prisma/client";
 
 import reviewService from "./review.service";
-import asyncHandler from "../../utils/asyncHandler";
-import {
-  sendSuccess,
-  createPagination,
-  sendError,
-} from "../../utils/responseFormatter";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { sendSuccess, createPagination } from "../../utils/responseFormatter";
 
 export class ReviewController {
   /**
    * Create a new review
    */
   createReview = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, __next: NextFunction) => {
       const { mediaId, content, isVisible, containsSpoilers } = req.body;
       const userId = req.user!.id;
 
@@ -34,7 +30,7 @@ export class ReviewController {
    * Get reviews for a specific media
    */
   getMediaReviews = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, _next: NextFunction) => {
       // TODO: Implement filter by time, containsSpoilers, etc.
 
       const mediaId = req.params.mediaId;
@@ -69,7 +65,7 @@ export class ReviewController {
    * Get reviews by a specific user
    */
   getUserReviews = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, _next: NextFunction) => {
       const userId = req.params.userId;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
@@ -100,7 +96,7 @@ export class ReviewController {
    * Get a single review by ID
    */
   getReviewById = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, _next: NextFunction) => {
       const reviewId = req.params.id;
       const review = await reviewService.getReviewById(reviewId);
 
@@ -112,7 +108,7 @@ export class ReviewController {
    * Get a user's review for a specific media
    */
   getUserMediaReview = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, _next: NextFunction) => {
       const mediaId = req.params.mediaId;
       const userId = req.user!.id;
       const review = await reviewService.getUserMediaReview(userId, mediaId);
@@ -125,7 +121,7 @@ export class ReviewController {
    * Update a review
    */
   updateReview = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, _next: NextFunction) => {
       const reviewId = req.params.id;
       const { content, isVisible, containsSpoilers } = req.body;
       const userId = req.user!.id;
@@ -146,12 +142,12 @@ export class ReviewController {
    * Delete a review
    */
   deleteReview = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, _next: NextFunction) => {
       const reviewId = req.params.id;
-      const userId = req.user!.id;
-      const userRole = req.user!.role as Role;
+      // const userId = req.user!.id;
+      // const userRole = req.user!.role as Role;
 
-      await reviewService.deleteReview(reviewId, userId, userRole);
+      await reviewService.deleteReview(reviewId);
 
       sendSuccess(res, null, "Review deleted successfully");
     },
@@ -161,7 +157,7 @@ export class ReviewController {
    * Like a review
    */
   likeReview = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, _next: NextFunction) => {
       const reviewId = req.params.id;
       const updatedReview = await reviewService.likeReview(reviewId);
 
@@ -173,7 +169,7 @@ export class ReviewController {
    * Unlike a review
    */
   unlikeReview = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, _next: NextFunction) => {
       const reviewId = req.params.id;
       const updatedReview = await reviewService.unlikeReview(reviewId);
 
