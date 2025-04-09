@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from "express";
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
-} from '@prisma/client/runtime/library';
-import { logger } from '../config/logger';
-import { config } from '../config/env';
-import { sendError } from '../utils/responseFormatter';
+} from "@prisma/client/runtime/library";
+import { logger } from "../config/logger";
+import { config } from "../config/env";
+import { sendError } from "../utils/responseFormatter";
 
 // Custom error class
 export class AppError extends Error {
@@ -23,7 +23,7 @@ export class AppError extends Error {
   ) {
     super(message);
     this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     this.isOperational = true;
     this.errorCode = errorCode;
     this.details = details;
@@ -34,61 +34,57 @@ export class AppError extends Error {
 
 // Handle Prisma errors
 const handlePrismaKnownRequestError = (err: PrismaClientKnownRequestError) => {
-  let message = 'Database error occurred';
+  let message = "Database error occurred";
   let statusCode = 500;
-  let code = 'DATABASE_ERROR';
+  let code = "DATABASE_ERROR";
 
   switch (err.code) {
-    case 'P2002':
-      const field = (err.meta?.target as string[]) || ['field'];
-      message = `Duplicate value for ${field.join(', ')}. Please use another value.`;
+    case "P2002": {
+      const field = (err.meta?.target as string[]) || ["field"];
+      message = `Duplicate value for ${field.join(
+        ", "
+      )}. Please use another value.`;
       statusCode = 409;
-      code = 'DUPLICATE_ENTRY';
+      code = "DUPLICATE_ENTRY";
       break;
-    case 'P2025':
-      message = 'Record not found';
+    }
+    case "P2025":
+      message = "Record not found";
       statusCode = 404;
-      code = 'NOT_FOUND';
+      code = "NOT_FOUND";
       break;
-    case 'P2003':
-      message = 'Related record not found';
+    case "P2003":
+      message = "Related record not found";
       statusCode = 400;
-      code = 'FOREIGN_KEY_CONSTRAINT';
+      code = "FOREIGN_KEY_CONSTRAINT";
       break;
   }
 
-  return new AppError(message, statusCode);
+  return new AppError(message, statusCode, code);
 };
 
 // Handle Prisma validation errors
-const handlePrismaValidationError = (err: PrismaClientValidationError) => {
-  return new AppError('Invalid input data', 400);
+const handlePrismaValidationError = (error: PrismaClientValidationError) => {
+  return new AppError(error.message, 400);
 };
 
 // Handle JWT errors
 const handleJWTError = () =>
-  new AppError('Invalid token. Please log in again.', 401);
+  new AppError("Invalid token. Please log in again.", 401);
 
 // Handle JWT expired error
 const handleJWTExpiredError = () =>
-  new AppError('Your token has expired. Please log in again.', 401);
+  new AppError("Your token has expired. Please log in again.", 401);
 
 // Error handler middleware
-export const errorHandler = (
-  err: any,
-  req: Request,
-  res: Response,
-  _next: NextFunction
-) => {
+export const errorHandler = (err: AppError, req: Request, res: Response) => {
   let error = err;
   if (!(error instanceof Error)) {
-    error = new AppError('An unknown error occurred', 500);
+    error = new AppError("An unknown error occurred", 500);
   }
-
-  const statusCode = error instanceof AppError ? error.statusCode : 500;
   const message = error.message;
   const errorCode =
-    error instanceof AppError ? error.errorCode : 'INTERNAL_ERROR';
+    error instanceof AppError ? error.errorCode : "INTERNAL_ERROR";
   const details = error instanceof AppError ? error.details : undefined;
 
   // Handle specific errors
@@ -98,10 +94,10 @@ export const errorHandler = (
   if (error instanceof PrismaClientValidationError) {
     error = handlePrismaValidationError(error);
   }
-  if (error.name === 'JsonWebTokenError') {
+  if (error.name === "JsonWebTokenError") {
     error = handleJWTError();
   }
-  if (error.name === 'TokenExpiredError') {
+  if (error.name === "TokenExpiredError") {
     error = handleJWTExpiredError();
   }
 
@@ -112,17 +108,17 @@ export const errorHandler = (
     method: req.method,
     path: req.originalUrl,
     ip: req.ip,
-    stack: config.NODE_ENV === 'development' ? error.stack : undefined, // Hide stack trace in production
+    stack: config.NODE_ENV === "development" ? error.stack : undefined, // Hide stack trace in production
     details,
   });
 
   // Development error response - with stack trace
-  if (config.NODE_ENV === 'development') {
+  if (config.NODE_ENV === "development") {
     sendError(
       res,
       error.message,
       error.statusCode,
-      error.code,
+      error.errorCode,
       error.stack,
       details
     );
@@ -137,5 +133,5 @@ export const errorHandler = (
   }
 
   // Generic error message for non-operational errors in production
-  sendError(res, 'Something went wrong', 500, 'INTERNAL_ERROR');
+  sendError(res, "Something went wrong", 500, "INTERNAL_ERROR");
 };

@@ -23,7 +23,7 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await userService.getUserById(userId, currentUserId);
 
   // Don't return the password
-  const { password, ...userWithoutPassword } = user;
+  const { password: _, ...userWithoutPassword } = user;
 
   sendSuccess(res, userWithoutPassword, "User retrieved successfully");
 });

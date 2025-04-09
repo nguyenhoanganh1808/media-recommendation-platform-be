@@ -5,6 +5,7 @@
     "isready",
     "loglevel",
     "Rengular",
+    "testuser",
     "userratelimit"
   ]
 }
