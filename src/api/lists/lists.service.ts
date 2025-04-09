@@ -1,9 +1,19 @@
-import { MediaList, MediaListItem, User } from "@prisma/client";
+import { MediaList, MediaListItem } from "@prisma/client";
 
 import { prisma } from "../../config/database";
 import { AppError } from "../../middlewares/error.middleware";
 import { clearCacheByPattern } from "../../middlewares/cache.middleware";
-import { createPagination } from "../../utils/responseFormatter";
+import { ApiResponse, createPagination } from "../../utils/responseFormatter";
+
+interface MediaListItemWithMedia {
+  id: string;
+  name: string;
+  description: string | null;
+  isPublic?: boolean;
+  itemCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 /**
  * Service for handling list operations
@@ -208,7 +218,9 @@ export const reorderListItems = async (
 /**
  * Get popular public lists
  */
-export const getPopularLists = async (limit: number = 10): Promise<any[]> => {
+export const getPopularLists = async (
+  limit: number = 10,
+): Promise<MediaListItemWithMedia[]> => {
   const lists = await prisma.mediaList.findMany({
     where: {
       isPublic: true,
@@ -302,7 +314,9 @@ export const getListByUser = async (
   page: number,
   skip: number,
   limit: number,
-): Promise<any> => {
+): Promise<
+  [lists: MediaListItemWithMedia[], pagination: ApiResponse<unknown>["meta"]]
+> => {
   const [lists, total] = await Promise.all([
     prisma.mediaList.findMany({
       where: { userId },
