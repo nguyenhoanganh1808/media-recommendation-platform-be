@@ -1,9 +1,20 @@
 // media.controller.ts
 import { Request, Response } from "express";
+import { MediaType } from "@prisma/client";
 
-import asyncHandler from "../../utils/asyncHandler";
+import { asyncHandler } from "../../utils/asyncHandler";
 import { sendSuccess, sendError } from "../../utils/responseFormatter";
 import * as mediaService from "./media.service";
+
+interface GetAllMediaQuery {
+  page?: number;
+  limit?: number;
+  type?: MediaType;
+  genre?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: string;
+}
 
 // Get all media with filtering and pagination
 export const getAllMedia = asyncHandler(async (req: Request, res: Response) => {
@@ -15,7 +26,7 @@ export const getAllMedia = asyncHandler(async (req: Request, res: Response) => {
     search,
     sortBy = "popularity",
     sortOrder = "desc",
-  } = req.query as any;
+  } = req.query as GetAllMediaQuery;
 
   const { media, pagination } = await mediaService.getAllMedia({
     page: Number(page),
