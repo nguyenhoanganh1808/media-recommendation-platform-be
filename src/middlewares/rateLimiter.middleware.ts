@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
-import rateLimit from 'express-rate-limit';
-import RedisStore from 'rate-limit-redis';
-import { redisClient } from '../config/redis';
-import { config } from '../config/env';
+import { Request } from "express";
+import rateLimit from "express-rate-limit";
+import RedisStore from "rate-limit-redis";
+import { redisClient } from "../config/redis";
+import { config } from "../config/env";
 
 // Default rate limiter for general API endpoints
 export const rateLimiter = rateLimit({
@@ -11,14 +11,14 @@ export const rateLimiter = rateLimit({
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   message: {
-    status: 'error',
-    message: 'Too many requests from this IP, please try again later.',
+    status: "error",
+    message: "Too many requests from this IP, please try again later.",
   },
   // Use Redis as store if available
   store: redisClient.isReady
     ? new RedisStore({
         sendCommand: (...args: string[]) => redisClient.sendCommand(args),
-        prefix: 'ratelimit:',
+        prefix: "ratelimit:",
       })
     : undefined,
 });
@@ -30,14 +30,14 @@ export const authRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: {
-    status: 'error',
+    status: "error",
     message:
-      'Too many authentication attempts from this IP, please try again later.',
+      "Too many authentication attempts from this IP, please try again later.",
   },
   store: redisClient.isReady
     ? new RedisStore({
         sendCommand: (...args: string[]) => redisClient.sendCommand(args),
-        prefix: 'authratelimit:',
+        prefix: "authratelimit:",
       })
     : undefined,
 });
@@ -50,19 +50,19 @@ export const apiKeyRateLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req: Request) => {
     // Use API key from headers or query parameters
-    return (req.headers['x-api-key'] as string) || (req.query.apiKey as string);
+    return (req.headers["x-api-key"] as string) || (req.query.apiKey as string);
   },
   message: {
-    status: 'error',
-    message: 'API rate limit exceeded, please slow down your requests.',
+    status: "error",
+    message: "API rate limit exceeded, please slow down your requests.",
   },
   store: redisClient.isReady
     ? new RedisStore({
         sendCommand: (...args: string[]) => redisClient.sendCommand(args),
-        prefix: 'apikeyratelimit:',
+        prefix: "apikeyratelimit:",
       })
     : undefined,
-  skip: (req: Request) => !req.headers['x-api-key'] && !req.query.apiKey, // Skip if no API key
+  skip: (req: Request) => !req.headers["x-api-key"] && !req.query.apiKey, // Skip if no API key
 });
 
 // Create dynamic rate limiter by user ID (when authenticated)
@@ -77,16 +77,16 @@ export const userRateLimiter = (
     legacyHeaders: false,
     keyGenerator: (req: Request) => {
       // Use user ID as the rate limiting key if authenticated
-      return (req.user as any).id || req.ip || '';
+      return (req.user as Express.User).id || req.ip || "";
     },
     message: {
-      status: 'error',
-      message: 'Too many requests, please try again later.',
+      status: "error",
+      message: "Too many requests, please try again later.",
     },
     store: redisClient.isReady
       ? new RedisStore({
           sendCommand: (...args: string[]) => redisClient.sendCommand(args),
-          prefix: 'userratelimit:',
+          prefix: "userratelimit:",
         })
       : undefined,
   });
@@ -98,7 +98,7 @@ export const userRateLimiter = (
 export const createIpRateLimiter = (
   maxRequests: number,
   windowMs: number,
-  prefix: string = 'ip'
+  prefix: string = "ip"
 ) => {
   return rateLimit({
     windowMs,
@@ -106,8 +106,8 @@ export const createIpRateLimiter = (
     standardHeaders: true,
     legacyHeaders: false,
     message: {
-      status: 'error',
-      message: 'Too many requests from this IP, please try again later.',
+      status: "error",
+      message: "Too many requests from this IP, please try again later.",
     },
     store: redisClient.isReady
       ? new RedisStore({
