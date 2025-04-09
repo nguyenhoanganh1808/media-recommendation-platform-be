@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+
 import { logger } from "./logger";
 
 // Create Prisma Client instance

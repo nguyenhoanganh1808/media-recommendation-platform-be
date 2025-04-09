@@ -1,4 +1,8 @@
 import https from "https";
+import fs from "fs";
+import path from "path";
+import http from "http";
+
 import app from "./app";
 import { logger } from "./config/logger";
 import { config } from "./config/env";
@@ -6,9 +10,6 @@ import { connectDB } from "./config/database";
 import { connectRedis } from "./config/redis";
 import { initializeJobs } from "./jobs";
 import { initializeSocket } from "./config/socket";
-import fs from "fs";
-import path from "path";
-import http from "http";
 
 const PORT = config.PORT;
 const HTTPS_PORT = config.HTTPS_PORT;

@@ -1,4 +1,5 @@
 import { Prisma, NotificationType } from "@prisma/client";
+
 import { AppError } from "../../middlewares/error.middleware";
 import { clearCacheByPattern } from "../../middlewares/cache.middleware";
 import { logger } from "../../config/logger";

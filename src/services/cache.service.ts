@@ -1,6 +1,7 @@
 // src/services/cache.service.ts
 import { createClient, RedisClientType } from "redis";
 import { MediaType, Media } from "@prisma/client";
+
 import { logger } from "../config/logger";
 import { config } from "../config/env";
 

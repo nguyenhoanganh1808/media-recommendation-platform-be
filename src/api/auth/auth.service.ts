@@ -1,4 +1,5 @@
 import { User, Role } from "@prisma/client";
+
 import { prisma } from "../../config/database";
 import { comparePasswords, hashPassword } from "../../utils/password";
 import {

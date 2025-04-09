@@ -1,5 +1,7 @@
 // media.routes.ts
 import { Router } from "express";
+import { Role } from "@prisma/client";
+
 import { authenticate, restrictTo } from "../../middlewares/auth.middleware";
 import {
   validate,
@@ -9,7 +11,6 @@ import { cacheMiddleware } from "../../middlewares/cache.middleware";
 import { rateLimiter } from "../../middlewares/rateLimiter.middleware";
 import * as mediaController from "./media.controller";
 import * as mediaValidation from "./media.validation";
-import { Role } from "@prisma/client";
 
 const router = Router();
 

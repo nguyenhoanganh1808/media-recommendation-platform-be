@@ -1,6 +1,7 @@
+import { MediaList, MediaListItem, User } from "@prisma/client";
+
 import { prisma } from "../../config/database";
 import { AppError } from "../../middlewares/error.middleware";
-import { MediaList, MediaListItem, User } from "@prisma/client";
 import { clearCacheByPattern } from "../../middlewares/cache.middleware";
 import { createPagination } from "../../utils/responseFormatter";
 

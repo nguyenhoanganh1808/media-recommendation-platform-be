@@ -1,4 +1,5 @@
 import { User, Role } from "@prisma/client";
+
 import { hashPassword } from "../../utils/password";
 import { AppError } from "../../middlewares/error.middleware";
 import { prisma } from "../../config/database";

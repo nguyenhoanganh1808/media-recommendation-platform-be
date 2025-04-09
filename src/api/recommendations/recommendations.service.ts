@@ -1,5 +1,6 @@
 // src/api/recommendations/recommendations.service.ts
 import { MediaType, Prisma } from "@prisma/client";
+
 import { prisma } from "../../config/database";
 import { AppError } from "../../middlewares/error.middleware";
 

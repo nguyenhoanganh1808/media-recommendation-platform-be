@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult, ValidationChain } from "express-validator";
+
 import { AppError } from "./error.middleware";
 
 // Middleware to validate request data

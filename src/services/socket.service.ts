@@ -1,7 +1,8 @@
 // src/services/socket.service.ts
+import { NotificationType } from "@prisma/client";
+
 import { getSocketIO } from "../config/socket";
 import { logger } from "../config/logger";
-import { NotificationType } from "@prisma/client";
 import { prisma } from "../config/database";
 
 // Event types

@@ -1,5 +1,7 @@
 // src/api/recommendations/recommendations.routes.ts
 import { Router } from "express";
+import { Role } from "@prisma/client";
+
 import * as recommendationsController from "./recommendations.controller";
 import { authenticate, restrictTo } from "../../middlewares/auth.middleware";
 import { validate } from "../../middlewares/validation.middleware";
@@ -8,7 +10,6 @@ import {
   getMediaBasedRecommendationsValidation,
   updateUserPreferencesValidation,
 } from "./recommendations.validation";
-import { Role } from "@prisma/client";
 import { userCacheMiddleware } from "../../middlewares/cache.middleware";
 
 const router = Router();

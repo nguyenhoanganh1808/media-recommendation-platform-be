@@ -1,7 +1,10 @@
 import { Router } from "express";
+
 import * as listsController from "./lists.controller";
-import { authenticate } from "../../middlewares/auth.middleware";
-import { checkOwnership } from "../../middlewares/auth.middleware";
+import {
+  authenticate,
+  checkOwnership,
+} from "../../middlewares/auth.middleware";
 import {
   validate,
   validateQueryParams,

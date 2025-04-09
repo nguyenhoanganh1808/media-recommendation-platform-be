@@ -1,11 +1,11 @@
 // src/api/recommendations/recommendations.controller.ts
 import { Request, Response, NextFunction } from "express";
+import { MediaType } from "@prisma/client";
+
 import asyncHandler from "../../utils/asyncHandler";
-import { sendSuccess } from "../../utils/responseFormatter";
+import { sendSuccess, createPagination } from "../../utils/responseFormatter";
 import recommendationService from "./recommendations.service";
 import { AppError } from "../../middlewares/error.middleware";
-import { MediaType } from "@prisma/client";
-import { createPagination } from "../../utils/responseFormatter";
 
 export const getRecommendations = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

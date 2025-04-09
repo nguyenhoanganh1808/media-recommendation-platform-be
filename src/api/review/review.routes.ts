@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { Role } from "@prisma/client";
+
 import reviewController from "./review.controller";
 import { validate } from "../../middlewares/validation.middleware";
 import {
@@ -6,7 +8,6 @@ import {
   checkOwnership,
   restrictTo,
 } from "../../middlewares/auth.middleware";
-import { Role } from "@prisma/client";
 import {
   createReviewValidation,
   updateReviewValidation,

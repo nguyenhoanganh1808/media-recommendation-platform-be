@@ -4,6 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+
 import passport from "./config/passport";
 
 // Import configurations

@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { Role } from "@prisma/client";
+
 import * as userController from "./users.controller";
 import * as userValidation from "./users.validation";
 import { validate } from "../../middlewares/validation.middleware";
@@ -8,7 +10,6 @@ import {
   restrictTo,
 } from "../../middlewares/auth.middleware";
 import { userCacheMiddleware } from "../../middlewares/cache.middleware";
-import { Role } from "@prisma/client";
 
 const router = Router();
 

@@ -1,6 +1,7 @@
 // src/api/ratings/ratings.service.ts
-import { prisma } from "../../config/database";
 import { MediaRating } from "@prisma/client";
+
+import { prisma } from "../../config/database";
 import { AppError } from "../../middlewares/error.middleware";
 import { clearCacheByPattern } from "../../middlewares/cache.middleware";
 import { createPagination } from "../../utils/responseFormatter";

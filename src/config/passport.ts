@@ -1,6 +1,7 @@
 import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
+
 import { prisma } from "./database";
 import { config } from "./env";
 import { comparePasswords } from "../utils/password";

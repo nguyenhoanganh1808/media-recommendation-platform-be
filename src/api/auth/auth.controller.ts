@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import { sendSuccess, sendError } from "../../utils/responseFormatter";
 import authService from "./auth.service";
 import asyncHandler from "../../utils/asyncHandler";

@@ -1,9 +1,10 @@
 // src/jobs/notification.job.ts
 import { Notification, PrismaClient, User } from "@prisma/client";
+import { createTransport, Transporter } from "nodemailer";
+
 import { logger } from "../config/logger";
 import * as NotificationService from "../api/notifications/notifications.service";
 import * as SocketService from "../services/socket.service";
-import { createTransport, Transporter } from "nodemailer";
 import { redisClient } from "../config/redis";
 import { config } from "../config/env";
 

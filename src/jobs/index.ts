@@ -1,5 +1,6 @@
 // src/jobs/index.ts
 import { CronJob } from "cron";
+
 import { logger } from "../config/logger";
 import { RecommendationJob } from "./recommendation.job";
 import { NotificationJob } from "./notification.job";

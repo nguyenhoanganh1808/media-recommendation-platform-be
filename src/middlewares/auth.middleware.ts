@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import passport from "passport";
+import { Role } from "@prisma/client";
+
 import { AppError } from "./error.middleware";
 import { prisma } from "../config/database";
-import { Role } from "@prisma/client";
 import asyncHandler from "../utils/asyncHandler";
 
 // Define a custom type to extend Express Request

@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import * as notificationController from "./notifications.controller";
 import { authenticate } from "../../middlewares/auth.middleware";
 import { validate } from "../../middlewares/validation.middleware";

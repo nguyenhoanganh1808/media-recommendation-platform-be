@@ -1,10 +1,10 @@
 import { Router } from "express";
+import { Role } from "@prisma/client";
+
 import genreController from "./genres.controller";
 import genreValidation from "./genres.validation";
 import { validate } from "../../middlewares/validation.middleware";
-import { authenticate } from "../../middlewares/auth.middleware";
-import { restrictTo } from "../../middlewares/auth.middleware";
-import { Role } from "@prisma/client";
+import { authenticate, restrictTo } from "../../middlewares/auth.middleware";
 import { cacheMiddleware } from "../../middlewares/cache.middleware";
 import { rateLimiter } from "../../middlewares/rateLimiter.middleware";
 

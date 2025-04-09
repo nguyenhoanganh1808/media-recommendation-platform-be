@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import { Role } from "@prisma/client";
+
 import reviewService from "./review.service";
 import asyncHandler from "../../utils/asyncHandler";
 import {
@@ -6,7 +8,6 @@ import {
   createPagination,
   sendError,
 } from "../../utils/responseFormatter";
-import { Role } from "@prisma/client";
 
 export class ReviewController {
   /**

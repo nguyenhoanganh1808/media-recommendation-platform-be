@@ -1,5 +1,7 @@
 // src/api/ratings/ratings.routes.ts
 import { Router } from "express";
+import { Role } from "@prisma/client";
+
 import * as ratingsController from "./ratings.controller";
 import {
   authenticate,
@@ -18,7 +20,6 @@ import {
   userRatingsQueryValidation,
 } from "./ratings.validation";
 import { userCacheMiddleware } from "../../middlewares/cache.middleware";
-import { Role } from "@prisma/client";
 
 const router = Router();
 

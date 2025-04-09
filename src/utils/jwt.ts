@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 import { User } from "@prisma/client";
-import { config } from "../config/env";
 import { randomUUID } from "crypto";
+
+import { config } from "../config/env";
 
 /**
  * Payload type for JWT tokens
