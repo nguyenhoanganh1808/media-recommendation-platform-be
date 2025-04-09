@@ -1,5 +1,6 @@
 import request from "supertest";
 import { Express } from "express";
+
 import { prisma } from "../../src/config/database";
 import { hashPassword } from "../../src/utils/password";
 import app from "../../src/app";
@@ -76,8 +77,6 @@ describe("Auth API", () => {
         email: testAuthUser.email,
         password: testAuthUser.password,
       });
-
-      console.log("Response: ", res.status, res.body);
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);

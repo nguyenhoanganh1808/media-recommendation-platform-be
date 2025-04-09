@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
+
 import * as listController from "../../src/api/lists/lists.controller";
 import * as listService from "../../src/api/lists/lists.service";
 import { sendSuccess } from "../../src/utils/responseFormatter";
-import { AppError } from "../../src/middlewares/error.middleware";
-import { prisma } from "../../src/config/database";
 
 // Mock dependencies
 jest.mock("../../src/api/lists/lists.service");
@@ -46,7 +46,7 @@ describe("Lists Controller Unit Tests", () => {
       const mockLists = [{ id: "list-1", name: "My List" }];
       const mockPagination = { page: 1, totalPages: 1 };
       mockListService.getListByUser.mockResolvedValue([
-        mockLists,
+        mockLists as any,
         mockPagination,
       ]);
 
@@ -79,7 +79,7 @@ describe("Lists Controller Unit Tests", () => {
       const mockLists = [{ id: "list-1", name: "My List" }];
       const mockPagination = { page: 2, totalPages: 3 };
       mockListService.getListByUser.mockResolvedValue([
-        mockLists,
+        mockLists as any,
         mockPagination,
       ]);
 
@@ -368,7 +368,7 @@ describe("Lists Controller Unit Tests", () => {
       const mockLists = [{ id: "list-1", name: "Public List", isPublic: true }];
       const mockPagination = { page: 1, totalPages: 1 };
       mockListService.getUserPublicLists.mockResolvedValue([
-        mockLists,
+        mockLists as any,
         mockPagination,
       ]);
 

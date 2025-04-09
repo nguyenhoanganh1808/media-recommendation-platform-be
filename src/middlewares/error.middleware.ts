@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
@@ -42,9 +42,7 @@ const handlePrismaKnownRequestError = (err: PrismaClientKnownRequestError) => {
   switch (err.code) {
     case "P2002": {
       const field = (err.meta?.target as string[]) || ["field"];
-      message = `Duplicate value for ${field.join(
-        ", ",
-      )}. Please use another value.`;
+      message = `Duplicate value for ${field.join(", ")}. Please use another value.`;
       statusCode = 409;
       code = "DUPLICATE_ENTRY";
       break;
@@ -65,8 +63,8 @@ const handlePrismaKnownRequestError = (err: PrismaClientKnownRequestError) => {
 };
 
 // Handle Prisma validation errors
-const handlePrismaValidationError = (error: PrismaClientValidationError) => {
-  return new AppError(error.message, 400);
+const handlePrismaValidationError = (_err: PrismaClientValidationError) => {
+  return new AppError("Invalid input data", 400);
 };
 
 // Handle JWT errors
@@ -78,11 +76,17 @@ const handleJWTExpiredError = () =>
   new AppError("Your token has expired. Please log in again.", 401);
 
 // Error handler middleware
-export const errorHandler = (err: AppError, req: Request, res: Response) => {
+export const errorHandler = (
+  err: AppError,
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
   let error = err;
   if (!(error instanceof Error)) {
     error = new AppError("An unknown error occurred", 500);
   }
+
   const message = error.message;
   const errorCode =
     error instanceof AppError ? error.errorCode : "INTERNAL_ERROR";
