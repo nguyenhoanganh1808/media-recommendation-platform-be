@@ -128,7 +128,7 @@ export class CacheService {
    */
   public async setUserPreferences(
     userId: string,
-    preferences: any,
+    preferences: unknown,
     options: CacheOptions = {}
   ): Promise<void> {
     try {
@@ -142,69 +142,6 @@ export class CacheService {
       logger.debug(`Cached preferences for user ${userId}`);
     } catch (error) {
       logger.error("Error setting user preferences in cache", error);
-    }
-  }
-
-  /**
-   * Get cached user preferences
-   * @param userId User ID
-   * @returns User preferences or null
-   */
-  public async getUserPreferences(userId: string): Promise<any | null> {
-    try {
-      await this.connect();
-
-      const key = `${this.USER_PREFERENCES_PREFIX}${userId}`;
-      const cachedPref = await this.client.get(key);
-
-      return cachedPref ? JSON.parse(cachedPref) : null;
-    } catch (error) {
-      logger.error("Error getting user preferences from cache", error);
-      return null;
-    }
-  }
-
-  /**
-   * Cache media details
-   * @param mediaId Media ID
-   * @param mediaDetails Media details object
-   * @param options Cache options
-   */
-  public async setMediaDetails(
-    mediaId: string,
-    mediaDetails: any,
-    options: CacheOptions = {}
-  ): Promise<void> {
-    try {
-      await this.connect();
-
-      const key = `${this.MEDIA_DETAILS_PREFIX}${mediaId}`;
-      const ttl = options.ttl || this.DEFAULT_TTL;
-
-      await this.client.set(key, JSON.stringify(mediaDetails), { EX: ttl });
-
-      logger.debug(`Cached details for media ${mediaId}`);
-    } catch (error) {
-      logger.error("Error setting media details in cache", error);
-    }
-  }
-
-  /**
-   * Get cached media details
-   * @param mediaId Media ID
-   * @returns Media details or null
-   */
-  public async getMediaDetails(mediaId: string): Promise<any | null> {
-    try {
-      await this.connect();
-
-      const key = `${this.MEDIA_DETAILS_PREFIX}${mediaId}`;
-      const cachedDetails = await this.client.get(key);
-
-      return cachedDetails ? JSON.parse(cachedDetails) : null;
-    } catch (error) {
-      logger.error("Error getting media details from cache", error);
-      return null;
     }
   }
 
