@@ -471,7 +471,9 @@ export const getUserPublicLists = async (
   page: number,
   skip: number,
   limit: number,
-) => {
+): Promise<
+  [lists: MediaListItemWithMedia[], pagination: ApiResponse<unknown>["meta"]]
+> => {
   const [lists, total] = await Promise.all([
     prisma.mediaList.findMany({
       where: {

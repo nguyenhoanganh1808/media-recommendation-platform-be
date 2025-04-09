@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
 import { prisma } from "../../config/database";
-import asyncHandler from "../../utils/asyncHandler";
-import { sendSuccess, createPagination } from "../../utils/responseFormatter";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { sendSuccess } from "../../utils/responseFormatter";
 import { AppError } from "../../middlewares/error.middleware";
 import * as listService from "./lists.service";
 
