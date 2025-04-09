@@ -1,8 +1,9 @@
+import { Role } from "@prisma/client";
+
 import { ReviewService } from "../../src/api/review/review.service";
 import { prisma } from "../../src/config/database";
 import { AppError } from "../../src/middlewares/error.middleware";
 import { clearCacheByPattern } from "../../src/middlewares/cache.middleware";
-import { Role } from "@prisma/client";
 
 // Mock dependencies
 jest.mock("../../src/config/database", () => ({
@@ -474,7 +475,7 @@ describe("ReviewService", () => {
       );
       (prisma.mediaReview.delete as jest.Mock).mockResolvedValue(mockReview);
 
-      await reviewService.deleteReview(reviewId, userId, Role.USER);
+      await reviewService.deleteReview(reviewId);
 
       expect(prisma.mediaReview.findUnique).toHaveBeenCalledWith({
         where: { id: reviewId },
@@ -498,7 +499,7 @@ describe("ReviewService", () => {
       });
       (prisma.mediaReview.delete as jest.Mock).mockResolvedValue(mockReview);
 
-      await reviewService.deleteReview(reviewId, userId, Role.MODERATOR);
+      await reviewService.deleteReview(reviewId);
 
       expect(prisma.mediaReview.delete).toHaveBeenCalled();
     });
@@ -506,9 +507,7 @@ describe("ReviewService", () => {
     it("should throw an error if review does not exist", async () => {
       (prisma.mediaReview.findUnique as jest.Mock).mockResolvedValue(null);
 
-      await expect(
-        reviewService.deleteReview(reviewId, userId, Role.USER),
-      ).rejects.toThrow(
+      await expect(reviewService.deleteReview(reviewId)).rejects.toThrow(
         new AppError("Review not found", 404, "REVIEW_NOT_FOUND"),
       );
 
