@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // packages/backend/tests/unit/review/review.controller.test.ts
 
 import { Request, Response, NextFunction } from "express";
 import { Role } from "@prisma/client";
+
 import { ReviewController } from "../../src/api/review/review.controller";
 import reviewService from "../../src/api/review/review.service";
 import * as responseFormatter from "../../src/utils/responseFormatter";
@@ -334,11 +336,7 @@ describe("ReviewController", () => {
       );
 
       // Assert
-      expect(reviewService.deleteReview).toHaveBeenCalledWith(
-        reviewId,
-        userId,
-        userRole,
-      );
+      expect(reviewService.deleteReview).toHaveBeenCalledWith(reviewId);
 
       expect(responseFormatter.sendSuccess).toHaveBeenCalledWith(
         mockResponse,

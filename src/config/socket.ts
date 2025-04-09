@@ -27,7 +27,7 @@ export function initializeSocket(server: https.Server) {
       }
 
       const decoded = verifyToken(token);
-      if (!decoded) {
+      if (!decoded || decoded instanceof Error) {
         return next(new Error("Invalid token"));
       }
 

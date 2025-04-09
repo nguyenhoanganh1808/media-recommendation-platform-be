@@ -1,9 +1,9 @@
 // tests/unit/ratings/ratings.controller.test.ts
 import { NextFunction, Request, Response } from "express";
+
 import * as ratingsService from "../../src/api/ratings/ratings.service";
 import * as ratingsController from "../../src/api/ratings/ratings.controller";
 import { sendSuccess } from "../../src/utils/responseFormatter";
-import { mock } from "node:test";
 
 // Mock dependencies
 jest.mock("../../src/api/ratings/ratings.service");
@@ -13,7 +13,14 @@ describe("Ratings Controller", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   const mockNext: NextFunction = jest.fn();
-  let mockRating: any;
+  let mockRating: {
+    id: string;
+    userId: string;
+    mediaId: string;
+    rating: number;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 
   beforeEach(() => {
     mockRequest = {
@@ -63,7 +70,6 @@ describe("Ratings Controller", () => {
         "user-123",
         "media-123",
         8.5,
-        undefined,
       );
       expect(sendSuccess).toHaveBeenCalledWith(
         mockResponse,
@@ -190,7 +196,7 @@ describe("Ratings Controller", () => {
         mockResult.ratings,
         "User ratings retrieved successfully",
         200,
-        { pagination: mockResult.pagination },
+        mockResult.pagination,
       );
     });
 
@@ -263,7 +269,7 @@ describe("Ratings Controller", () => {
         mockResult.ratings,
         "Media ratings retrieved successfully",
         200,
-        { pagination: mockResult.pagination },
+        mockResult.pagination,
       );
     });
   });

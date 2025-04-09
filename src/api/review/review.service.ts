@@ -6,7 +6,7 @@ import { prisma } from "../../config/database";
 import { AppError } from "../../middlewares/error.middleware";
 import { clearCacheByPattern } from "../../middlewares/cache.middleware";
 
-interface CreateReviewData {
+export interface CreateReviewData {
   userId: string;
   mediaId: string;
   content: string;
