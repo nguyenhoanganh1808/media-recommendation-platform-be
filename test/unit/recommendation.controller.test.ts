@@ -1,16 +1,16 @@
-import { Request, Response } from 'express';
-import { MediaType } from '@prisma/client';
+import { Request, Response } from "express";
+import { MediaType } from "@prisma/client";
 import {
   getRecommendations,
   getMediaBasedRecommendations,
   getTrendingRecommendations,
   updateUserPreferences,
-} from '../../src/api/recommendations/recommendations.controller';
-import recommendationService from '../../src/api/recommendations/recommendations.service';
-import { AppError } from '../../src/middlewares/error.middleware';
+} from "../../src/api/recommendations/recommendations.controller";
+import recommendationService from "../../src/api/recommendations/recommendations.service";
+import { AppError } from "../../src/middlewares/error.middleware";
 
 // Mock the service
-jest.mock('../../src/api/recommendations/recommendations.service', () => ({
+jest.mock("../../src/api/recommendations/recommendations.service", () => ({
   __esModule: true,
   default: {
     getRecommendationsForUser: jest.fn(),
@@ -20,7 +20,7 @@ jest.mock('../../src/api/recommendations/recommendations.service', () => ({
   },
 }));
 
-describe('Recommendation Controller', () => {
+describe("Recommendation Controller", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockNext: jest.Mock;
@@ -28,10 +28,10 @@ describe('Recommendation Controller', () => {
   beforeEach(() => {
     mockRequest = {
       user: {
-        id: 'user-123',
-        email: 'Qv5t5@example.com',
-        role: 'USER',
-        username: 'testuser',
+        id: "user-123",
+        email: "Qv5t5@example.com",
+        role: "USER",
+        username: "testuser",
         isActive: true,
       },
       query: {},
@@ -49,13 +49,13 @@ describe('Recommendation Controller', () => {
     jest.clearAllMocks();
   });
 
-  describe('getRecommendations', () => {
-    it('should return recommendations successfully', async () => {
+  describe("getRecommendations", () => {
+    it("should return recommendations successfully", async () => {
       // Mock data
       const mockRecommendationResult = {
         recommendations: [
-          { id: 'media-1', title: 'Test Media 1' },
-          { id: 'media-2', title: 'Test Media 2' },
+          { id: "media-1", title: "Test Media 1" },
+          { id: "media-2", title: "Test Media 2" },
         ],
         totalCount: 2,
         page: 1,
@@ -71,14 +71,14 @@ describe('Recommendation Controller', () => {
       await getRecommendations(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assertions
       expect(
-        recommendationService.getRecommendationsForUser
+        recommendationService.getRecommendationsForUser,
       ).toHaveBeenCalledWith({
-        userId: 'user-123',
+        userId: "user-123",
         limit: 10,
         page: 1,
         mediaType: undefined,
@@ -89,19 +89,19 @@ describe('Recommendation Controller', () => {
         expect.objectContaining({
           success: true,
           data: mockRecommendationResult.recommendations,
-          message: 'Recommendations retrieved successfully',
+          message: "Recommendations retrieved successfully",
           meta: expect.any(Object),
-        })
+        }),
       );
     });
 
-    it('should handle query parameters correctly', async () => {
+    it("should handle query parameters correctly", async () => {
       // Setup request with query params
       mockRequest.query = {
-        limit: '20',
-        page: '2',
+        limit: "20",
+        page: "2",
         mediaType: MediaType.GAME,
-        includeRated: 'true',
+        includeRated: "true",
       };
 
       // Mock service result
@@ -118,14 +118,14 @@ describe('Recommendation Controller', () => {
       await getRecommendations(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Verify service called with correct params
       expect(
-        recommendationService.getRecommendationsForUser
+        recommendationService.getRecommendationsForUser,
       ).toHaveBeenCalledWith({
-        userId: 'user-123',
+        userId: "user-123",
         limit: 20,
         page: 2,
         mediaType: MediaType.GAME,
@@ -133,7 +133,7 @@ describe('Recommendation Controller', () => {
       });
     });
 
-    it('should return 401 if user is not authenticated', async () => {
+    it("should return 401 if user is not authenticated", async () => {
       // Setup request without user
       mockRequest.user = undefined;
 
@@ -141,28 +141,28 @@ describe('Recommendation Controller', () => {
       await getRecommendations(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assertions
       expect(mockNext).toHaveBeenCalledWith(expect.any(AppError));
 
       const error = mockNext.mock.calls[0][0];
-      expect(error.message).toBe('Authentication required');
+      expect(error.message).toBe("Authentication required");
       expect(error.statusCode).toBe(401);
     });
   });
 
-  describe('getMediaBasedRecommendations', () => {
-    it('should return media-based recommendations successfully', async () => {
+  describe("getMediaBasedRecommendations", () => {
+    it("should return media-based recommendations successfully", async () => {
       // Setup request with params
-      mockRequest.params = { mediaId: 'media-123' };
-      mockRequest.query = { limit: '5' };
+      mockRequest.params = { mediaId: "media-123" };
+      mockRequest.query = { limit: "5" };
 
       // Mock service result
       const mockRecommendations = [
-        { id: 'media-1', title: 'Similar Media 1' },
-        { id: 'media-2', title: 'Similar Media 2' },
+        { id: "media-1", title: "Similar Media 1" },
+        { id: "media-2", title: "Similar Media 2" },
       ];
 
       (
@@ -173,15 +173,15 @@ describe('Recommendation Controller', () => {
       await getMediaBasedRecommendations(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assertions
       expect(
-        recommendationService.getMediaBasedRecommendations
+        recommendationService.getMediaBasedRecommendations,
       ).toHaveBeenCalledWith({
-        userId: 'user-123',
-        mediaId: 'media-123',
+        userId: "user-123",
+        mediaId: "media-123",
         limit: 5,
       });
 
@@ -189,46 +189,46 @@ describe('Recommendation Controller', () => {
         expect.objectContaining({
           success: true,
           data: mockRecommendations,
-          message: 'Media-based recommendations retrieved successfully',
-        })
+          message: "Media-based recommendations retrieved successfully",
+        }),
       );
     });
 
-    it('should return 401 if user is not authenticated', async () => {
+    it("should return 401 if user is not authenticated", async () => {
       // Setup request without user
       mockRequest.user = undefined;
-      mockRequest.params = { mediaId: 'media-123' };
+      mockRequest.params = { mediaId: "media-123" };
 
       // Call controller
       await getMediaBasedRecommendations(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assertions
       expect(mockNext).toHaveBeenCalledWith(expect.any(AppError));
 
       const error = mockNext.mock.calls[0][0];
-      expect(error.message).toBe('Authentication required');
+      expect(error.message).toBe("Authentication required");
       expect(error.statusCode).toBe(401);
     });
   });
 
-  describe('getTrendingRecommendations', () => {
-    it('should return trending recommendations successfully', async () => {
+  describe("getTrendingRecommendations", () => {
+    it("should return trending recommendations successfully", async () => {
       // Setup request with query params
       mockRequest.query = {
-        limit: '10',
-        page: '1',
+        limit: "10",
+        page: "1",
         mediaType: MediaType.MOVIE,
       };
 
       // Mock service result
       const mockTrendingResult = {
         recommendations: [
-          { id: 'media-1', title: 'Trending Media 1' },
-          { id: 'media-2', title: 'Trending Media 2' },
+          { id: "media-1", title: "Trending Media 1" },
+          { id: "media-2", title: "Trending Media 2" },
         ],
         totalCount: 2,
         page: 1,
@@ -243,25 +243,25 @@ describe('Recommendation Controller', () => {
       await getTrendingRecommendations(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assertions
       expect(
-        recommendationService.getTrendingRecommendations
+        recommendationService.getTrendingRecommendations,
       ).toHaveBeenCalledWith(MediaType.MOVIE, 10, 1);
 
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
           success: true,
           data: mockTrendingResult.recommendations,
-          message: 'Trending recommendations retrieved successfully',
+          message: "Trending recommendations retrieved successfully",
           meta: expect.any(Object),
-        })
+        }),
       );
     });
 
-    it('should work without user authentication', async () => {
+    it("should work without user authentication", async () => {
       // Setup request without user
       mockRequest.user = undefined;
 
@@ -279,23 +279,23 @@ describe('Recommendation Controller', () => {
       await getTrendingRecommendations(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assertions
       expect(mockNext).not.toHaveBeenCalled(); // No error
       expect(
-        recommendationService.getTrendingRecommendations
+        recommendationService.getTrendingRecommendations,
       ).toHaveBeenCalled();
     });
   });
 
-  describe('updateUserPreferences', () => {
-    it('should update user preferences successfully', async () => {
+  describe("updateUserPreferences", () => {
+    it("should update user preferences successfully", async () => {
       // Setup request
-      mockRequest.params = { userId: 'user-123' };
+      mockRequest.params = { userId: "user-123" };
       mockRequest.body = {
-        genreIds: ['genre-1', 'genre-2'],
+        genreIds: ["genre-1", "genre-2"],
         mediaTypePreferences: [
           { type: MediaType.MOVIE, strength: 0.8 },
           { type: MediaType.GAME, strength: 0.5 },
@@ -304,15 +304,15 @@ describe('Recommendation Controller', () => {
 
       // Mock service result
       const mockUpdatedPreferences = [
-        { userId: 'user-123', genreId: 'genre-1', preferenceStrength: 1.0 },
-        { userId: 'user-123', genreId: 'genre-2', preferenceStrength: 1.0 },
+        { userId: "user-123", genreId: "genre-1", preferenceStrength: 1.0 },
+        { userId: "user-123", genreId: "genre-2", preferenceStrength: 1.0 },
         {
-          userId: 'user-123',
+          userId: "user-123",
           mediaTypePreference: MediaType.MOVIE,
           preferenceStrength: 0.8,
         },
         {
-          userId: 'user-123',
+          userId: "user-123",
           mediaTypePreference: MediaType.GAME,
           preferenceStrength: 0.5,
         },
@@ -326,31 +326,31 @@ describe('Recommendation Controller', () => {
       await updateUserPreferences(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assertions
       expect(recommendationService.updateUserPreferences).toHaveBeenCalledWith(
-        'user-123',
-        ['genre-1', 'genre-2'],
+        "user-123",
+        ["genre-1", "genre-2"],
         [
           { type: MediaType.MOVIE, strength: 0.8 },
           { type: MediaType.GAME, strength: 0.5 },
-        ]
+        ],
       );
 
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
           success: true,
           data: mockUpdatedPreferences,
-          message: 'User preferences updated successfully',
-        })
+          message: "User preferences updated successfully",
+        }),
       );
     });
 
-    it('should handle empty inputs', async () => {
+    it("should handle empty inputs", async () => {
       // Setup request with empty arrays
-      mockRequest.params = { userId: 'user-123' };
+      mockRequest.params = { userId: "user-123" };
       mockRequest.body = {};
 
       // Mock service result
@@ -362,14 +362,14 @@ describe('Recommendation Controller', () => {
       await updateUserPreferences(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assertions
       expect(recommendationService.updateUserPreferences).toHaveBeenCalledWith(
-        'user-123',
+        "user-123",
         [],
-        []
+        [],
       );
     });
   });

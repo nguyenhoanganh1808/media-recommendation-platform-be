@@ -6,6 +6,7 @@
     "loglevel",
     "Rengular",
     "testuser",
+    "tsparser",
     "userratelimit"
   ]
 }

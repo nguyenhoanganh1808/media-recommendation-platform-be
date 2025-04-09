@@ -87,7 +87,7 @@ describe("ReviewService", () => {
         },
       });
       expect(clearCacheByPattern).toHaveBeenCalledWith(
-        `reviews:media:${createReviewData.mediaId}`
+        `reviews:media:${createReviewData.mediaId}`,
       );
 
       // Verify result
@@ -103,13 +103,13 @@ describe("ReviewService", () => {
       });
 
       await expect(
-        reviewService.createReview(createReviewData)
+        reviewService.createReview(createReviewData),
       ).rejects.toThrow(
         new AppError(
           "You have already reviewed this media",
           409,
-          "REVIEW_EXISTS"
-        )
+          "REVIEW_EXISTS",
+        ),
       );
 
       expect(prisma.mediaReview.create).not.toHaveBeenCalled();
@@ -120,9 +120,9 @@ describe("ReviewService", () => {
       (prisma.media.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(
-        reviewService.createReview(createReviewData)
+        reviewService.createReview(createReviewData),
       ).rejects.toThrow(
-        new AppError("Media not found", 404, "MEDIA_NOT_FOUND")
+        new AppError("Media not found", 404, "MEDIA_NOT_FOUND"),
       );
 
       expect(prisma.mediaReview.create).not.toHaveBeenCalled();
@@ -235,7 +235,7 @@ describe("ReviewService", () => {
         userId,
         1,
         10,
-        requestingUserId
+        requestingUserId,
       );
 
       expect(prisma.mediaReview.findMany).toHaveBeenCalledWith({
@@ -312,7 +312,7 @@ describe("ReviewService", () => {
 
     it("should return a review by ID", async () => {
       (prisma.mediaReview.findUnique as jest.Mock).mockResolvedValue(
-        mockReview
+        mockReview,
       );
 
       const result = await reviewService.getReviewById(reviewId);
@@ -345,7 +345,7 @@ describe("ReviewService", () => {
       (prisma.mediaReview.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(reviewService.getReviewById(reviewId)).rejects.toThrow(
-        new AppError("Review not found", 404, "REVIEW_NOT_FOUND")
+        new AppError("Review not found", 404, "REVIEW_NOT_FOUND"),
       );
     });
   });
@@ -375,7 +375,7 @@ describe("ReviewService", () => {
 
     it("should update a review when user is the owner", async () => {
       (prisma.mediaReview.findUnique as jest.Mock).mockResolvedValue(
-        mockReview
+        mockReview,
       );
       (prisma.mediaReview.update as jest.Mock).mockResolvedValue(updatedReview);
 
@@ -383,7 +383,7 @@ describe("ReviewService", () => {
         reviewId,
         userId,
         updateData,
-        Role.USER
+        Role.USER,
       );
 
       expect(prisma.mediaReview.findUnique).toHaveBeenCalledWith({
@@ -394,10 +394,10 @@ describe("ReviewService", () => {
         data: updateData,
       });
       expect(clearCacheByPattern).toHaveBeenCalledWith(
-        `reviews:media:${mockReview.mediaId}`
+        `reviews:media:${mockReview.mediaId}`,
       );
       expect(clearCacheByPattern).toHaveBeenCalledWith(
-        `reviews:user:${mockReview.userId}`
+        `reviews:user:${mockReview.userId}`,
       );
 
       expect(result).toEqual(updatedReview);
@@ -415,7 +415,7 @@ describe("ReviewService", () => {
         reviewId,
         userId,
         updateData,
-        Role.ADMIN
+        Role.ADMIN,
       );
 
       expect(prisma.mediaReview.update).toHaveBeenCalled();
@@ -426,9 +426,9 @@ describe("ReviewService", () => {
       (prisma.mediaReview.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(
-        reviewService.updateReview(reviewId, userId, updateData, Role.USER)
+        reviewService.updateReview(reviewId, userId, updateData, Role.USER),
       ).rejects.toThrow(
-        new AppError("Review not found", 404, "REVIEW_NOT_FOUND")
+        new AppError("Review not found", 404, "REVIEW_NOT_FOUND"),
       );
 
       expect(prisma.mediaReview.update).not.toHaveBeenCalled();
@@ -441,13 +441,13 @@ describe("ReviewService", () => {
       });
 
       await expect(
-        reviewService.updateReview(reviewId, userId, updateData, Role.USER)
+        reviewService.updateReview(reviewId, userId, updateData, Role.USER),
       ).rejects.toThrow(
         new AppError(
           "You do not have permission to update this review",
           403,
-          "PERMISSION_DENIED"
-        )
+          "PERMISSION_DENIED",
+        ),
       );
 
       expect(prisma.mediaReview.update).not.toHaveBeenCalled();
@@ -470,7 +470,7 @@ describe("ReviewService", () => {
 
     it("should delete a review when user is the owner", async () => {
       (prisma.mediaReview.findUnique as jest.Mock).mockResolvedValue(
-        mockReview
+        mockReview,
       );
       (prisma.mediaReview.delete as jest.Mock).mockResolvedValue(mockReview);
 
@@ -483,10 +483,10 @@ describe("ReviewService", () => {
         where: { id: reviewId },
       });
       expect(clearCacheByPattern).toHaveBeenCalledWith(
-        `reviews:media:${mockReview.mediaId}`
+        `reviews:media:${mockReview.mediaId}`,
       );
       expect(clearCacheByPattern).toHaveBeenCalledWith(
-        `reviews:user:${mockReview.userId}`
+        `reviews:user:${mockReview.userId}`,
       );
     });
 
@@ -507,9 +507,9 @@ describe("ReviewService", () => {
       (prisma.mediaReview.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(
-        reviewService.deleteReview(reviewId, userId, Role.USER)
+        reviewService.deleteReview(reviewId, userId, Role.USER),
       ).rejects.toThrow(
-        new AppError("Review not found", 404, "REVIEW_NOT_FOUND")
+        new AppError("Review not found", 404, "REVIEW_NOT_FOUND"),
       );
 
       expect(prisma.mediaReview.delete).not.toHaveBeenCalled();
@@ -535,7 +535,7 @@ describe("ReviewService", () => {
 
     it("should increment the likes count of a review", async () => {
       (prisma.mediaReview.findUnique as jest.Mock).mockResolvedValue(
-        mockReview
+        mockReview,
       );
       (prisma.mediaReview.update as jest.Mock).mockResolvedValue(updatedReview);
       (prisma.notification.create as jest.Mock).mockResolvedValue({});
@@ -568,7 +568,7 @@ describe("ReviewService", () => {
       (prisma.mediaReview.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(reviewService.likeReview(reviewId)).rejects.toThrow(
-        new AppError("Review not found", 404, "REVIEW_NOT_FOUND")
+        new AppError("Review not found", 404, "REVIEW_NOT_FOUND"),
       );
 
       expect(prisma.mediaReview.update).not.toHaveBeenCalled();

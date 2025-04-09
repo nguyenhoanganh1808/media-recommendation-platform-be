@@ -144,7 +144,7 @@ async function seedGenres() {
   ];
 
   const genres = await Promise.all(
-    genreData.map((genre) => prisma.genre.create({ data: genre }))
+    genreData.map((genre) => prisma.genre.create({ data: genre })),
   );
 
   console.log(`Created ${genres.length} genres`);
@@ -168,8 +168,8 @@ async function seedPlatforms() {
     platformData.map((platform) =>
       prisma.platform.create({
         data: platform,
-      })
-    )
+      }),
+    ),
   );
 
   console.log(`Created ${platforms.length} platforms`);
@@ -229,8 +229,8 @@ async function seedUsers() {
     userData.map((user) =>
       prisma.user.create({
         data: user,
-      })
-    )
+      }),
+    ),
   );
 
   console.log(`Created ${users.length} users`);
@@ -248,7 +248,7 @@ async function fetchAndCreateMovies(pageCount = 5) {
     let allMovies: any = [];
     for (let page = 1; page <= pageCount; page++) {
       const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`
+        `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`,
       );
       const movieData: any[] = response.data.results;
 
@@ -257,16 +257,16 @@ async function fetchAndCreateMovies(pageCount = 5) {
           try {
             // Get detailed movie info
             const detailsResponse = await axios.get(
-              `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDB_API_KEY}&language=en-US`
+              `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDB_API_KEY}&language=en-US`,
             );
             const movieDetails = detailsResponse.data;
 
             // Get credits for director
             const creditsResponse = await axios.get(
-              `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=${TMDB_API_KEY}`
+              `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=${TMDB_API_KEY}`,
             );
             const directors = creditsResponse.data.crew.filter(
-              (person: any) => person.job === "Director"
+              (person: any) => person.job === "Director",
             );
             const director = directors.length > 0 ? directors[0].name : null;
 
@@ -314,11 +314,11 @@ async function fetchAndCreateMovies(pageCount = 5) {
           } catch (error: any) {
             console.error(
               `Failed to process movie ${movie.id}:`,
-              error.message
+              error.message,
             );
             return null; // Skip the movie if an error occurs
           }
-        })
+        }),
       );
 
       console.log(`Created ${movies.length} movies from TMDB`);
@@ -404,7 +404,7 @@ async function createFallbackMovies() {
           },
         },
       });
-    })
+    }),
   );
 
   console.log(`Created ${movies.length} fallback movies`);
@@ -534,7 +534,7 @@ async function fetchAndCreateGames(pageCount = 5) {
 
       // Get games from RAWG - sorted by rating
       const response = await axios.get(
-        `https://api.rawg.io/api/games?key=${RAWG_API_KEY}&page=${page}&page_size=40&ordering=-rating`
+        `https://api.rawg.io/api/games?key=${RAWG_API_KEY}&page=${page}&page_size=40&ordering=-rating`,
       );
 
       const gameData = response.data.results;
@@ -545,7 +545,7 @@ async function fetchAndCreateGames(pageCount = 5) {
           try {
             // Get detailed game info for additional data
             const detailsResponse = await axios.get(
-              `https://api.rawg.io/api/games/${game.id}?key=${RAWG_API_KEY}`
+              `https://api.rawg.io/api/games/${game.id}?key=${RAWG_API_KEY}`,
             );
             const gameDetails = detailsResponse.data;
 
@@ -620,13 +620,13 @@ async function fetchAndCreateGames(pageCount = 5) {
             console.error(`Failed to process game ${game.id}:`, error.message);
             return null; // Skip this game if an error occurs
           }
-        })
+        }),
       );
 
       // Filter out null results (failed game creations)
       const validGames = games.filter((game) => game !== null);
       console.log(
-        `Created ${validGames.length} games from RAWG (page ${page})`
+        `Created ${validGames.length} games from RAWG (page ${page})`,
       );
 
       allGames = [...allGames, ...validGames];
@@ -744,7 +744,7 @@ async function createFallbackGames() {
           },
         },
       });
-    })
+    }),
   );
 
   console.log(`Created ${games.length} games`);
@@ -765,7 +765,7 @@ async function fetchAndCreateManga() {
     for (let page = 1; page <= totalPages; page++) {
       console.log(`Fetching page ${page} of ${totalPages}...`);
       const response = await axios.get(
-        `${MANGA_API_URL}/top/manga?limit=${mangaPerPage}&page=${page}`
+        `${MANGA_API_URL}/top/manga?limit=${mangaPerPage}&page=${page}`,
       );
       allMangaData = [...allMangaData, ...response.data.data];
 
@@ -782,8 +782,8 @@ async function fetchAndCreateManga() {
     const allGenres = [
       ...new Set(
         allMangaData.flatMap((manga: any) =>
-          manga.genres.map((g: any) => g.name)
-        )
+          manga.genres.map((g: any) => g.name),
+        ),
       ),
     ];
 
@@ -797,8 +797,8 @@ async function fetchAndCreateManga() {
             name: genreName,
             description: `MyAnimeList Genre: ${genreName}`,
           },
-        })
-      )
+        }),
+      ),
     );
     console.log(`Upserted ${allGenres.length} unique genres`);
 
@@ -867,8 +867,8 @@ async function fetchAndCreateManga() {
             console.error(`Failed to create manga "${manga.title}":`, error);
             return null; // Skip failed entries
           }
-        }
-      )
+        },
+      ),
     );
 
     // Filter out any failed creations
@@ -978,7 +978,7 @@ async function createFallbackManga() {
           },
         },
       });
-    })
+    }),
   );
 
   console.log(`Created ${manga.length} manga entries`);
@@ -1006,7 +1006,7 @@ async function createUserRelationships(users: string | any[]) {
 
   // Create the follow relationships concurrently
   await Promise.all(
-    follows.map((follow) => prisma.follow.create({ data: follow }))
+    follows.map((follow) => prisma.follow.create({ data: follow })),
   );
 
   console.log(`Created ${follows.length} follow relationships`);
@@ -1029,7 +1029,7 @@ async function createMediaRatingsAndReviews(
     role: $Enums.Role;
     lastLogin: Date | null;
   }[],
-  allMedia: any[]
+  allMedia: any[],
 ) {
   const ratings: { userId: any; mediaId: any; rating: any }[] = [];
   const reviews: {
@@ -1091,7 +1091,7 @@ async function createMediaRatingsAndReviews(
   }
 
   console.log(
-    `Created ${ratings.length} ratings and ${reviews.length} reviews`
+    `Created ${ratings.length} ratings and ${reviews.length} reviews`,
   );
 }
 
@@ -1142,11 +1142,11 @@ async function createMediaLists(users: any[], allMedia: any[]) {
                   Math.random() > 0.5 ? `My thoughts on ${media.title}` : null,
                 order: index,
               },
-            })
-          )
+            }),
+          ),
         );
       }
-    })
+    }),
   );
 
   console.log(`Created media lists for ${users.length} users`);

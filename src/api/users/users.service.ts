@@ -51,7 +51,7 @@ export const createUser = async (userData: CreateUserDTO): Promise<User> => {
 
 export const getUserById = async (
   id: string,
-  currentUserId?: string
+  currentUserId?: string,
 ): Promise<
   User & {
     stats: {
@@ -118,7 +118,7 @@ export const getUserById = async (
 
 export const updateUser = async (
   id: string,
-  userData: UpdateUserDTO
+  userData: UpdateUserDTO,
 ): Promise<User> => {
   // Check if user exists
   const user = await prisma.user.findUnique({
@@ -138,7 +138,7 @@ export const updateUser = async (
 
 export const followUser = async (
   followerId: string,
-  followingId: string
+  followingId: string,
 ): Promise<void> => {
   // Prevent self-following
   if (followerId === followingId) {
@@ -186,7 +186,7 @@ export const followUser = async (
     {
       followerId,
       followerUsername: users[0].username,
-    }
+    },
   );
 
   // Delete cache
@@ -196,7 +196,7 @@ export const followUser = async (
 
 export const unfollowUser = async (
   followerId: string,
-  followingId: string
+  followingId: string,
 ): Promise<void> => {
   // Check if follow relationship exists
   const follow = await prisma.follow.findUnique({
@@ -228,7 +228,7 @@ export const unfollowUser = async (
 
 export const getUserFollowers = async (
   userId: string,
-  currentUserId?: string
+  currentUserId?: string,
 ): Promise<(User & { isFollowing: boolean })[]> => {
   const followers = await prisma.follow.findMany({
     where: { followingId: userId },
@@ -245,7 +245,7 @@ export const getUserFollowers = async (
 
 export const getUserFollowing = async (
   userId: string,
-  currentUserId?: string
+  currentUserId?: string,
 ): Promise<(User & { isFollowing: boolean })[]> => {
   const following = await prisma.follow.findMany({
     where: { followerId: userId },

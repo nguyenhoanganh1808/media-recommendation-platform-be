@@ -62,7 +62,7 @@ export const unfollowUser = asyncHandler(
     await userService.unfollowUser(followerId, followingId);
 
     sendSuccess(res, null, "User unfollowed successfully");
-  }
+  },
 );
 
 export const getUserFollowers = asyncHandler(
@@ -80,9 +80,9 @@ export const getUserFollowers = asyncHandler(
     sendSuccess(
       res,
       followersWithoutPasswords,
-      "User followers retrieved successfully"
+      "User followers retrieved successfully",
     );
-  }
+  },
 );
 
 export const getUserFollowing = asyncHandler(
@@ -101,9 +101,9 @@ export const getUserFollowing = asyncHandler(
     sendSuccess(
       res,
       followingWithoutPasswords,
-      "User following retrieved successfully"
+      "User following retrieved successfully",
     );
-  }
+  },
 );
 
 export default {

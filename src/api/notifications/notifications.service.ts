@@ -33,7 +33,7 @@ interface NotificationSettings {
  */
 export async function getUserNotifications(
   userId: string,
-  options: PaginationOptions
+  options: PaginationOptions,
 ) {
   const { page, limit, includeRead = false } = options;
   const skip = (page - 1) * limit;
@@ -80,7 +80,7 @@ export async function getUserNotifications(
  */
 export async function markNotificationAsRead(
   userId: string,
-  notificationId: string
+  notificationId: string,
 ) {
   const notification = await prisma.notification.findUnique({
     where: { id: notificationId },
@@ -152,7 +152,7 @@ export async function markAllNotificationsAsRead(userId: string) {
  */
 export async function deleteNotification(
   userId: string,
-  notificationId: string
+  notificationId: string,
 ) {
   const notification = await prisma.notification.findUnique({
     where: { id: notificationId },
@@ -205,7 +205,7 @@ export async function createNotification(
   type: NotificationType,
   title: string,
   message: string,
-  data?: Record<string, any>
+  data?: Record<string, any>,
 ) {
   // Check if user exists
   const user = await prisma.user.findUnique({
@@ -214,7 +214,7 @@ export async function createNotification(
 
   if (!user) {
     logger.warn(
-      `Attempted to create notification for non-existent user: ${userId}`
+      `Attempted to create notification for non-existent user: ${userId}`,
     );
     return null;
   }
@@ -264,7 +264,7 @@ export async function createBulkNotifications(
   type: NotificationType,
   title: string,
   message: string,
-  data?: Record<string, any>
+  data?: Record<string, any>,
 ) {
   const notifications = [];
 
@@ -275,14 +275,14 @@ export async function createBulkNotifications(
         type,
         title,
         message,
-        data
+        data,
       );
       if (notification) {
         notifications.push(notification);
       }
     } catch (error) {
       logger.error(
-        `Failed to create notification for user ${userId}: ${error}`
+        `Failed to create notification for user ${userId}: ${error}`,
       );
     }
   }
@@ -296,7 +296,7 @@ export async function createBulkNotifications(
 export async function createSystemNotification(
   title: string,
   message: string,
-  data?: Record<string, any>
+  data?: Record<string, any>,
 ) {
   // Get all active users
   const users = await prisma.user.findMany({
@@ -311,7 +311,7 @@ export async function createSystemNotification(
     "SYSTEM_NOTIFICATION",
     title,
     message,
-    data
+    data,
   );
 }
 
@@ -319,7 +319,7 @@ export async function createSystemNotification(
  * Retrieve notification settings for a user
  */
 export async function getNotificationSettings(
-  userId: string
+  userId: string,
 ): Promise<NotificationSettings> {
   // In a real implementation, fetch from database
   return {
@@ -336,7 +336,7 @@ export async function getNotificationSettings(
 
 export async function updateNotificationSettings(
   userId: string,
-  settings: Partial<NotificationSettings>
+  settings: Partial<NotificationSettings>,
 ): Promise<NotificationSettings> {
   const currentSettings = await getNotificationSettings(userId);
   const updatedSettings = { ...currentSettings, ...settings };
@@ -351,7 +351,7 @@ export async function updateNotificationSettings(
  */
 function shouldSendNotification(
   type: NotificationType,
-  settings: NotificationSettings
+  settings: NotificationSettings,
 ): boolean {
   switch (type) {
     case "NEW_RECOMMENDATION":

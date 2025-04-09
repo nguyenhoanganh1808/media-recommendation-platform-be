@@ -21,7 +21,7 @@ export class GenreController {
       await clearCacheByPattern("genres");
 
       sendSuccess(res, genre, "Genre created successfully", 201);
-    }
+    },
   );
 
   /**
@@ -38,12 +38,12 @@ export class GenreController {
       const { genres, count } = await genreService.getGenres(
         { name, mediaType },
         page,
-        limit
+        limit,
       );
 
       const meta = createPagination(page, limit, count);
       sendSuccess(res, genres, "Genres retrieved successfully", 200, meta);
-    }
+    },
   );
 
   /**
@@ -60,7 +60,7 @@ export class GenreController {
       }
 
       sendSuccess(res, genre, "Genre retrieved successfully");
-    }
+    },
   );
 
   /**
@@ -76,7 +76,7 @@ export class GenreController {
       const { genre, media, totalMedia } = await genreService.getGenreWithMedia(
         id,
         page,
-        limit
+        limit,
       );
 
       if (!genre) {
@@ -89,9 +89,9 @@ export class GenreController {
         { genre, media },
         "Genre with media retrieved successfully",
         200,
-        meta
+        meta,
       );
-    }
+    },
   );
 
   /**
@@ -109,7 +109,7 @@ export class GenreController {
       await clearCacheByPattern("genres");
 
       sendSuccess(res, genre, "Genre updated successfully");
-    }
+    },
   );
 
   /**
@@ -126,7 +126,7 @@ export class GenreController {
       await clearCacheByPattern("genres");
 
       sendSuccess(res, null, "Genre deleted successfully");
-    }
+    },
   );
 
   /**
@@ -146,7 +146,7 @@ export class GenreController {
       ]);
 
       sendSuccess(res, result, "Genre added to media successfully");
-    }
+    },
   );
 
   /**
@@ -166,7 +166,7 @@ export class GenreController {
       ]);
 
       sendSuccess(res, null, "Genre removed from media successfully");
-    }
+    },
   );
 }
 

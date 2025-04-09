@@ -7,7 +7,7 @@ import { logger } from "../config/logger";
  */
 export async function createFollowNotification(
   followerId: string,
-  followingId: string
+  followingId: string,
 ) {
   try {
     // Get user details to personalize notification
@@ -25,7 +25,7 @@ export async function createFollowNotification(
       "NEW_FOLLOWER",
       "New Follower",
       `${follower.username} is now following you`,
-      { followerId }
+      { followerId },
     );
   } catch (error) {
     logger.error(`Failed to create follow notification: ${error}`);
@@ -39,7 +39,7 @@ export async function createFollowNotification(
 export async function createRatingNotification(
   userId: string,
   mediaId: string,
-  rating: number
+  rating: number,
 ) {
   try {
     // Get media details
@@ -70,7 +70,7 @@ export async function createRatingNotification(
       "NEW_RATING",
       "New Rating",
       `${user?.username} rated ${media.title} ${rating}/10`,
-      { userId, mediaId, rating }
+      { userId, mediaId, rating },
     );
   } catch (error) {
     logger.error(`Failed to create rating notification: ${error}`);
@@ -84,7 +84,7 @@ export async function createRatingNotification(
 export async function createReviewNotification(
   userId: string,
   mediaId: string,
-  reviewId: string
+  reviewId: string,
 ) {
   try {
     // Get media details
@@ -115,7 +115,7 @@ export async function createReviewNotification(
       "NEW_REVIEW",
       "New Review",
       `${user?.username} posted a review for ${media.title}`,
-      { userId, mediaId, reviewId }
+      { userId, mediaId, reviewId },
     );
   } catch (error) {
     logger.error(`Failed to create review notification: ${error}`);
@@ -129,7 +129,7 @@ export async function createReviewNotification(
 export async function createListShareNotification(
   listId: string,
   sharedByUserId: string,
-  sharedWithUserId: string
+  sharedWithUserId: string,
 ) {
   try {
     // Get list details
@@ -153,7 +153,7 @@ export async function createListShareNotification(
       "LIST_SHARE",
       "List Shared With You",
       `${sharedByUser?.username} shared their list "${list.name}" with you`,
-      { listId, sharedByUserId }
+      { listId, sharedByUserId },
     );
   } catch (error) {
     logger.error(`Failed to create list share notification: ${error}`);
@@ -166,7 +166,7 @@ export async function createListShareNotification(
  */
 export async function createRecommendationNotification(
   userId: string,
-  recommendationCount: number
+  recommendationCount: number,
 ) {
   try {
     return await notificationService.createNotification(
@@ -174,7 +174,7 @@ export async function createRecommendationNotification(
       "NEW_RECOMMENDATION",
       "New Recommendations",
       `We have ${recommendationCount} new recommendations for you`,
-      { count: recommendationCount }
+      { count: recommendationCount },
     );
   } catch (error) {
     logger.error(`Failed to create recommendation notification: ${error}`);
@@ -188,11 +188,11 @@ export async function createRecommendationNotification(
 export async function createGlobalSystemNotification(
   title: string,
   message: string,
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>,
 ) {
   return await notificationService.createSystemNotification(
     title,
     message,
-    data
+    data,
   );
 }

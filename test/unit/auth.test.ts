@@ -30,7 +30,7 @@ describe("Auth Service Unit Tests", () => {
   test("should compare password correctly", async () => {
     const isMatch = await comparePasswords(
       testUser.password,
-      testUser.hashedPassword
+      testUser.hashedPassword,
     );
     expect(isMatch).toBe(true);
   });

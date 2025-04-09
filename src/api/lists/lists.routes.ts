@@ -85,7 +85,7 @@ router.get(
   "/",
   validateQueryParams(["page", "limit"]),
   userCacheMiddleware({ ttl: 300 }),
-  listsController.getUserLists
+  listsController.getUserLists,
 );
 
 /**
@@ -169,7 +169,7 @@ router.get(
 router.get(
   "/:id",
   userCacheMiddleware({ ttl: 300 }),
-  listsController.getListById
+  listsController.getListById,
 );
 
 /**
@@ -226,7 +226,7 @@ router.get(
 router.post(
   "/",
   validate(listsValidation.createListValidation),
-  listsController.createList
+  listsController.createList,
 );
 
 /**
@@ -290,7 +290,7 @@ router.put(
   "/:id",
   validate(listsValidation.updateListValidation),
   checkOwnership("mediaList"),
-  listsController.updateList
+  listsController.updateList,
 );
 
 /**
@@ -372,7 +372,7 @@ router.post(
   "/:listId/items",
   validate(listsValidation.addItemValidation),
   checkOwnership("mediaList", "listId"),
-  listsController.addItemToList
+  listsController.addItemToList,
 );
 
 /**
@@ -430,7 +430,7 @@ router.post(
 router.put(
   "/items/:itemId",
   validate(listsValidation.updateItemValidation),
-  listsController.updateListItem
+  listsController.updateListItem,
 );
 
 /**
@@ -494,7 +494,7 @@ router.put(
   "/:listId/reorder",
   validate(listsValidation.reorderItemsValidation),
   checkOwnership("mediaList", "listId"),
-  listsController.reorderListItems
+  listsController.reorderListItems,
 );
 
 /**
@@ -600,7 +600,7 @@ router.delete("/items/:itemId", listsController.removeItemFromList);
 router.get(
   "/user/:userId/public",
   cacheMiddleware({ ttl: 600, keyPrefix: "lists:public:" }),
-  listsController.getUserPublicLists
+  listsController.getUserPublicLists,
 );
 
 export default router;

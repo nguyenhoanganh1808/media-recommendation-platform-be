@@ -16,7 +16,7 @@ router.get(
   genreValidation.getGenres,
   validate(genreValidation.getGenres),
   cacheMiddleware({ ttl: 3600, keyPrefix: "genres:all:" }),
-  genreController.getGenres
+  genreController.getGenres,
 );
 
 router.get(
@@ -24,7 +24,7 @@ router.get(
   genreValidation.getGenreById,
   validate(genreValidation.getGenreById),
   cacheMiddleware({ ttl: 3600, keyPrefix: "genres:id:" }),
-  genreController.getGenreById
+  genreController.getGenreById,
 );
 
 router.get(
@@ -32,7 +32,7 @@ router.get(
   genreValidation.getGenreWithMedia,
   validate(genreValidation.getGenreWithMedia),
   cacheMiddleware({ ttl: 3600, keyPrefix: "genres:media:" }),
-  genreController.getGenreWithMedia
+  genreController.getGenreWithMedia,
 );
 
 // Protected routes - only for admins and moderators
@@ -43,7 +43,7 @@ router.post(
   restrictTo(Role.ADMIN, Role.MODERATOR),
   genreValidation.createGenre,
   validate(genreValidation.createGenre),
-  genreController.createGenre
+  genreController.createGenre,
 );
 
 router.put(
@@ -51,7 +51,7 @@ router.put(
   restrictTo(Role.ADMIN, Role.MODERATOR),
   genreValidation.updateGenre,
   validate(genreValidation.updateGenre),
-  genreController.updateGenre
+  genreController.updateGenre,
 );
 
 router.delete(
@@ -59,7 +59,7 @@ router.delete(
   restrictTo(Role.ADMIN, Role.MODERATOR),
   genreValidation.deleteGenre,
   validate(genreValidation.deleteGenre),
-  genreController.deleteGenre
+  genreController.deleteGenre,
 );
 
 // Genre-media association routes
@@ -68,7 +68,7 @@ router.post(
   restrictTo(Role.ADMIN, Role.MODERATOR),
   genreValidation.addGenreToMedia,
   validate(genreValidation.addGenreToMedia),
-  genreController.addGenreToMedia
+  genreController.addGenreToMedia,
 );
 
 router.delete(
@@ -76,7 +76,7 @@ router.delete(
   restrictTo(Role.ADMIN, Role.MODERATOR),
   genreValidation.removeGenreFromMedia,
   validate(genreValidation.removeGenreFromMedia),
-  genreController.removeGenreFromMedia
+  genreController.removeGenreFromMedia,
 );
 
 export default router;

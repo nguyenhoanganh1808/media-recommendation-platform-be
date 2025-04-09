@@ -49,8 +49,8 @@ passport.use(
       } catch (error) {
         return done(error);
       }
-    }
-  )
+    },
+  ),
 );
 
 const cookieExtractor = (req: any) => {
@@ -86,8 +86,8 @@ passport.use(
       } catch (error) {
         return done(error, false);
       }
-    }
-  )
+    },
+  ),
 );
 
 // Configure JWT Refresh Token strategy
@@ -137,8 +137,8 @@ passport.use(
       } catch (error) {
         return done(error, false);
       }
-    }
-  )
+    },
+  ),
 );
 
 export default passport;

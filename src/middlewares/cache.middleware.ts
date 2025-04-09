@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { getCache, redisClient, setCache } from '../config/redis';
-import { config } from '../config/env';
-import { logger } from '../config/logger';
+import { Request, Response, NextFunction } from "express";
+import { getCache, redisClient, setCache } from "../config/redis";
+import { config } from "../config/env";
+import { logger } from "../config/logger";
 
 // Interface for cache options
 interface CacheOptions {
@@ -18,7 +18,7 @@ interface CacheOptions {
 export const cacheMiddleware = (options: CacheOptions = {}) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     // Skip cache for non-GET requests
-    if (req.method !== 'GET') {
+    if (req.method !== "GET") {
       return next();
     }
 
@@ -28,15 +28,15 @@ export const cacheMiddleware = (options: CacheOptions = {}) => {
     }
 
     // Generate cache key
-    const keyPrefix = options.keyPrefix || 'api:';
+    const keyPrefix = options.keyPrefix || "api:";
     const keyGenerator =
       options.keyGenerator ||
       ((req: Request) => {
         // Default key generation based on URL and query parameters
         const queryParams = new URLSearchParams(
-          req.query as Record<string, string>
+          req.query as Record<string, string>,
         ).toString();
-        return `${req.originalUrl}${queryParams ? `?${queryParams}` : ''}`;
+        return `${req.originalUrl}${queryParams ? `?${queryParams}` : ""}`;
       });
 
     const cacheKey = `${keyPrefix}${keyGenerator(req)}`;
@@ -88,11 +88,11 @@ export const userCacheMiddleware = (options: CacheOptions = {}) => {
   return (req: Request, res: Response, next: NextFunction) => {
     // Default key generator that includes user ID
     const defaultKeyGenerator = (req: Request) => {
-      const userId = req.user?.id || 'anonymous';
+      const userId = req.user?.id || "anonymous";
       const queryParams = new URLSearchParams(
-        req.query as Record<string, string>
+        req.query as Record<string, string>,
       ).toString();
-      return `user:${userId}:${req.originalUrl}${queryParams ? `?${queryParams}` : ''}`;
+      return `user:${userId}:${req.originalUrl}${queryParams ? `?${queryParams}` : ""}`;
     };
 
     // Use custom key generator if provided, otherwise use default
@@ -101,7 +101,7 @@ export const userCacheMiddleware = (options: CacheOptions = {}) => {
     // Apply the standard cache middleware with user-specific key
     return cacheMiddleware({
       ...options,
-      keyPrefix: options.keyPrefix || 'user:',
+      keyPrefix: options.keyPrefix || "user:",
       keyGenerator,
       // Only cache for authenticated users unless overridden
       cacheCondition: options.cacheCondition || ((req: Request) => !!req.user),
@@ -114,7 +114,7 @@ export const userCacheMiddleware = (options: CacheOptions = {}) => {
  * @param keyPrefix The prefix pattern to clear
  */
 export const clearCacheByPattern = async (
-  keyPattern: string
+  keyPattern: string,
 ): Promise<void> => {
   try {
     // Find all keys matching the pattern
@@ -124,7 +124,7 @@ export const clearCacheByPattern = async (
       // Delete all found keys
       await redisClient.del(keys);
       logger.info(
-        `Cleared ${keys.length} cache entries matching pattern: ${keyPattern}`
+        `Cleared ${keys.length} cache entries matching pattern: ${keyPattern}`,
       );
     }
   } catch (error) {

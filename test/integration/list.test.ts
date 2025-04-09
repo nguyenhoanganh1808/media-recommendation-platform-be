@@ -12,12 +12,12 @@ jest.mock("../../src/middlewares/cache.middleware", () => ({
   cacheMiddleware: jest
     .fn()
     .mockImplementation(
-      () => (req: Request, res: Response, next: NextFunction) => next()
+      () => (req: Request, res: Response, next: NextFunction) => next(),
     ),
   userCacheMiddleware: jest
     .fn()
     .mockImplementation(
-      () => (req: Request, res: Response, next: NextFunction) => next()
+      () => (req: Request, res: Response, next: NextFunction) => next(),
     ),
 }));
 
@@ -172,7 +172,7 @@ describe("Lists API Integration Tests", () => {
       expect(response.body.data).toHaveProperty("id");
       expect(response.body.data.name).toBe("My Test List");
       expect(response.body.data.description).toBe(
-        "A list for integration testing"
+        "A list for integration testing",
       );
       expect(response.body.data.isPublic).toBe(true);
 
@@ -325,7 +325,7 @@ describe("Lists API Integration Tests", () => {
       expect(response.status).toBe(200);
       expect(response.body.data.name).toBe("Updated Test List"); // Name unchanged
       expect(response.body.data.description).toBe(
-        "Only updating the description"
+        "Only updating the description",
       );
     });
 
@@ -433,7 +433,7 @@ describe("Lists API Integration Tests", () => {
         .set("Authorization", `Bearer ${authToken}`);
 
       const itemStillExists = updatedList.body.data.items.some(
-        (item: any) => item.id === listItemId
+        (item: any) => item.id === listItemId,
       );
       expect(itemStillExists).toBe(false);
     });
@@ -499,7 +499,7 @@ describe("Lists API Integration Tests", () => {
       expect(response.body.success).toBe(true);
       expect(Array.isArray(response.body.data)).toBe(true);
       expect(
-        response.body.data.some((list: any) => list.id === publicListId)
+        response.body.data.some((list: any) => list.id === publicListId),
       ).toBe(true);
     });
   });

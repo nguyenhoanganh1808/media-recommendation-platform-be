@@ -98,7 +98,7 @@ describe("NotificationJob", () => {
 
       // Setup mocks
       (mockPrisma.notification.findMany as jest.Mock).mockResolvedValue(
-        mockNotifications
+        mockNotifications,
       );
       mockRedis.get.mockResolvedValue(null);
       mockRedis.set.mockResolvedValue(true);
@@ -109,12 +109,12 @@ describe("NotificationJob", () => {
       // Assertions
       expect(mockPrisma.notification.findMany).toHaveBeenCalled();
       expect(mockRedis.get).toHaveBeenCalledWith(
-        "notification:delivered:notification1"
+        "notification:delivered:notification1",
       );
       expect(mockRedis.set).toHaveBeenCalledWith(
         "notification:delivered:notification1",
         "1",
-        { EX: 60 * 60 * 24 * 7 }
+        { EX: 60 * 60 * 24 * 7 },
       );
     });
 
@@ -136,7 +136,7 @@ describe("NotificationJob", () => {
 
       // Setup mocks
       (mockPrisma.notification.findMany as jest.Mock).mockResolvedValue(
-        mockNotifications
+        mockNotifications,
       );
       mockRedis.get.mockResolvedValue("1"); // Already delivered
 
@@ -146,7 +146,7 @@ describe("NotificationJob", () => {
       // Assertions
       expect(mockPrisma.notification.findMany).toHaveBeenCalled();
       expect(mockRedis.get).toHaveBeenCalledWith(
-        "notification:delivered:notification1"
+        "notification:delivered:notification1",
       );
       // Ensure no further processing occurs
       expect(mockRedis.set).not.toHaveBeenCalled();
@@ -158,7 +158,7 @@ describe("NotificationJob", () => {
       // Mock delete result
       const mockDeleteResult = { count: 10 };
       (mockPrisma.notification.deleteMany as jest.Mock).mockResolvedValue(
-        mockDeleteResult
+        mockDeleteResult,
       );
 
       // Call the method
@@ -210,13 +210,13 @@ describe("NotificationJob", () => {
       // Setup mocks
       (mockPrisma.user.findMany as jest.Mock).mockResolvedValue(mockUsers);
       (mockPrisma.media.findMany as jest.Mock).mockResolvedValue(
-        mockRecommendations
+        mockRecommendations,
       );
       (mockPrisma.follow.findMany as jest.Mock).mockResolvedValue(
-        mockFollowingActivity
+        mockFollowingActivity,
       );
       (NotificationService.createNotification as jest.Mock).mockResolvedValue(
-        {}
+        {},
       );
 
       // Call the method
@@ -232,7 +232,7 @@ describe("NotificationJob", () => {
         "SYSTEM_NOTIFICATION",
         "Your Weekly Digest",
         expect.any(String),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });

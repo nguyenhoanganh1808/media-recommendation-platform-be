@@ -55,7 +55,7 @@ describe("Ratings Controller", () => {
       await ratingsController.createRating(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
@@ -63,13 +63,13 @@ describe("Ratings Controller", () => {
         "user-123",
         "media-123",
         8.5,
-        undefined
+        undefined,
       );
       expect(sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockRating,
         "Rating created successfully",
-        201
+        201,
       );
     });
   });
@@ -88,19 +88,19 @@ describe("Ratings Controller", () => {
       await ratingsController.updateRating(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
       expect(ratingsService.updateRating).toHaveBeenCalledWith(
         "rating-123",
         "user-123",
-        9.0
+        9.0,
       );
       expect(sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         { ...mockRating, rating: 9.0 },
-        "Rating updated successfully"
+        "Rating updated successfully",
       );
     });
   });
@@ -115,18 +115,18 @@ describe("Ratings Controller", () => {
       await ratingsController.deleteRating(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
       expect(ratingsService.deleteRating).toHaveBeenCalledWith(
         "rating-123",
-        "user-123"
+        "user-123",
       );
       expect(sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         null,
-        "Rating deleted successfully"
+        "Rating deleted successfully",
       );
     });
   });
@@ -141,7 +141,7 @@ describe("Ratings Controller", () => {
       await ratingsController.getRating(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
@@ -149,7 +149,7 @@ describe("Ratings Controller", () => {
       expect(sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockRating,
-        "Rating retrieved successfully"
+        "Rating retrieved successfully",
       );
     });
   });
@@ -169,28 +169,28 @@ describe("Ratings Controller", () => {
         },
       };
       (ratingsService.getUserRatings as jest.Mock).mockResolvedValue(
-        mockResult
+        mockResult,
       );
 
       // Act
       await ratingsController.getUserRatings(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
       expect(ratingsService.getUserRatings).toHaveBeenCalledWith(
         "user-123",
         1,
-        10
+        10,
       );
       expect(sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockResult.ratings,
         "User ratings retrieved successfully",
         200,
-        { pagination: mockResult.pagination }
+        { pagination: mockResult.pagination },
       );
     });
 
@@ -208,21 +208,21 @@ describe("Ratings Controller", () => {
         },
       };
       (ratingsService.getUserRatings as jest.Mock).mockResolvedValue(
-        mockResult
+        mockResult,
       );
 
       // Act
       await ratingsController.getUserRatings(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
       expect(ratingsService.getUserRatings).toHaveBeenCalledWith(
         "user-123",
         1,
-        10
+        10,
       );
     });
   });
@@ -242,28 +242,28 @@ describe("Ratings Controller", () => {
         },
       };
       (ratingsService.getMediaRatings as jest.Mock).mockResolvedValue(
-        mockResult
+        mockResult,
       );
 
       // Act
       await ratingsController.getMediaRatings(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
       expect(ratingsService.getMediaRatings).toHaveBeenCalledWith(
         "media-123",
         1,
-        10
+        10,
       );
       expect(sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockResult.ratings,
         "Media ratings retrieved successfully",
         200,
-        { pagination: mockResult.pagination }
+        { pagination: mockResult.pagination },
       );
     });
   });

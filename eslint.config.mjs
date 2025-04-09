@@ -1,85 +1,95 @@
 import { defineConfig } from "eslint/config";
-import js from "@eslint/js";
+import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import prettier from "eslint-plugin-prettier";
+import _import from "eslint-plugin-import";
 import globals from "globals";
-import tseslint from "typescript-eslint";
-import eslintPluginImport from "eslint-plugin-import";
-import eslintConfigPrettier from "eslint-config-prettier";
+import tsParser from "@typescript-eslint/parser";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import js from "@eslint/js";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
+});
 
 export default defineConfig([
-  // Base JavaScript configuration
   {
-    files: ["**/*.{js,mjs,cjs,ts}"],
+    extends: fixupConfigRules(
+      compat.extends(
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:import/typescript",
+      ),
+    ),
+
     plugins: {
-      js,
-      import: eslintPluginImport,
+      "@typescript-eslint": fixupPluginRules(typescriptEslint),
+      prettier: fixupPluginRules(prettier),
+      import: fixupPluginRules(_import),
     },
-    extends: [
-      "js/recommended",
-      "plugin:import/recommended",
-      "plugin:import/typescript",
-    ],
+
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+
+      parser: tsParser,
+      ecmaVersion: 2020,
+      sourceType: "module",
+
+      parserOptions: {
+        project: "./tsconfig.json",
+      },
+    },
+
+    settings: {
+      "import/resolver": {
+        typescript: {},
+      },
+    },
+
     rules: {
+      "prettier/prettier": "error",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
+
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+        },
+      ],
+
       "import/order": [
         "error",
         {
           "newlines-between": "always",
-          alphabetize: { order: "asc", caseInsensitive: true },
+          groups: [
+            ["builtin", "external"],
+            ["internal", "parent", "sibling", "index"],
+          ],
         },
       ],
-    },
-  },
 
-  // TypeScript-specific configuration
-  ...tseslint.configs.recommended,
-  {
-    files: ["**/*.ts"],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        project: "./tsconfig.json",
-        sourceType: "module",
-        ecmaVersion: "latest",
-      },
-    },
-    rules: {
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": [
+      "no-console": [
         "warn",
-        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+        {
+          allow: ["warn", "error"],
+        },
       ],
+
+      "import/no-unresolved": "off",
     },
-  },
-
-  // Node.js environment configuration
-  {
-    files: ["**/*.{js,mjs,cjs,ts}"],
-    languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.es2020,
-      },
-    },
-  },
-
-  // Prettier integration (must come last)
-  eslintConfigPrettier,
-
-  // Ignore patterns
-  {
-    ignores: [
-      "**/dist",
-      "**/build",
-      "**/coverage",
-      "**/node_modules",
-      "**/.git",
-      "**/.github",
-      "**/.idea",
-      "**/.vscode",
-      "**/.DS_Store",
-      "**/.eslintcache",
-      "**/scripts",
-      "**/*.d.ts",
-    ],
   },
 ]);

@@ -96,7 +96,7 @@ export class RecommendationService {
       const score = this.calculateRecommendationScore(
         media,
         genreScores,
-        mediaTypePreferences
+        mediaTypePreferences,
       );
 
       return {
@@ -177,7 +177,7 @@ export class RecommendationService {
     const scoredRecommendations = recommendations.map((media) => {
       const genreSimilarity = this.calculateGenreSimilarity(
         sourceMedia.genres.map((g) => g.genreId),
-        media.genres.map((g) => g.genreId)
+        media.genres.map((g) => g.genreId),
       );
 
       return {
@@ -198,7 +198,7 @@ export class RecommendationService {
   async updateUserPreferences(
     userId: string,
     genreIds: string[] = [],
-    mediaTypePreferences: { type: MediaType; strength: number }[] = []
+    mediaTypePreferences: { type: MediaType; strength: number }[] = [],
   ) {
     // First, delete existing preferences
     await prisma.userPreference.deleteMany({
@@ -236,7 +236,7 @@ export class RecommendationService {
   async getTrendingRecommendations(
     mediaType?: MediaType,
     limit: number = 10,
-    page: number = 1
+    page: number = 1,
   ) {
     const skip = (page - 1) * limit;
 
@@ -317,7 +317,7 @@ export class RecommendationService {
   private calculateRecommendationScore(
     media: any,
     genreScores: Record<string, number>,
-    mediaTypePreferences: Record<string, number>
+    mediaTypePreferences: Record<string, number>,
   ) {
     let score = 0;
 
@@ -342,7 +342,7 @@ export class RecommendationService {
 
   private calculateGenreSimilarity(
     sourceGenres: string[],
-    targetGenres: string[]
+    targetGenres: string[],
   ) {
     // Count matching genres
     const matchingGenres = sourceGenres.filter((g) => targetGenres.includes(g));

@@ -31,7 +31,7 @@ export const initializeJobs = (): void => {
     },
     null, // onComplete
     false, // start
-    config.TZ
+    config.TZ,
   );
 
   // Schedule notification delivery - runs every 15 minutes
@@ -53,7 +53,7 @@ export const initializeJobs = (): void => {
     },
     null, // onComplete
     false, // start
-    config.TZ || "UTC"
+    config.TZ || "UTC",
   );
 
   // Schedule weekly digest - runs Sunday at 8:00 AM
@@ -75,7 +75,7 @@ export const initializeJobs = (): void => {
     },
     null, // onComplete
     false, // start
-    config.TZ
+    config.TZ,
   );
 
   // Schedule notification cleanup - runs at 3:00 AM every Monday
@@ -97,7 +97,7 @@ export const initializeJobs = (): void => {
     },
     null, // onComplete
     false, // start
-    config.TZ
+    config.TZ,
   );
 
   // Start all jobs

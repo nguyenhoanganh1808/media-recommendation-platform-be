@@ -134,7 +134,7 @@ describe("Review Routes", () => {
   describe("GET /media/:mediaId", () => {
     it("should return reviews for a specific media", async () => {
       const response = await request(app).get(
-        `/api/reviews/media/${testMedia.id}`
+        `/api/reviews/media/${testMedia.id}`,
       );
 
       expect(response.status).toBe(200);
@@ -146,7 +146,7 @@ describe("Review Routes", () => {
 
     it("should respect pagination parameters", async () => {
       const response = await request(app).get(
-        `/api/reviews/media/${testMedia.id}?page=1&limit=5`
+        `/api/reviews/media/${testMedia.id}?page=1&limit=5`,
       );
 
       expect(response.status).toBe(200);
@@ -158,7 +158,7 @@ describe("Review Routes", () => {
   describe("GET /user/:userId", () => {
     it("should return reviews by a specific user", async () => {
       const response = await request(app).get(
-        `/api/reviews/user/${testUsers.regular.id}`
+        `/api/reviews/user/${testUsers.regular.id}`,
       );
 
       expect(response.status).toBe(200);
@@ -268,7 +268,7 @@ describe("Review Routes", () => {
 
     it("should return 401 when not authenticated", async () => {
       const response = await request(app).post(
-        `/api/reviews/${testReview.id}/like`
+        `/api/reviews/${testReview.id}/like`,
       );
 
       expect(response.status).toBe(401);
@@ -356,7 +356,7 @@ describe("Review Routes", () => {
 
       // Check if hidden reviews are included
       const hasHiddenReview = response.body.data.some(
-        (review: any) => review.isVisible === false
+        (review: any) => review.isVisible === false,
       );
 
       expect(hasHiddenReview).toBe(true);

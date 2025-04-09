@@ -64,7 +64,7 @@ router.post(
   authenticate,
   restrictTo(Role.ADMIN),
   validate(userValidation.createUserValidation),
-  userController.createUser
+  userController.createUser,
 );
 
 /**
@@ -100,7 +100,7 @@ router.get(
   authenticate,
   validate(userValidation.userIdValidation),
   userCacheMiddleware({ ttl: 300 }),
-  userController.getUser
+  userController.getUser,
 );
 
 /**
@@ -161,7 +161,7 @@ router.patch(
     ...userValidation.userIdValidation,
     ...userValidation.updateUserValidation,
   ]),
-  userController.updateUser
+  userController.updateUser,
 );
 
 /**
@@ -195,7 +195,7 @@ router.delete(
   validate(userValidation.userIdValidation),
   (req, res) => {
     res.status(501).json({ message: "Not implemented" });
-  }
+  },
 );
 
 /**
@@ -238,7 +238,7 @@ router.post(
   "/:id/follow",
   authenticate,
   validate(userValidation.followUserValidation),
-  userController.followUser
+  userController.followUser,
 );
 
 /**
@@ -277,7 +277,7 @@ router.delete(
   "/:id/follow",
   authenticate,
   validate(userValidation.followUserValidation),
-  userController.unfollowUser
+  userController.unfollowUser,
 );
 
 /**
@@ -318,7 +318,7 @@ router.get(
   authenticate,
   validate(userValidation.userIdValidation),
   userCacheMiddleware({ ttl: 300 }),
-  userController.getUserFollowers
+  userController.getUserFollowers,
 );
 
 /**
@@ -359,7 +359,7 @@ router.get(
   authenticate,
   validate(userValidation.userIdValidation),
   userCacheMiddleware({ ttl: 300 }),
-  userController.getUserFollowing
+  userController.getUserFollowing,
 );
 
 export default router;

@@ -19,7 +19,7 @@ export class AppError extends Error {
     message: string,
     statusCode: number,
     errorCode?: string,
-    details?: Record<string, string>
+    details?: Record<string, string>,
   ) {
     super(message);
     this.statusCode = statusCode;
@@ -42,7 +42,7 @@ const handlePrismaKnownRequestError = (err: PrismaClientKnownRequestError) => {
     case "P2002": {
       const field = (err.meta?.target as string[]) || ["field"];
       message = `Duplicate value for ${field.join(
-        ", "
+        ", ",
       )}. Please use another value.`;
       statusCode = 409;
       code = "DUPLICATE_ENTRY";
@@ -120,7 +120,7 @@ export const errorHandler = (err: AppError, req: Request, res: Response) => {
       error.statusCode,
       error.errorCode,
       error.stack,
-      details
+      details,
     );
     return;
   }

@@ -34,7 +34,7 @@ app.use(
   cors({
     origin: config.CORS_ORIGIN,
     credentials: true,
-  })
+  }),
 );
 app.use(
   helmet({
@@ -57,7 +57,7 @@ app.use(
         imgSrc: ["'self'", "data:", "cdn.jsdelivr.net"],
       },
     },
-  })
+  }),
 );
 app.use(compression());
 app.use(express.json({ limit: "10mb" }));
@@ -79,7 +79,7 @@ if (config.NODE_ENV === "development") {
   app.use(
     morgan("combined", {
       stream: { write: (message) => logger.info(message.trim()) },
-    })
+    }),
   );
 }
 

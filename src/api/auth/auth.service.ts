@@ -1,13 +1,13 @@
-import { User, Role } from '@prisma/client';
-import { prisma } from '../../config/database';
-import { comparePasswords, hashPassword } from '../../utils/password';
+import { User, Role } from "@prisma/client";
+import { prisma } from "../../config/database";
+import { comparePasswords, hashPassword } from "../../utils/password";
 import {
   generateAccessToken,
   generateRefreshToken,
   getRefreshTokenExpiryDate,
-} from '../../utils/jwt';
-import { AppError } from '../../middlewares/error.middleware';
-import { clearCacheByPattern } from '../../middlewares/cache.middleware';
+} from "../../utils/jwt";
+import { AppError } from "../../middlewares/error.middleware";
+import { clearCacheByPattern } from "../../middlewares/cache.middleware";
 
 interface CreateUserInput {
   email: string;
@@ -30,9 +30,9 @@ export const createUser = async (userData: CreateUserInput): Promise<User> => {
 
   if (existingUser) {
     if (existingUser.email === userData.email) {
-      throw new AppError('Email already in use', 409);
+      throw new AppError("Email already in use", 409);
     }
-    throw new AppError('Username already in use', 409);
+    throw new AppError("Username already in use", 409);
   }
 
   // Hash the password
@@ -81,7 +81,7 @@ export const generateAuthTokens = async (user: User) => {
  */
 export const loginWithEmailAndPassword = async (
   email: string,
-  password: string
+  password: string,
 ) => {
   // Find user by email
   const user = await prisma.user.findUnique({
@@ -89,18 +89,18 @@ export const loginWithEmailAndPassword = async (
   });
 
   if (!user) {
-    throw new AppError('Invalid email or password', 401);
+    throw new AppError("Invalid email or password", 401);
   }
 
   // Check if the account is active
   if (!user.isActive) {
-    throw new AppError('Account is deactivated. Please contact support.', 403);
+    throw new AppError("Account is deactivated. Please contact support.", 403);
   }
 
   // Verify password
   const isPasswordMatch = await comparePasswords(password, user.password);
   if (!isPasswordMatch) {
-    throw new AppError('Invalid email or password', 401);
+    throw new AppError("Invalid email or password", 401);
   }
 
   // Generate tokens
@@ -154,7 +154,7 @@ export const refreshAuth = async (userId: string, refreshToken: string) => {
   });
 
   if (!tokenRecord) {
-    throw new AppError('Invalid or expired refresh token', 401);
+    throw new AppError("Invalid or expired refresh token", 401);
   }
 
   // Generate new tokens
@@ -192,7 +192,7 @@ export const getUserById = async (userId: string): Promise<User | null> => {
 export const changePassword = async (
   userId: string,
   currentPassword: string,
-  newPassword: string
+  newPassword: string,
 ) => {
   // Get user
   const user = await prisma.user.findUnique({
@@ -200,16 +200,16 @@ export const changePassword = async (
   });
 
   if (!user) {
-    throw new AppError('User not found', 404);
+    throw new AppError("User not found", 404);
   }
 
   // Verify current password
   const isPasswordMatch = await comparePasswords(
     currentPassword,
-    user.password
+    user.password,
   );
   if (!isPasswordMatch) {
-    throw new AppError('Current password is incorrect', 401);
+    throw new AppError("Current password is incorrect", 401);
   }
 
   // Hash new password

@@ -22,7 +22,7 @@ declare global {
 export const authenticate = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   passport.authenticate(
     "jwt",
@@ -34,7 +34,7 @@ export const authenticate = (
 
       if (!user) {
         return next(
-          new AppError("Authentication required. Please log in.", 401)
+          new AppError("Authentication required. Please log in.", 401),
         );
       }
 
@@ -45,7 +45,7 @@ export const authenticate = (
 
       req.user = user!;
       next();
-    }
+    },
   )(req, res, next);
 };
 
@@ -53,7 +53,7 @@ export const authenticate = (
 export const authenticateRefreshToken = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   passport.authenticate(
     "jwt-refresh",
@@ -69,7 +69,7 @@ export const authenticateRefreshToken = (
 
       req.user = user;
       next();
-    }
+    },
   )(req, res, next);
 };
 
@@ -82,7 +82,7 @@ export const restrictTo = (...roles: Role[]) => {
 
     if (!roles.includes(req.user.role)) {
       return next(
-        new AppError("You do not have permission to perform this action", 403)
+        new AppError("You do not have permission to perform this action", 403),
       );
     }
 
@@ -93,13 +93,13 @@ export const restrictTo = (...roles: Role[]) => {
 // Middleware to check if user owns a resource
 export const checkOwnership = (
   resourceModel: string,
-  paramIdField: string = "id"
+  paramIdField: string = "id",
 ) => {
   return asyncHandler(
     async (req: Request, _res: Response, next: NextFunction) => {
       if (!req.user) {
         return next(
-          new AppError("Authentication required. Please log in.", 401)
+          new AppError("Authentication required. Please log in.", 401),
         );
       }
 
@@ -129,13 +129,13 @@ export const checkOwnership = (
         return next(
           new AppError(
             "You do not have permission to perform this action on this resource",
-            403
-          )
+            403,
+          ),
         );
       }
 
       next();
-    }
+    },
   );
 };
 
@@ -149,5 +149,5 @@ export const updateLastLogin = asyncHandler(
       });
     }
     next();
-  }
+  },
 );

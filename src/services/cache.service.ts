@@ -66,7 +66,7 @@ export class CacheService {
     userId: string,
     mediaType: MediaType,
     recommendations: Media[],
-    options: CacheOptions = {}
+    options: CacheOptions = {},
   ): Promise<void> {
     try {
       await this.connect();
@@ -83,7 +83,7 @@ export class CacheService {
       await this.client.expire(key, ttl);
 
       logger.debug(
-        `Cached ${recommendations.length} recommendations for user ${userId}`
+        `Cached ${recommendations.length} recommendations for user ${userId}`,
       );
     } catch (error) {
       logger.error("Error setting recommendations in cache", error);
@@ -98,7 +98,7 @@ export class CacheService {
    */
   public async getRecommendations(
     userId: string,
-    mediaType: MediaType
+    mediaType: MediaType,
   ): Promise<Media[] | null> {
     try {
       await this.connect();
@@ -129,7 +129,7 @@ export class CacheService {
   public async setUserPreferences(
     userId: string,
     preferences: unknown,
-    options: CacheOptions = {}
+    options: CacheOptions = {},
   ): Promise<void> {
     try {
       await this.connect();
@@ -154,7 +154,7 @@ export class CacheService {
   public async incrementCounter(
     key: string,
     incrementBy: number = 1,
-    options: CacheOptions = {}
+    options: CacheOptions = {},
   ): Promise<number> {
     try {
       await this.connect();
@@ -194,7 +194,7 @@ export class CacheService {
    */
   public async clearUserRecommendations(
     userId: string,
-    mediaType?: MediaType
+    mediaType?: MediaType,
   ): Promise<void> {
     try {
       await this.connect();
@@ -205,7 +205,7 @@ export class CacheService {
       } else {
         // Clear all media type recommendations for the user
         const keys = await this.client.keys(
-          `${this.RECOMMENDATION_PREFIX}${userId}:*`
+          `${this.RECOMMENDATION_PREFIX}${userId}:*`,
         );
         if (keys.length > 0) {
           await this.client.del(keys);

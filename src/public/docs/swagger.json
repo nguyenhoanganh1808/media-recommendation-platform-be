@@ -41,11 +41,7 @@
           },
           "role": {
             "type": "string",
-            "enum": [
-              "USER",
-              "MODERATOR",
-              "ADMIN"
-            ]
+            "enum": ["USER", "MODERATOR", "ADMIN"]
           },
           "bio": {
             "type": "string",
@@ -64,13 +60,7 @@
             "format": "date-time"
           }
         },
-        "required": [
-          "id",
-          "email",
-          "username",
-          "password",
-          "role"
-        ]
+        "required": ["id", "email", "username", "password", "role"]
       },
       "Media": {
         "type": "object",
@@ -91,11 +81,7 @@
           },
           "mediaType": {
             "type": "string",
-            "enum": [
-              "MOVIE",
-              "GAME",
-              "MANGA"
-            ]
+            "enum": ["MOVIE", "GAME", "MANGA"]
           },
           "externalIds": {
             "type": "object",
@@ -123,11 +109,7 @@
             "format": "date-time"
           }
         },
-        "required": [
-          "id",
-          "title",
-          "mediaType"
-        ]
+        "required": ["id", "title", "mediaType"]
       },
       "Rating": {
         "type": "object",
@@ -170,12 +152,7 @@
             "format": "date-time"
           }
         },
-        "required": [
-          "id",
-          "userId",
-          "mediaId",
-          "score"
-        ]
+        "required": ["id", "userId", "mediaId", "score"]
       },
       "MediaList": {
         "type": "object",
@@ -227,11 +204,7 @@
             "format": "date-time"
           }
         },
-        "required": [
-          "id",
-          "userId",
-          "name"
-        ]
+        "required": ["id", "userId", "name"]
       }
     },
     "securitySchemes": {
@@ -356,20 +329,14 @@
   "paths": {
     "/api/auth/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Register a new user",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "username",
-                  "password"
-                ],
+                "required": ["email", "username", "password"],
                 "properties": {
                   "email": {
                     "type": "string",
@@ -458,19 +425,14 @@
     },
     "/api/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "User login",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "password"
-                ],
+                "required": ["email", "password"],
                 "properties": {
                   "email": {
                     "type": "string",
@@ -544,18 +506,14 @@
     },
     "/api/auth/refresh": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Refresh access token",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "refreshToken"
-                ],
+                "required": ["refreshToken"],
                 "properties": {
                   "refreshToken": {
                     "type": "string"
@@ -589,9 +547,7 @@
     },
     "/api/auth/logout": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "User logout",
         "security": [
           {
@@ -626,9 +582,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "refreshToken"
-                ],
+                "required": ["refreshToken"],
                 "properties": {
                   "refreshToken": {
                     "type": "string",
@@ -643,9 +597,7 @@
     },
     "/api/users": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get a list of users",
         "security": [
           {
@@ -715,9 +667,7 @@
       },
       "post": {
         "summary": "Create a new user (Admin only)",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []
@@ -729,11 +679,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "username",
-                  "password"
-                ],
+                "required": ["email", "username", "password"],
                 "properties": {
                   "email": {
                     "type": "string",
@@ -784,9 +730,7 @@
     },
     "/api/users/{id}": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Retrieve a user by ID",
         "security": [
           {
@@ -826,9 +770,7 @@
       },
       "patch": {
         "summary": "Update user profile",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []
@@ -901,9 +843,7 @@
       },
       "delete": {
         "summary": "Delete a user (Admin only)",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []
@@ -936,9 +876,7 @@
     },
     "/api/media": {
       "get": {
-        "tags": [
-          "Media"
-        ],
+        "tags": ["Media"],
         "summary": "Retrieve a list of media with optional filtering",
         "parameters": [
           {
@@ -946,11 +884,7 @@
             "name": "page",
             "schema": {
               "type": "integer",
-              "enum": [
-                "MOVIE",
-                "GAME",
-                "MANGA"
-              ],
+              "enum": ["MOVIE", "GAME", "MANGA"],
               "default": 1
             },
             "description": "Page number for pagination"
@@ -971,11 +905,7 @@
             "schema": {
               "type": "string",
               "default": 10,
-              "enum": [
-                "MOVIE",
-                "GAME",
-                "MANGA"
-              ]
+              "enum": ["MOVIE", "GAME", "MANGA"]
             },
             "description": "Filter media by type"
           },
@@ -1000,12 +930,7 @@
             "name": "sortBy",
             "schema": {
               "type": "string",
-              "enum": [
-                "popularity",
-                "releaseDate",
-                "averageRating",
-                "title"
-              ],
+              "enum": ["popularity", "releaseDate", "averageRating", "title"],
               "default": "popularity"
             },
             "description": "Sort media by specified field"
@@ -1015,10 +940,7 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ],
+              "enum": ["asc", "desc"],
               "default": "desc"
             },
             "description": "Sort order for media list"
@@ -1079,9 +1001,7 @@
       "post": {
         "summary": "Create a new media item",
         "description": "Add a new media item (movies, games, manga)",
-        "tags": [
-          "Media"
-        ],
+        "tags": ["Media"],
         "security": [
           {
             "bearerAuth": []
@@ -1093,10 +1013,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "title",
-                  "mediaType"
-                ],
+                "required": ["title", "mediaType"],
                 "properties": {
                   "title": {
                     "type": "string"
@@ -1110,11 +1027,7 @@
                   },
                   "mediaType": {
                     "type": "string",
-                    "enum": [
-                      "MOVIE",
-                      "GAME",
-                      "MANGA"
-                    ]
+                    "enum": ["MOVIE", "GAME", "MANGA"]
                   },
                   "status": {
                     "type": "string"
@@ -1157,9 +1070,7 @@
     "/api/auth/refresh-token": {
       "post": {
         "summary": "Refresh access token",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Generate a new access token using a valid refresh token",
         "security": [
           {
@@ -1172,9 +1083,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "refreshToken"
-                ],
+                "required": ["refreshToken"],
                 "properties": {
                   "refreshToken": {
                     "type": "string",
@@ -1215,9 +1124,7 @@
     "/api/auth/profile": {
       "get": {
         "summary": "Get current user profile",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Retrieve the profile information of the authenticated user",
         "security": [
           {
@@ -1259,11 +1166,7 @@
                     },
                     "role": {
                       "type": "string",
-                      "enum": [
-                        "USER",
-                        "MODERATOR",
-                        "ADMIN"
-                      ]
+                      "enum": ["USER", "MODERATOR", "ADMIN"]
                     },
                     "createdAt": {
                       "type": "string",
@@ -1283,9 +1186,7 @@
     "/api/auth/change-password": {
       "post": {
         "summary": "Change user password",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Change the password for the authenticated user",
         "security": [
           {
@@ -1298,10 +1199,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "currentPassword",
-                  "newPassword"
-                ],
+                "required": ["currentPassword", "newPassword"],
                 "properties": {
                   "currentPassword": {
                     "type": "string",
@@ -1347,9 +1245,7 @@
     "/api/lists": {
       "get": {
         "summary": "Get all lists for the authenticated user",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1446,9 +1342,7 @@
       },
       "post": {
         "summary": "Create a new list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1474,9 +1368,7 @@
                     "description": "Whether the list is public or not"
                   }
                 },
-                "required": [
-                  "name"
-                ]
+                "required": ["name"]
               }
             }
           }
@@ -1523,9 +1415,7 @@
     "/api/lists/{id}": {
       "get": {
         "summary": "Get a specific list by ID",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1640,9 +1530,7 @@
       },
       "put": {
         "summary": "Update a list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1725,9 +1613,7 @@
       },
       "delete": {
         "summary": "Delete a list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1757,9 +1643,7 @@
     "/api/lists/{listId}/items": {
       "post": {
         "summary": "Add an item to a list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1791,9 +1675,7 @@
                     "description": "Optional notes for the list item"
                   }
                 },
-                "required": [
-                  "mediaId"
-                ]
+                "required": ["mediaId"]
               }
             }
           }
@@ -1838,9 +1720,7 @@
     "/api/lists/items/{itemId}": {
       "put": {
         "summary": "Update a list item",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1918,9 +1798,7 @@
       },
       "delete": {
         "summary": "Remove an item from a list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1953,9 +1831,7 @@
     "/api/lists/{listId}/reorder": {
       "put": {
         "summary": "Reorder list items",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1993,9 +1869,7 @@
                     }
                   }
                 },
-                "required": [
-                  "items"
-                ]
+                "required": ["items"]
               }
             }
           }
@@ -2043,9 +1917,7 @@
     "/api/lists/user/{userId}/public": {
       "get": {
         "summary": "Get public lists from a specific user",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "parameters": [
           {
             "in": "path",
@@ -2157,9 +2029,7 @@
       "get": {
         "summary": "Retrieve a specific media item by ID",
         "description": "Fetch detailed information about a specific media item",
-        "tags": [
-          "Media"
-        ],
+        "tags": ["Media"],
         "parameters": [
           {
             "in": "path",
@@ -2191,9 +2061,7 @@
       "put": {
         "summary": "Update an existing media item",
         "description": "Update details of a specific media item",
-        "tags": [
-          "Media"
-        ],
+        "tags": ["Media"],
         "security": [
           {
             "bearerAuth": []
@@ -2230,11 +2098,7 @@
                   },
                   "mediaType": {
                     "type": "string",
-                    "enum": [
-                      "MOVIE",
-                      "GAME",
-                      "MANGA"
-                    ]
+                    "enum": ["MOVIE", "GAME", "MANGA"]
                   },
                   "status": {
                     "type": "string"
@@ -2276,9 +2140,7 @@
       "delete": {
         "summary": "Delete a media item",
         "description": "Remove a specific media item from the system",
-        "tags": [
-          "Media"
-        ],
+        "tags": ["Media"],
         "security": [
           {
             "bearerAuth": []
@@ -2329,9 +2191,7 @@
     "/api/notifications": {
       "get": {
         "summary": "Get all notifications for the logged-in user",
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "security": [
           {
             "bearerAuth": []
@@ -2440,9 +2300,7 @@
     "/api/notifications/{id}/read": {
       "patch": {
         "summary": "Mark a specific notification as read",
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "security": [
           {
             "bearerAuth": []
@@ -2496,9 +2354,7 @@
     "/api/notifications/read-all": {
       "patch": {
         "summary": "Mark all notifications as read",
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "security": [
           {
             "bearerAuth": []
@@ -2535,9 +2391,7 @@
     "/api/notifications/read": {
       "delete": {
         "summary": "Delete all read notifications",
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "security": [
           {
             "bearerAuth": []
@@ -2574,9 +2428,7 @@
     "/api/notifications/{id}": {
       "delete": {
         "summary": "Delete a specific notification",
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "security": [
           {
             "bearerAuth": []
@@ -2610,9 +2462,7 @@
     "/api/notifications/settings": {
       "get": {
         "summary": "Get notification settings",
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "security": [
           {
             "bearerAuth": []
@@ -2667,9 +2517,7 @@
       },
       "put": {
         "summary": "Update notification settings",
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "security": [
           {
             "bearerAuth": []
@@ -2765,9 +2613,7 @@
     "/api/ratings": {
       "post": {
         "summary": "Create a new rating for a media item",
-        "tags": [
-          "Ratings"
-        ],
+        "tags": ["Ratings"],
         "security": [
           {
             "bearerAuth": []
@@ -2779,10 +2625,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "mediaId",
-                  "rating"
-                ],
+                "required": ["mediaId", "rating"],
                 "properties": {
                   "mediaId": {
                     "type": "string",
@@ -2826,9 +2669,7 @@
     "/api/ratings/me": {
       "get": {
         "summary": "Get ratings for the authenticated user",
-        "tags": [
-          "Ratings"
-        ],
+        "tags": ["Ratings"],
         "security": [
           {
             "bearerAuth": []
@@ -2885,9 +2726,7 @@
     "/api/ratings/user/{userId}": {
       "get": {
         "summary": "Get ratings for a specific user",
-        "tags": [
-          "Ratings"
-        ],
+        "tags": ["Ratings"],
         "security": [
           {
             "bearerAuth": []
@@ -2957,9 +2796,7 @@
     "/api/ratings/media/{mediaId}": {
       "get": {
         "summary": "Get ratings for a specific media",
-        "tags": [
-          "Ratings"
-        ],
+        "tags": ["Ratings"],
         "security": [
           {
             "bearerAuth": []
@@ -3029,9 +2866,7 @@
     "/api/ratings/{id}": {
       "get": {
         "summary": "Get a specific rating by ID",
-        "tags": [
-          "Ratings"
-        ],
+        "tags": ["Ratings"],
         "security": [
           {
             "bearerAuth": []
@@ -3070,9 +2905,7 @@
       },
       "put": {
         "summary": "Update a rating",
-        "tags": [
-          "Ratings"
-        ],
+        "tags": ["Ratings"],
         "security": [
           {
             "bearerAuth": []
@@ -3096,9 +2929,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "rating"
-                ],
+                "required": ["rating"],
                 "properties": {
                   "rating": {
                     "type": "number",
@@ -3138,9 +2969,7 @@
       },
       "delete": {
         "summary": "Delete a rating",
-        "tags": [
-          "Ratings"
-        ],
+        "tags": ["Ratings"],
         "security": [
           {
             "bearerAuth": []
@@ -3177,9 +3006,7 @@
     "/api/ratings/admin/{id}": {
       "delete": {
         "summary": "Force delete a rating (Admin only)",
-        "tags": [
-          "Ratings"
-        ],
+        "tags": ["Ratings"],
         "security": [
           {
             "bearerAuth": []
@@ -3216,9 +3043,7 @@
     "/api/recommendations": {
       "get": {
         "summary": "Get personalized recommendations for authenticated user",
-        "tags": [
-          "Recommendations"
-        ],
+        "tags": ["Recommendations"],
         "security": [
           {
             "bearerAuth": []
@@ -3251,11 +3076,7 @@
             "name": "mediaType",
             "schema": {
               "type": "string",
-              "enum": [
-                "MOVIE",
-                "GAME",
-                "MANGA"
-              ]
+              "enum": ["MOVIE", "GAME", "MANGA"]
             },
             "description": "Filter recommendations by media type"
           },
@@ -3308,9 +3129,7 @@
     "/api/recommendations/trending": {
       "get": {
         "summary": "Get trending media recommendations",
-        "tags": [
-          "Recommendations"
-        ],
+        "tags": ["Recommendations"],
         "parameters": [
           {
             "in": "query",
@@ -3338,11 +3157,7 @@
             "name": "mediaType",
             "schema": {
               "type": "string",
-              "enum": [
-                "MOVIE",
-                "GAME",
-                "MANGA"
-              ]
+              "enum": ["MOVIE", "GAME", "MANGA"]
             },
             "description": "Filter trending recommendations by media type"
           }
@@ -3383,9 +3198,7 @@
     "/api/recommendations/media/{mediaId}": {
       "get": {
         "summary": "Get recommendations based on a specific media item",
-        "tags": [
-          "Recommendations"
-        ],
+        "tags": ["Recommendations"],
         "security": [
           {
             "bearerAuth": []
@@ -3453,9 +3266,7 @@
     "/api/recommendations/preferences/{userId}": {
       "put": {
         "summary": "Update user recommendation preferences",
-        "tags": [
-          "Recommendations"
-        ],
+        "tags": ["Recommendations"],
         "security": [
           {
             "bearerAuth": []
@@ -3495,11 +3306,7 @@
                       "properties": {
                         "type": {
                           "type": "string",
-                          "enum": [
-                            "MOVIE",
-                            "GAME",
-                            "MANGA"
-                          ]
+                          "enum": ["MOVIE", "GAME", "MANGA"]
                         },
                         "strength": {
                           "type": "number",
@@ -3542,11 +3349,7 @@
                           },
                           "mediaTypePreference": {
                             "type": "string",
-                            "enum": [
-                              "MOVIE",
-                              "GAME",
-                              "MANGA"
-                            ]
+                            "enum": ["MOVIE", "GAME", "MANGA"]
                           },
                           "preferenceStrength": {
                             "type": "number"
@@ -3572,9 +3375,7 @@
     "/api/users/{id}/follow": {
       "post": {
         "summary": "Follow a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []
@@ -3625,9 +3426,7 @@
       },
       "delete": {
         "summary": "Unfollow a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []
@@ -3674,9 +3473,7 @@
     "/api/users/{id}/followers": {
       "get": {
         "summary": "Get a user's followers",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []
@@ -3725,9 +3522,7 @@
     "/api/users/{id}/following": {
       "get": {
         "summary": "Get users that the specified user is following",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []

@@ -1,8 +1,8 @@
 import { Request } from "express";
 import rateLimit from "express-rate-limit";
 import RedisStore from "rate-limit-redis";
-import { redisClient } from "../config/redis";
 import { config } from "../config/env";
+import { redisClient } from "../config/redis";
 
 // Default rate limiter for general API endpoints
 export const rateLimiter = rateLimit({
@@ -68,7 +68,7 @@ export const apiKeyRateLimiter = rateLimit({
 // Create dynamic rate limiter by user ID (when authenticated)
 export const userRateLimiter = (
   maxRequests: number = 50,
-  windowMs: number = 60 * 1000 // 1 minute
+  windowMs: number = 60 * 1000, // 1 minute
 ) => {
   const limiter = rateLimit({
     windowMs,
@@ -98,7 +98,7 @@ export const userRateLimiter = (
 export const createIpRateLimiter = (
   maxRequests: number,
   windowMs: number,
-  prefix: string = "ip"
+  prefix: string = "ip",
 ) => {
   return rateLimit({
     windowMs,

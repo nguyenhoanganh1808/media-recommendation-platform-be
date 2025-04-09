@@ -12,11 +12,11 @@ export const createRating = asyncHandler(
       userId,
       mediaId,
       rating,
-      review
+      review,
     );
 
     sendSuccess(res, newRating, "Rating created successfully", 201);
-  }
+  },
 );
 
 export const updateRating = asyncHandler(
@@ -28,7 +28,7 @@ export const updateRating = asyncHandler(
     const updatedRating = await ratingsService.updateRating(id, userId, rating);
 
     sendSuccess(res, updatedRating, "Rating updated successfully");
-  }
+  },
 );
 
 export const deleteRating = asyncHandler(
@@ -39,7 +39,7 @@ export const deleteRating = asyncHandler(
     await ratingsService.deleteRating(id, userId);
 
     sendSuccess(res, null, "Rating deleted successfully");
-  }
+  },
 );
 
 export const getRating = asyncHandler(async (req: Request, res: Response) => {
@@ -63,9 +63,9 @@ export const getUserRatings = asyncHandler(
       result.ratings,
       "User ratings retrieved successfully",
       200,
-      { pagination: result.pagination }
+      { pagination: result.pagination },
     );
-  }
+  },
 );
 
 export const getMediaRatings = asyncHandler(
@@ -81,9 +81,9 @@ export const getMediaRatings = asyncHandler(
       result.ratings,
       "Media ratings retrieved successfully",
       200,
-      { pagination: result.pagination }
+      { pagination: result.pagination },
     );
-  }
+  },
 );
 
 export const getUserMediaRating = asyncHandler(
@@ -94,5 +94,5 @@ export const getUserMediaRating = asyncHandler(
     const rating = await ratingsService.getUserMediaRating(userId, mediaId);
 
     sendSuccess(res, rating, "User media rating retrieved successfully");
-  }
+  },
 );

@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import { prisma } from '../../config/database';
-import asyncHandler from '../../utils/asyncHandler';
-import { sendSuccess, createPagination } from '../../utils/responseFormatter';
-import { AppError } from '../../middlewares/error.middleware';
-import * as listService from './lists.service';
+import { Request, Response } from "express";
+import { prisma } from "../../config/database";
+import asyncHandler from "../../utils/asyncHandler";
+import { sendSuccess, createPagination } from "../../utils/responseFormatter";
+import { AppError } from "../../middlewares/error.middleware";
+import * as listService from "./lists.service";
 
 /**
  * Get all lists for the authenticated user
@@ -19,11 +19,11 @@ export const getUserLists = asyncHandler(
       userId,
       page,
       skip,
-      limit
+      limit,
     );
 
-    sendSuccess(res, lists, 'Lists retrieved successfully', 200, pagination);
-  }
+    sendSuccess(res, lists, "Lists retrieved successfully", 200, pagination);
+  },
 );
 
 /**
@@ -35,7 +35,7 @@ export const getListById = asyncHandler(async (req: Request, res: Response) => {
 
   const list = await listService.getListById(id, userId);
 
-  sendSuccess(res, list, 'List retrieved successfully');
+  sendSuccess(res, list, "List retrieved successfully");
 });
 
 /**
@@ -49,10 +49,10 @@ export const createList = asyncHandler(async (req: Request, res: Response) => {
     userId,
     name,
     description,
-    isPublic
+    isPublic,
   );
 
-  sendSuccess(res, newList, 'List created successfully', 201);
+  sendSuccess(res, newList, "List created successfully", 201);
 });
 
 /**
@@ -68,7 +68,7 @@ export const updateList = asyncHandler(async (req: Request, res: Response) => {
     isPublic,
   });
 
-  sendSuccess(res, updatedList, 'List updated successfully');
+  sendSuccess(res, updatedList, "List updated successfully");
 });
 
 /**
@@ -81,7 +81,7 @@ export const deleteList = asyncHandler(async (req: Request, res: Response) => {
     where: { id },
   });
 
-  sendSuccess(res, null, 'List deleted successfully');
+  sendSuccess(res, null, "List deleted successfully");
 });
 
 /**
@@ -94,8 +94,8 @@ export const addItemToList = asyncHandler(
 
     const listItem = await listService.addItemToList(listId, mediaId, notes);
 
-    sendSuccess(res, listItem, 'Item added to list successfully', 201);
-  }
+    sendSuccess(res, listItem, "Item added to list successfully", 201);
+  },
 );
 
 /**
@@ -109,11 +109,11 @@ export const updateListItem = asyncHandler(
     const updatedItem = await listService.updateListItem(
       itemId,
       notes,
-      req.user!
+      req.user!,
     );
 
-    sendSuccess(res, updatedItem, 'List item updated successfully');
-  }
+    sendSuccess(res, updatedItem, "List item updated successfully");
+  },
 );
 
 /**
@@ -130,16 +130,16 @@ export const reorderListItems = asyncHandler(
       items.some((item) => !item.id || item.order === undefined)
     ) {
       throw new AppError(
-        'Invalid items format. Each item must have id and order properties',
-        400
+        "Invalid items format. Each item must have id and order properties",
+        400,
       );
     }
 
     // Transaction to update all items at once
     const updates = await listService.reorderListItems(listId, items);
 
-    sendSuccess(res, updates, 'List items reordered successfully');
-  }
+    sendSuccess(res, updates, "List items reordered successfully");
+  },
 );
 
 /**
@@ -151,8 +151,8 @@ export const removeItemFromList = asyncHandler(
 
     await listService.removeItemFromList(itemId, req.user!.id);
 
-    sendSuccess(res, null, 'Item removed from list successfully');
-  }
+    sendSuccess(res, null, "Item removed from list successfully");
+  },
 );
 
 /**
@@ -169,15 +169,15 @@ export const getUserPublicLists = asyncHandler(
       userId,
       page,
       skip,
-      limit
+      limit,
     );
 
     sendSuccess(
       res,
       lists,
-      'Public lists retrieved successfully',
+      "Public lists retrieved successfully",
       200,
-      pagination
+      pagination,
     );
-  }
+  },
 );

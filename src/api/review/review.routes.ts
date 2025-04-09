@@ -26,7 +26,7 @@ router.post(
   "/",
   authenticate,
   validate(createReviewValidation),
-  reviewController.createReview
+  reviewController.createReview,
 );
 
 // Get reviews for a specific media (paginated, cached)
@@ -38,7 +38,7 @@ router.get(
     keyGenerator: (req) =>
       `${req.params.mediaId}:page:${req.query.page || 1}:limit:${req.query.limit || 10}`,
   }),
-  reviewController.getMediaReviews
+  reviewController.getMediaReviews,
 );
 
 // Get reviews by a specific user (paginated, cached)
@@ -50,7 +50,7 @@ router.get(
     keyGenerator: (req) =>
       `${req.params.userId}:page:${req.query.page || 1}:limit:${req.query.limit || 10}`,
   }),
-  reviewController.getUserReviews
+  reviewController.getUserReviews,
 );
 
 // Get review by media ID and user ID (cached)
@@ -59,7 +59,7 @@ router.get(
   authenticate,
   validate(getUserMediaReviewValidation),
   userCacheMiddleware({ ttl: 300 }),
-  reviewController.getUserMediaReview
+  reviewController.getUserMediaReview,
 );
 
 // Get a single review by ID
@@ -70,7 +70,7 @@ router.put(
   "/:id",
   authenticate,
   validate(updateReviewValidation),
-  reviewController.updateReview
+  reviewController.updateReview,
 );
 
 // Delete a review (authenticated)
@@ -79,7 +79,7 @@ router.delete(
   authenticate,
   checkOwnership("mediaReview"),
   validate(deleteReviewValidation),
-  reviewController.deleteReview
+  reviewController.deleteReview,
 );
 
 // Like a review (authenticated)
@@ -87,7 +87,7 @@ router.post(
   "/:id/like",
   authenticate,
   validate(likeReviewValidation),
-  reviewController.likeReview
+  reviewController.likeReview,
 );
 
 // UnLike a review (authenticated)
@@ -95,7 +95,7 @@ router.delete(
   "/:id/like",
   authenticate,
   validate(likeReviewValidation),
-  reviewController.likeReview
+  reviewController.likeReview,
 );
 
 // Admin route to get all reviews (including hidden)
@@ -103,7 +103,7 @@ router.get(
   "/admin/all",
   authenticate,
   restrictTo(Role.ADMIN, Role.MODERATOR),
-  reviewController.getMediaReviews
+  reviewController.getMediaReviews,
 );
 
 export default router;

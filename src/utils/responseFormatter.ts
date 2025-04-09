@@ -37,7 +37,7 @@ export const sendSuccess = <T>(
   data: T,
   message = "Operation successful",
   statusCode = 200,
-  meta?: ApiResponse<T>["meta"]
+  meta?: ApiResponse<T>["meta"],
 ): void => {
   const response: ApiResponse<T> = {
     success: true,
@@ -67,7 +67,7 @@ export const sendError = (
   statusCode = 400,
   errorCode = "BAD_REQUEST",
   stack?: string | undefined,
-  details?: Record<string, string>
+  details?: Record<string, string>,
 ): void => {
   const response: ApiResponse<null> = {
     success: false,
@@ -96,7 +96,7 @@ export const sendError = (
 export const createPagination = (
   page: number,
   limit: number,
-  total: number
+  total: number,
 ): ApiResponse<unknown>["meta"] => {
   const totalPages = Math.ceil(total / limit);
 

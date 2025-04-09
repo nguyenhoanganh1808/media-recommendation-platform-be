@@ -35,7 +35,7 @@ export class RecommendationJob {
       });
 
       logger.info(
-        `Found ${users.length} active users for recommendation processing`
+        `Found ${users.length} active users for recommendation processing`,
       );
 
       // Process users in batches to avoid memory issues
@@ -43,7 +43,7 @@ export class RecommendationJob {
       for (let i = 0; i < users.length; i += batchSize) {
         const batch = users.slice(i, i + batchSize);
         await Promise.all(
-          batch.map((user) => this.processUserRecommendations(user))
+          batch.map((user) => this.processUserRecommendations(user)),
         );
         logger.info(`Processed recommendations batch ${i / batchSize + 1}`);
       }
@@ -77,7 +77,7 @@ export class RecommendationJob {
       for (const mediaType of mediaTypes) {
         // Check if the user has preferences for this media type
         const hasTypePreference = preferences.some(
-          (p) => p.mediaTypePreference === mediaType
+          (p) => p.mediaTypePreference === mediaType,
         );
 
         // Skip if user has explicitly shown no interest in this type
@@ -86,7 +86,7 @@ export class RecommendationJob {
         }
 
         const data = await this.recommendationService.getRecommendationsForUser(
-          { userId: user.id, mediaType }
+          { userId: user.id, mediaType },
         );
 
         if (data.recommendations.length > 0) {
@@ -94,7 +94,7 @@ export class RecommendationJob {
           await this.cacheService.setRecommendations(
             user.id,
             mediaType,
-            data.recommendations
+            data.recommendations,
           );
 
           newRecommendations = true;
@@ -108,13 +108,13 @@ export class RecommendationJob {
           "NEW_RECOMMENDATION",
           "New Recommendations Available",
           "We have new recommendations for you based on your preferences and ratings!",
-          { timestamp: new Date().toISOString() }
+          { timestamp: new Date().toISOString() },
         );
       }
     } catch (error) {
       logger.error(
         `Error generating recommendations for user ${user.username}:`,
-        error
+        error,
       );
       // Continue with other users even if one fails
     }
@@ -172,7 +172,7 @@ export class RecommendationJob {
       }
 
       logger.info(
-        `Updated popularity scores for ${mediaItems.length} media items`
+        `Updated popularity scores for ${mediaItems.length} media items`,
       );
     } catch (error) {
       logger.error("Error updating media popularity scores:", error);

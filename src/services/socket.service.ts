@@ -28,7 +28,7 @@ export function sendUserNotification(
     message: string;
     data?: unknown;
     createdAt: Date;
-  }
+  },
 ) {
   try {
     logger.info("Sending notification to user:");
@@ -49,7 +49,7 @@ export function sendUserNotification(
 // Send notification read status update
 export async function sendNotificationReadStatus(
   userId: string,
-  notificationId: string
+  notificationId: string,
 ) {
   try {
     const io = getSocketIO();
@@ -59,7 +59,7 @@ export async function sendNotificationReadStatus(
     sendUnreadCount(userId);
 
     logger.debug(
-      `Sent read status update for notification ${notificationId} to user ${userId}`
+      `Sent read status update for notification ${notificationId} to user ${userId}`,
     );
     return true;
   } catch (error) {
@@ -93,7 +93,7 @@ export async function sendUnreadCount(userId: string) {
 // Notify all sockets when multiple notifications are marked as read
 export async function sendBulkReadStatus(
   userId: string,
-  notificationIds: string[]
+  notificationIds: string[],
 ) {
   try {
     const io = getSocketIO();
@@ -102,7 +102,7 @@ export async function sendBulkReadStatus(
     for (const notificationId of notificationIds) {
       io.to(`user:${userId}`).emit(
         SocketEvent.NOTIFICATION_READ,
-        notificationId
+        notificationId,
       );
     }
 
@@ -110,7 +110,7 @@ export async function sendBulkReadStatus(
     sendUnreadCount(userId);
 
     logger.debug(
-      `Sent bulk read status update for ${notificationIds.length} notifications to user ${userId}`
+      `Sent bulk read status update for ${notificationIds.length} notifications to user ${userId}`,
     );
     return true;
   } catch (error) {
@@ -123,7 +123,7 @@ export async function sendBulkReadStatus(
 export function notifyMediaRatingUpdate(
   mediaId: string,
   mediaTitle: string,
-  newRating: number
+  newRating: number,
 ) {
   try {
     const io = getSocketIO();
@@ -146,7 +146,7 @@ export function notifyNewReview(
   reviewerUsername: string,
   mediaId: string,
   mediaTitle: string,
-  reviewId: string
+  reviewId: string,
 ) {
   try {
     const io = getSocketIO();
@@ -169,7 +169,7 @@ export function notifyNewReview(
 export function notifyUserFollowed(
   followerId: string,
   followerUsername: string,
-  followingId: string
+  followingId: string,
 ) {
   try {
     const io = getSocketIO();
@@ -191,7 +191,7 @@ export function notifyListShared(
   sharerUsername: string,
   listId: string,
   listName: string,
-  recipientIds: string[]
+  recipientIds: string[],
 ) {
   try {
     const io = getSocketIO();
@@ -216,7 +216,7 @@ export function notifyListShared(
 // Notify about new recommendations
 export function notifyNewRecommendation(
   userId: string,
-  recommendationCount: number
+  recommendationCount: number,
 ) {
   try {
     const io = getSocketIO();
@@ -236,7 +236,7 @@ export function broadcastMediaUpdate(
   mediaId: string,
   mediaTitle: string,
   mediaType: string,
-  updateType: "new" | "update"
+  updateType: "new" | "update",
 ) {
   try {
     const io = getSocketIO();

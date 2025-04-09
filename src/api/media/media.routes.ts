@@ -108,7 +108,7 @@ router.get(
   cacheMiddleware({ ttl: 300 }), // Cache for 5 minutes
   rateLimiter,
   validate(mediaValidation.getAllMediaValidation),
-  mediaController.getAllMedia
+  mediaController.getAllMedia,
 );
 
 /**
@@ -142,7 +142,7 @@ router.get(
   cacheMiddleware({ ttl: 300 }),
   rateLimiter,
   validate(mediaValidation.getMediaByIdValidation),
-  mediaController.getMediaById
+  mediaController.getMediaById,
 );
 
 /**
@@ -201,7 +201,7 @@ router.post(
   authenticate,
   restrictTo(Role.ADMIN, Role.MODERATOR),
   validate(mediaValidation.createMediaValidation),
-  mediaController.createMedia
+  mediaController.createMedia,
 );
 
 /**
@@ -265,7 +265,7 @@ router.put(
   authenticate,
   restrictTo(Role.ADMIN, Role.MODERATOR),
   validate(mediaValidation.updateMediaValidation),
-  mediaController.updateMedia
+  mediaController.updateMedia,
 );
 
 /**
@@ -310,7 +310,7 @@ router.delete(
   authenticate,
   restrictTo(Role.ADMIN),
   validate(mediaValidation.deleteMediaValidation),
-  mediaController.deleteMedia
+  mediaController.deleteMedia,
 );
 
 export default router;

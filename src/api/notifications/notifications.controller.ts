@@ -28,9 +28,9 @@ export const getUserNotifications = asyncHandler(
       {
         ...pagination,
         unreadCount,
-      }
+      },
     );
-  }
+  },
 );
 
 /**
@@ -43,11 +43,11 @@ export const markAsRead = asyncHandler(
 
     const notification = await notificationService.markNotificationAsRead(
       userId,
-      notificationId
+      notificationId,
     );
 
     sendSuccess(res, notification, "Notification marked as read", 200);
-  }
+  },
 );
 
 /**
@@ -60,7 +60,7 @@ export const markAllAsRead = asyncHandler(
     const count = await notificationService.markAllNotificationsAsRead(userId);
 
     sendSuccess(res, { count }, `${count} notifications marked as read`, 200);
-  }
+  },
 );
 
 /**
@@ -74,7 +74,7 @@ export const deleteNotification = asyncHandler(
     await notificationService.deleteNotification(userId, notificationId);
 
     sendSuccess(res, null, "Notification deleted successfully", 204);
-  }
+  },
 );
 
 /**
@@ -87,7 +87,7 @@ export const deleteAllReadNotifications = asyncHandler(
     const count = await notificationService.deleteAllReadNotifications(userId);
 
     sendSuccess(res, { count }, `${count} read notifications deleted`, 200);
-  }
+  },
 );
 
 /**
@@ -103,9 +103,9 @@ export const getNotificationSettings = asyncHandler(
       res,
       settings,
       "Notification settings retrieved successfully",
-      200
+      200,
     );
-  }
+  },
 );
 
 /**
@@ -123,7 +123,7 @@ export const updateNotificationSettings = asyncHandler(
       res,
       updatedSettings,
       "Notification settings updated successfully",
-      200
+      200,
     );
-  }
+  },
 );

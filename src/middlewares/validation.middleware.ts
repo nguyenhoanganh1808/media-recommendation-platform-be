@@ -15,16 +15,19 @@ export const validate = (validations: ValidationChain[]) => {
     }
 
     // Format the validation errors
-    const extractedErrors = errors.array().reduce((acc, err) => {
-      // Check if err has a path property (express-validator v6+)
-      if (err.type === "field") {
-        acc[err.path] = err.msg;
-      } else if ("param" in err) {
-        // Fallback for older express-validator versions
-        acc[err.param as never] = err.msg;
-      }
-      return acc;
-    }, {} as Record<string, string>);
+    const extractedErrors = errors.array().reduce(
+      (acc, err) => {
+        // Check if err has a path property (express-validator v6+)
+        if (err.type === "field") {
+          acc[err.path] = err.msg;
+        } else if ("param" in err) {
+          // Fallback for older express-validator versions
+          acc[err.param as never] = err.msg;
+        }
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
 
     // Return validation error response
     return next(
@@ -32,8 +35,8 @@ export const validate = (validations: ValidationChain[]) => {
         "Validation failed. Please check your input.",
         400,
         "VALIDATION_ERROR",
-        extractedErrors
-      )
+        extractedErrors,
+      ),
     );
   };
 };
@@ -70,10 +73,10 @@ export const validateContentType = (allowedTypes: string[]) => {
       return next(
         new AppError(
           `Unsupported Content-Type. Supported types: ${allowedTypes.join(
-            ", "
+            ", ",
           )}`,
-          415
-        )
+          415,
+        ),
       );
     }
 
@@ -87,17 +90,17 @@ export const validateQueryParams = (allowedParams: string[]) => {
     const queryParams = Object.keys(req.query);
 
     const invalidParams = queryParams.filter(
-      (param) => !allowedParams.includes(param)
+      (param) => !allowedParams.includes(param),
     );
 
     if (invalidParams.length > 0) {
       return next(
         new AppError(
           `Invalid query parameters: ${invalidParams.join(
-            ", "
+            ", ",
           )}. Allowed parameters: ${allowedParams.join(", ")}`,
-          400
-        )
+          400,
+        ),
       );
     }
 

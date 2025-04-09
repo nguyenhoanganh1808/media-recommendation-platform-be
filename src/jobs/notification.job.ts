@@ -61,7 +61,7 @@ export class NotificationJob {
       });
 
       logger.info(
-        `Found ${notifications.length} pending notifications to process`
+        `Found ${notifications.length} pending notifications to process`,
       );
 
       for (const notification of notifications) {
@@ -180,7 +180,7 @@ export class NotificationJob {
             "SYSTEM_NOTIFICATION",
             "Your Weekly Digest",
             "Check your email for your weekly content digest!",
-            { timestamp: new Date().toISOString() }
+            { timestamp: new Date().toISOString() },
           );
         }
       }
@@ -227,10 +227,10 @@ export class NotificationJob {
         username: string;
         email: string;
       };
-    }
+    },
   ): Promise<void> {
     logger.debug(
-      `Processing in-app notification ${notification.id} for user ${notification.user.username}`
+      `Processing in-app notification ${notification.id} for user ${notification.user.username}`,
     );
 
     await this.sendSocketNotification(notification);
@@ -246,7 +246,7 @@ export class NotificationJob {
         username: string;
         email: string;
       };
-    }
+    },
   ): Promise<void> {
     try {
       // Extract notification data for socket emission
@@ -262,7 +262,7 @@ export class NotificationJob {
       // Use the socket service to send the notification
       SocketService.sendUserNotification(
         notification.user.id,
-        socketNotification
+        socketNotification,
       );
 
       logger.debug(`Socket notification sent to user ${notification.user.id}`);
@@ -324,7 +324,7 @@ export class NotificationJob {
   private async sendDigestEmail(
     user: any,
     recommendations: any[],
-    followingActivity: any[]
+    followingActivity: any[],
   ): Promise<void> {
     try {
       logger.debug(`Sending weekly digest to ${user.email}`);

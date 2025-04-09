@@ -73,7 +73,7 @@ export const verifyToken = (token: string): TokenPayload | Error => {
  */
 export const getRefreshTokenExpiryDate = (): Date => {
   const expiresInMilliseconds = parseTimeToMilliseconds(
-    config.JWT_REFRESH_EXPIRES_IN
+    config.JWT_REFRESH_EXPIRES_IN,
   );
   return new Date(Date.now() + expiresInMilliseconds);
 };

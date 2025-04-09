@@ -153,7 +153,7 @@ describe("Media API Routes", () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeInstanceOf(Array);
       expect(
-        response.body.data.every((item: any) => item.mediaType === "MOVIE")
+        response.body.data.every((item: any) => item.mediaType === "MOVIE"),
       ).toBe(true);
     });
 
@@ -173,7 +173,7 @@ describe("Media API Routes", () => {
 
       expect(response.body.success).toBe(true);
       expect(
-        response.body.data.some((item: any) => item.title.includes("Test"))
+        response.body.data.some((item: any) => item.title.includes("Test")),
       ).toBe(true);
     });
 

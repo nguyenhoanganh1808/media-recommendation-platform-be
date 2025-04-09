@@ -1,11 +1,11 @@
 // tests/unit/ratings/ratings.service.test.ts
-import { prisma } from '../../src/config/database';
-import * as ratingsService from '../../src/api/ratings/ratings.service';
-import { AppError } from '../../src/middlewares/error.middleware';
-import { clearCacheByPattern } from '../../src/middlewares/cache.middleware';
+import { prisma } from "../../src/config/database";
+import * as ratingsService from "../../src/api/ratings/ratings.service";
+import { AppError } from "../../src/middlewares/error.middleware";
+import { clearCacheByPattern } from "../../src/middlewares/cache.middleware";
 
 // Mock dependencies
-jest.mock('../../src/config/database', () => ({
+jest.mock("../../src/config/database", () => ({
   prisma: {
     user: {
       findUnique: jest.fn(),
@@ -26,16 +26,16 @@ jest.mock('../../src/config/database', () => ({
   },
 }));
 
-jest.mock('../../src/middlewares/cache.middleware', () => ({
+jest.mock("../../src/middlewares/cache.middleware", () => ({
   clearCacheByPattern: jest.fn(),
 }));
 
-describe('Ratings Service', () => {
-  const mockUserId = 'user-123';
-  const mockMediaId = 'media-123';
-  const mockRatingId = 'rating-123';
+describe("Ratings Service", () => {
+  const mockUserId = "user-123";
+  const mockMediaId = "media-123";
+  const mockRatingId = "rating-123";
   const mockRating = 8.5;
-  const mockUser = { id: mockUserId, name: 'John Doe' };
+  const mockUser = { id: mockUserId, name: "John Doe" };
   const mockMediaRating = {
     id: mockRatingId,
     userId: mockUserId,
@@ -49,16 +49,16 @@ describe('Ratings Service', () => {
     jest.clearAllMocks();
   });
 
-  describe('createRating', () => {
-    it('should create a new rating and update media statistics', async () => {
+  describe("createRating", () => {
+    it("should create a new rating and update media statistics", async () => {
       // Arrange
       (prisma.media.findUnique as jest.Mock).mockResolvedValue({
         id: mockMediaId,
-        title: 'Test Media',
+        title: "Test Media",
       });
       (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(null);
       (prisma.mediaRating.create as jest.Mock).mockResolvedValue(
-        mockMediaRating
+        mockMediaRating,
       );
       (prisma.mediaRating.findMany as jest.Mock).mockResolvedValue([
         { rating: 8.5 },
@@ -69,7 +69,7 @@ describe('Ratings Service', () => {
       const result = await ratingsService.createRating(
         mockUserId,
         mockMediaId,
-        mockRating
+        mockRating,
       );
 
       // Assert
@@ -104,51 +104,51 @@ describe('Ratings Service', () => {
       });
       expect(clearCacheByPattern).toHaveBeenCalledWith(`media:${mockMediaId}`);
       expect(clearCacheByPattern).toHaveBeenCalledWith(
-        `user:${mockUserId}:/api/ratings`
+        `user:${mockUserId}:/api/ratings`,
       );
       expect(result).toEqual(mockMediaRating);
     });
 
-    it('should throw an error if media does not exist', async () => {
+    it("should throw an error if media does not exist", async () => {
       // Arrange
       (prisma.media.findUnique as jest.Mock).mockResolvedValue(null);
 
       // Act & Assert
       await expect(
-        ratingsService.createRating(mockUserId, mockMediaId, mockRating)
+        ratingsService.createRating(mockUserId, mockMediaId, mockRating),
       ).rejects.toThrow(
-        new AppError('Media not found', 404, 'MEDIA_NOT_FOUND')
+        new AppError("Media not found", 404, "MEDIA_NOT_FOUND"),
       );
     });
 
-    it('should throw an error if user has already rated the media', async () => {
+    it("should throw an error if user has already rated the media", async () => {
       // Arrange
       (prisma.media.findUnique as jest.Mock).mockResolvedValue({
         id: mockMediaId,
-        title: 'Test Media',
+        title: "Test Media",
       });
       (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(
-        mockMediaRating
+        mockMediaRating,
       );
 
       // Act & Assert
       await expect(
-        ratingsService.createRating(mockUserId, mockMediaId, mockRating)
+        ratingsService.createRating(mockUserId, mockMediaId, mockRating),
       ).rejects.toThrow(
         new AppError(
-          'You have already rated this media. Please update your rating instead.',
+          "You have already rated this media. Please update your rating instead.",
           409,
-          'RATING_EXISTS'
-        )
+          "RATING_EXISTS",
+        ),
       );
     });
   });
 
-  describe('updateRating', () => {
-    it('should update an existing rating and update media statistics', async () => {
+  describe("updateRating", () => {
+    it("should update an existing rating and update media statistics", async () => {
       // Arrange
       (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(
-        mockMediaRating
+        mockMediaRating,
       );
       (prisma.mediaRating.update as jest.Mock).mockResolvedValue({
         ...mockMediaRating,
@@ -163,7 +163,7 @@ describe('Ratings Service', () => {
       const result = await ratingsService.updateRating(
         mockRatingId,
         mockUserId,
-        9.0
+        9.0,
       );
 
       // Assert
@@ -187,7 +187,7 @@ describe('Ratings Service', () => {
       });
       expect(clearCacheByPattern).toHaveBeenCalledWith(`media:${mockMediaId}`);
       expect(clearCacheByPattern).toHaveBeenCalledWith(
-        `user:${mockUserId}:/api/ratings`
+        `user:${mockUserId}:/api/ratings`,
       );
       expect(result).toEqual({
         ...mockMediaRating,
@@ -195,42 +195,42 @@ describe('Ratings Service', () => {
       });
     });
 
-    it('should throw an error if rating does not exist', async () => {
+    it("should throw an error if rating does not exist", async () => {
       // Arrange
       (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(null);
 
       // Act & Assert
       await expect(
-        ratingsService.updateRating(mockRatingId, mockUserId, 9.0)
+        ratingsService.updateRating(mockRatingId, mockUserId, 9.0),
       ).rejects.toThrow(
-        new AppError('Rating not found', 404, 'RATING_NOT_FOUND')
+        new AppError("Rating not found", 404, "RATING_NOT_FOUND"),
       );
     });
 
-    it('should throw an error if user does not own the rating', async () => {
+    it("should throw an error if user does not own the rating", async () => {
       // Arrange
       (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue({
         ...mockMediaRating,
-        userId: 'different-user',
+        userId: "different-user",
       });
 
       // Act & Assert
       await expect(
-        ratingsService.updateRating(mockRatingId, mockUserId, 9.0)
+        ratingsService.updateRating(mockRatingId, mockUserId, 9.0),
       ).rejects.toThrow(
         new AppError(
-          'You can only update your own ratings',
+          "You can only update your own ratings",
           403,
-          'UNAUTHORIZED'
-        )
+          "UNAUTHORIZED",
+        ),
       );
     });
 
-    describe('deleteRating', () => {
-      it('should delete a rating and update media statistics', async () => {
+    describe("deleteRating", () => {
+      it("should delete a rating and update media statistics", async () => {
         // Arrange
         (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(
-          mockMediaRating
+          mockMediaRating,
         );
         (prisma.mediaRating.findMany as jest.Mock).mockResolvedValue([
           { rating: 7.0 },
@@ -258,17 +258,17 @@ describe('Ratings Service', () => {
           },
         });
         expect(clearCacheByPattern).toHaveBeenCalledWith(
-          `media:${mockMediaId}`
+          `media:${mockMediaId}`,
         );
         expect(clearCacheByPattern).toHaveBeenCalledWith(
-          `user:${mockUserId}:/api/ratings`
+          `user:${mockUserId}:/api/ratings`,
         );
       });
 
-      it('should set averageRating to 0 when last rating is deleted', async () => {
+      it("should set averageRating to 0 when last rating is deleted", async () => {
         // Arrange
         (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(
-          mockMediaRating
+          mockMediaRating,
         );
         (prisma.mediaRating.findMany as jest.Mock).mockResolvedValue([]);
 
@@ -285,24 +285,24 @@ describe('Ratings Service', () => {
         });
       });
 
-      it('should throw an error if rating does not exist', async () => {
+      it("should throw an error if rating does not exist", async () => {
         // Arrange
         (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(null);
 
         // Act & Assert
         await expect(
-          ratingsService.deleteRating(mockRatingId, mockUserId)
+          ratingsService.deleteRating(mockRatingId, mockUserId),
         ).rejects.toThrow(
-          new AppError('Rating not found', 404, 'RATING_NOT_FOUND')
+          new AppError("Rating not found", 404, "RATING_NOT_FOUND"),
         );
       });
     });
 
-    describe('getRatingById', () => {
-      it('should return a rating by ID', async () => {
+    describe("getRatingById", () => {
+      it("should return a rating by ID", async () => {
         // Arrange
         (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(
-          mockMediaRating
+          mockMediaRating,
         );
 
         // Act
@@ -315,30 +315,30 @@ describe('Ratings Service', () => {
         expect(result).toEqual(mockMediaRating);
       });
 
-      it('should throw an error if rating does not exist', async () => {
+      it("should throw an error if rating does not exist", async () => {
         // Arrange
         (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(null);
 
         // Act & Assert
         await expect(
-          ratingsService.getRatingById(mockRatingId)
+          ratingsService.getRatingById(mockRatingId),
         ).rejects.toThrow(
-          new AppError('Rating not found', 404, 'RATING_NOT_FOUND')
+          new AppError("Rating not found", 404, "RATING_NOT_FOUND"),
         );
       });
     });
 
-    describe('getUserMediaRating', () => {
+    describe("getUserMediaRating", () => {
       it("should return a user's rating for a specific media", async () => {
         // Arrange
         (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(
-          mockMediaRating
+          mockMediaRating,
         );
 
         // Act
         const result = await ratingsService.getUserMediaRating(
           mockUserId,
-          mockMediaId
+          mockMediaId,
         );
 
         // Assert
@@ -353,14 +353,14 @@ describe('Ratings Service', () => {
         expect(result).toEqual(mockMediaRating);
       });
 
-      it('should return null if user has not rated the media', async () => {
+      it("should return null if user has not rated the media", async () => {
         // Arrange
         (prisma.mediaRating.findUnique as jest.Mock).mockResolvedValue(null);
 
         // Act
         const result = await ratingsService.getUserMediaRating(
           mockUserId,
-          mockMediaId
+          mockMediaId,
         );
 
         // Assert
@@ -368,13 +368,13 @@ describe('Ratings Service', () => {
       });
     });
 
-    describe('getMediaRatings', () => {
-      it('should return ratings for a specific media with pagination', async () => {
+    describe("getMediaRatings", () => {
+      it("should return ratings for a specific media with pagination", async () => {
         // Arrange
         const mockRatings = [mockMediaRating];
         const mockTotal = 1;
         (prisma.mediaRating.findMany as jest.Mock).mockResolvedValue(
-          mockRatings
+          mockRatings,
         );
         (prisma.mediaRating.count as jest.Mock).mockResolvedValue(mockTotal);
 
@@ -386,7 +386,7 @@ describe('Ratings Service', () => {
           where: { mediaId: mockMediaId },
           skip: 0,
           take: 10,
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
           include: {
             user: {
               select: {
@@ -400,19 +400,19 @@ describe('Ratings Service', () => {
         expect(prisma.mediaRating.count).toHaveBeenCalledWith({
           where: { mediaId: mockMediaId },
         });
-        expect(result).toHaveProperty('ratings');
-        expect(result).toHaveProperty('pagination');
+        expect(result).toHaveProperty("ratings");
+        expect(result).toHaveProperty("pagination");
         expect(result.ratings).toEqual(mockRatings);
       });
     });
 
-    describe('getUserRatings', () => {
-      it('should return ratings by a specific user with pagination', async () => {
+    describe("getUserRatings", () => {
+      it("should return ratings by a specific user with pagination", async () => {
         // Arrange
         const mockRatings = [mockMediaRating];
         const mockTotal = 1;
         (prisma.mediaRating.findMany as jest.Mock).mockResolvedValue(
-          mockRatings
+          mockRatings,
         );
         (prisma.mediaRating.count as jest.Mock).mockResolvedValue(mockTotal);
         (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
@@ -425,7 +425,7 @@ describe('Ratings Service', () => {
           where: { userId: mockUserId },
           skip: 0,
           take: 10,
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
           include: {
             media: {
               select: {
@@ -441,8 +441,8 @@ describe('Ratings Service', () => {
         expect(prisma.mediaRating.count).toHaveBeenCalledWith({
           where: { userId: mockUserId },
         });
-        expect(result).toHaveProperty('ratings');
-        expect(result).toHaveProperty('pagination');
+        expect(result).toHaveProperty("ratings");
+        expect(result).toHaveProperty("pagination");
         expect(result.ratings).toEqual(mockRatings);
       });
     });

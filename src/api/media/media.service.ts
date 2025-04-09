@@ -1,6 +1,6 @@
 // media.service.ts
-import { prisma } from '../../config/database';
-import { createPagination } from '../../utils/responseFormatter';
+import { prisma } from "../../config/database";
+import { createPagination } from "../../utils/responseFormatter";
 
 interface MediaQueryParams {
   page: number;
@@ -28,7 +28,7 @@ export const getAllMedia = async ({
 
   // Handle search
   const searchFilter = search
-    ? { title: { contains: search, mode: 'insensitive' } }
+    ? { title: { contains: search, mode: "insensitive" } }
     : {};
 
   // Handle genre filter
@@ -110,9 +110,9 @@ export const createMedia = async (mediaData: any) => {
       coverImage,
       backdropImage,
       // Conditional fields based on media type
-      ...(mediaType === 'MOVIE' ? { duration, director } : {}),
-      ...(mediaType === 'GAME' ? { developer, publisher } : {}),
-      ...(mediaType === 'MANGA'
+      ...(mediaType === "MOVIE" ? { duration, director } : {}),
+      ...(mediaType === "GAME" ? { developer, publisher } : {}),
+      ...(mediaType === "MANGA"
         ? { author, artist, volumeCount, isCompleted }
         : {}),
       // Connect genres if provided
@@ -126,7 +126,7 @@ export const createMedia = async (mediaData: any) => {
           }
         : {}),
       // If platforms are provided for games
-      ...(mediaType === 'GAME' && platforms && platforms.length > 0
+      ...(mediaType === "GAME" && platforms && platforms.length > 0
         ? { platforms: { connect: platforms.map((id: string) => ({ id })) } }
         : {}),
     },
@@ -168,9 +168,9 @@ export const updateMedia = async (id: string, mediaData: any) => {
       coverImage,
       backdropImage,
       // Conditional fields based on media type
-      ...(mediaType === 'MOVIE' ? { duration, director } : {}),
-      ...(mediaType === 'GAME' ? { developer, publisher } : {}),
-      ...(mediaType === 'MANGA'
+      ...(mediaType === "MOVIE" ? { duration, director } : {}),
+      ...(mediaType === "GAME" ? { developer, publisher } : {}),
+      ...(mediaType === "MANGA"
         ? { author, artist, volumeCount, isCompleted }
         : {}),
       // Connect genres if provided
@@ -184,7 +184,7 @@ export const updateMedia = async (id: string, mediaData: any) => {
           }
         : {}),
       // If platforms are provided for games
-      ...(mediaType === 'GAME' && platforms && platforms.length > 0
+      ...(mediaType === "GAME" && platforms && platforms.length > 0
         ? { platforms: { connect: platforms.map((id: string) => ({ id })) } }
         : {}),
     },

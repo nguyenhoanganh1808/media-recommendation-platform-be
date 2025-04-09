@@ -50,7 +50,7 @@ export const config = {
   // Rate limiting
   RATE_LIMIT_WINDOW_MS: parseInt(
     process.env.RATE_LIMIT_WINDOW_MS || "900000",
-    10
+    10,
   ), // Default: 15 minutes
   RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX || "100", 10), // Default: 100 requests per window
 
@@ -76,7 +76,7 @@ export const config = {
   // Recommendation engine configuration
   RECOMMENDATION_BATCH_SIZE: parseInt(
     process.env.RECOMMENDATION_BATCH_SIZE || "100",
-    10
+    10,
   ),
   RECOMMENDATION_UPDATE_INTERVAL:
     process.env.RECOMMENDATION_UPDATE_INTERVAL || "0 */6 * * *", // Default: every 6 hours

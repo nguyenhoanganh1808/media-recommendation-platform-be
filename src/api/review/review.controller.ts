@@ -26,7 +26,7 @@ export class ReviewController {
       });
 
       sendSuccess(res, review, "Review created successfully", 201);
-    }
+    },
   );
 
   /**
@@ -49,7 +49,7 @@ export class ReviewController {
         mediaId,
         page,
         limit,
-        includeHidden
+        includeHidden,
       );
 
       const pagination = createPagination(page, limit, total);
@@ -59,9 +59,9 @@ export class ReviewController {
         reviews,
         "Media reviews retrieved successfully",
         200,
-        pagination
+        pagination,
       );
-    }
+    },
   );
 
   /**
@@ -80,7 +80,7 @@ export class ReviewController {
         userId,
         page,
         limit,
-        requestingUserId
+        requestingUserId,
       );
 
       const pagination = createPagination(page, limit, total);
@@ -90,9 +90,9 @@ export class ReviewController {
         reviews,
         "User reviews retrieved successfully",
         200,
-        pagination
+        pagination,
       );
-    }
+    },
   );
 
   /**
@@ -104,7 +104,7 @@ export class ReviewController {
       const review = await reviewService.getReviewById(reviewId);
 
       sendSuccess(res, review, "Review retrieved successfully");
-    }
+    },
   );
 
   /**
@@ -117,7 +117,7 @@ export class ReviewController {
       const review = await reviewService.getUserMediaReview(userId, mediaId);
 
       sendSuccess(res, review, "User media review retrieved successfully");
-    }
+    },
   );
 
   /**
@@ -134,11 +134,11 @@ export class ReviewController {
         reviewId,
         userId,
         { content, isVisible, containsSpoilers },
-        userRole
+        userRole,
       );
 
       sendSuccess(res, updatedReview, "Review updated successfully");
-    }
+    },
   );
 
   /**
@@ -153,7 +153,7 @@ export class ReviewController {
       await reviewService.deleteReview(reviewId, userId, userRole);
 
       sendSuccess(res, null, "Review deleted successfully");
-    }
+    },
   );
 
   /**
@@ -165,7 +165,7 @@ export class ReviewController {
       const updatedReview = await reviewService.likeReview(reviewId);
 
       sendSuccess(res, updatedReview, "Review liked successfully");
-    }
+    },
   );
 
   /**
@@ -177,7 +177,7 @@ export class ReviewController {
       const updatedReview = await reviewService.unlikeReview(reviewId);
 
       sendSuccess(res, updatedReview, "Review liked successfully");
-    }
+    },
   );
 }
 

@@ -1,13 +1,13 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as glob from 'glob';
-import swaggerJsdoc from 'swagger-jsdoc';
-import { config } from '../src/config/env';
-import { logger } from '../src/config/logger';
-import express, { Express } from 'express';
+import * as fs from "fs";
+import * as path from "path";
+import * as glob from "glob";
+import swaggerJsdoc from "swagger-jsdoc";
+import { config } from "../src/config/env";
+import { logger } from "../src/config/logger";
+import express, { Express } from "express";
 
 // Base server URL from environment variables or default
-const BASE_URL = config.SERVER_URL || 'http://localhost:3000';
+const BASE_URL = config.SERVER_URL || "http://localhost:3000";
 
 // Create debug logger
 const debug = (message: string, ...args: any[]) => {
@@ -19,82 +19,82 @@ const debug = (message: string, ...args: any[]) => {
  */
 const manualSchemas = {
   User: {
-    type: 'object',
+    type: "object",
     properties: {
-      id: { type: 'string', format: 'uuid' },
-      email: { type: 'string', format: 'email' },
-      username: { type: 'string' },
+      id: { type: "string", format: "uuid" },
+      email: { type: "string", format: "email" },
+      username: { type: "string" },
       password: {
-        type: 'string',
-        description: 'Password (hashed, never returned in responses)',
+        type: "string",
+        description: "Password (hashed, never returned in responses)",
       },
-      role: { type: 'string', enum: ['USER', 'MODERATOR', 'ADMIN'] },
-      bio: { type: 'string', nullable: true },
-      avatar: { type: 'string', nullable: true },
-      createdAt: { type: 'string', format: 'date-time' },
-      updatedAt: { type: 'string', format: 'date-time' },
+      role: { type: "string", enum: ["USER", "MODERATOR", "ADMIN"] },
+      bio: { type: "string", nullable: true },
+      avatar: { type: "string", nullable: true },
+      createdAt: { type: "string", format: "date-time" },
+      updatedAt: { type: "string", format: "date-time" },
     },
-    required: ['id', 'email', 'username', 'password', 'role'],
+    required: ["id", "email", "username", "password", "role"],
   },
   Media: {
-    type: 'object',
+    type: "object",
     properties: {
-      id: { type: 'string', format: 'uuid' },
-      title: { type: 'string' },
-      description: { type: 'string' },
-      releaseDate: { type: 'string', format: 'date' },
-      mediaType: { type: 'string', enum: ['MOVIE', 'GAME', 'MANGA'] },
+      id: { type: "string", format: "uuid" },
+      title: { type: "string" },
+      description: { type: "string" },
+      releaseDate: { type: "string", format: "date" },
+      mediaType: { type: "string", enum: ["MOVIE", "GAME", "MANGA"] },
       externalIds: {
-        type: 'object',
+        type: "object",
         properties: {
-          tmdb: { type: 'string', nullable: true },
-          igdb: { type: 'string', nullable: true },
-          mal: { type: 'string', nullable: true },
+          tmdb: { type: "string", nullable: true },
+          igdb: { type: "string", nullable: true },
+          mal: { type: "string", nullable: true },
         },
       },
-      createdAt: { type: 'string', format: 'date-time' },
-      updatedAt: { type: 'string', format: 'date-time' },
+      createdAt: { type: "string", format: "date-time" },
+      updatedAt: { type: "string", format: "date-time" },
     },
-    required: ['id', 'title', 'mediaType'],
+    required: ["id", "title", "mediaType"],
   },
   Rating: {
-    type: 'object',
+    type: "object",
     properties: {
-      id: { type: 'string', format: 'uuid' },
-      userId: { type: 'string', format: 'uuid' },
-      mediaId: { type: 'string', format: 'uuid' },
-      score: { type: 'integer', minimum: 1, maximum: 10 },
-      review: { type: 'string', nullable: true },
-      likes: { type: 'integer', default: 0 },
-      isPublic: { type: 'boolean', default: true },
-      createdAt: { type: 'string', format: 'date-time' },
-      updatedAt: { type: 'string', format: 'date-time' },
+      id: { type: "string", format: "uuid" },
+      userId: { type: "string", format: "uuid" },
+      mediaId: { type: "string", format: "uuid" },
+      score: { type: "integer", minimum: 1, maximum: 10 },
+      review: { type: "string", nullable: true },
+      likes: { type: "integer", default: 0 },
+      isPublic: { type: "boolean", default: true },
+      createdAt: { type: "string", format: "date-time" },
+      updatedAt: { type: "string", format: "date-time" },
     },
-    required: ['id', 'userId', 'mediaId', 'score'],
+    required: ["id", "userId", "mediaId", "score"],
   },
   MediaList: {
-    type: 'object',
+    type: "object",
     properties: {
-      id: { type: 'string', format: 'uuid' },
-      userId: { type: 'string', format: 'uuid' },
-      name: { type: 'string' },
-      description: { type: 'string', nullable: true },
-      isPublic: { type: 'boolean', default: true },
+      id: { type: "string", format: "uuid" },
+      userId: { type: "string", format: "uuid" },
+      name: { type: "string" },
+      description: { type: "string", nullable: true },
+      isPublic: { type: "boolean", default: true },
       items: {
-        type: 'array',
+        type: "array",
         items: {
-          type: 'object',
+          type: "object",
           properties: {
-            mediaId: { type: 'string', format: 'uuid' },
-            notes: { type: 'string', nullable: true },
-            order: { type: 'integer' },
+            mediaId: { type: "string", format: "uuid" },
+            notes: { type: "string", nullable: true },
+            order: { type: "integer" },
           },
         },
       },
-      createdAt: { type: 'string', format: 'date-time' },
-      updatedAt: { type: 'string', format: 'date-time' },
+      createdAt: { type: "string", format: "date-time" },
+      updatedAt: { type: "string", format: "date-time" },
     },
-    required: ['id', 'userId', 'name'],
+    required: ["id", "userId", "name"],
   },
 };
 
@@ -104,19 +104,19 @@ const manualSchemas = {
 const manualRoutes = {
   auth: [
     {
-      path: '/api/auth/register',
-      method: 'post',
-      summary: 'Register a new user',
+      path: "/api/auth/register",
+      method: "post",
+      summary: "Register a new user",
       requestBody: {
         content: {
-          'application/json': {
+          "application/json": {
             schema: {
-              type: 'object',
-              required: ['email', 'username', 'password'],
+              type: "object",
+              required: ["email", "username", "password"],
               properties: {
-                email: { type: 'string', format: 'email' },
-                username: { type: 'string', minLength: 3 },
-                password: { type: 'string', minLength: 8 },
+                email: { type: "string", format: "email" },
+                username: { type: "string", minLength: 3 },
+                password: { type: "string", minLength: 8 },
               },
             },
           },
@@ -124,36 +124,36 @@ const manualRoutes = {
       },
       responses: {
         201: {
-          description: 'User registered successfully',
+          description: "User registered successfully",
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
-                  user: { $ref: '#/components/schemas/User' },
-                  token: { type: 'string' },
-                  refreshToken: { type: 'string' },
+                  user: { $ref: "#/components/schemas/User" },
+                  token: { type: "string" },
+                  refreshToken: { type: "string" },
                 },
               },
             },
           },
         },
-        400: { $ref: '#/components/responses/ValidationError' },
+        400: { $ref: "#/components/responses/ValidationError" },
       },
     },
     {
-      path: '/api/auth/login',
-      method: 'post',
-      summary: 'User login',
+      path: "/api/auth/login",
+      method: "post",
+      summary: "User login",
       requestBody: {
         content: {
-          'application/json': {
+          "application/json": {
             schema: {
-              type: 'object',
-              required: ['email', 'password'],
+              type: "object",
+              required: ["email", "password"],
               properties: {
-                email: { type: 'string', format: 'email' },
-                password: { type: 'string' },
+                email: { type: "string", format: "email" },
+                password: { type: "string" },
               },
             },
           },
@@ -161,35 +161,35 @@ const manualRoutes = {
       },
       responses: {
         200: {
-          description: 'Login successful',
+          description: "Login successful",
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
-                  user: { $ref: '#/components/schemas/User' },
-                  token: { type: 'string' },
-                  refreshToken: { type: 'string' },
+                  user: { $ref: "#/components/schemas/User" },
+                  token: { type: "string" },
+                  refreshToken: { type: "string" },
                 },
               },
             },
           },
         },
-        401: { $ref: '#/components/responses/UnauthorizedError' },
+        401: { $ref: "#/components/responses/UnauthorizedError" },
       },
     },
     {
-      path: '/api/auth/refresh',
-      method: 'post',
-      summary: 'Refresh access token',
+      path: "/api/auth/refresh",
+      method: "post",
+      summary: "Refresh access token",
       requestBody: {
         content: {
-          'application/json': {
+          "application/json": {
             schema: {
-              type: 'object',
-              required: ['refreshToken'],
+              type: "object",
+              required: ["refreshToken"],
               properties: {
-                refreshToken: { type: 'string' },
+                refreshToken: { type: "string" },
               },
             },
           },
@@ -197,86 +197,86 @@ const manualRoutes = {
       },
       responses: {
         200: {
-          description: 'Token refreshed successfully',
+          description: "Token refreshed successfully",
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
-                  token: { type: 'string' },
+                  token: { type: "string" },
                 },
               },
             },
           },
         },
-        401: { $ref: '#/components/responses/UnauthorizedError' },
+        401: { $ref: "#/components/responses/UnauthorizedError" },
       },
     },
     {
-      path: '/api/auth/logout',
-      method: 'post',
-      summary: 'User logout',
+      path: "/api/auth/logout",
+      method: "post",
+      summary: "User logout",
       security: [{ bearerAuth: [] }],
       responses: {
         200: {
-          description: 'Logout successful',
+          description: "Logout successful",
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
                   message: {
-                    type: 'string',
-                    example: 'Logged out successfully',
+                    type: "string",
+                    example: "Logged out successfully",
                   },
                 },
               },
             },
           },
         },
-        401: { $ref: '#/components/responses/UnauthorizedError' },
+        401: { $ref: "#/components/responses/UnauthorizedError" },
       },
     },
   ],
   users: [
     {
-      path: '/api/users',
-      method: 'get',
-      summary: 'Get a list of users',
+      path: "/api/users",
+      method: "get",
+      summary: "Get a list of users",
       security: [{ bearerAuth: [] }],
       parameters: [
         {
-          in: 'query',
-          name: 'page',
-          schema: { type: 'integer', default: 1 },
-          description: 'Page number',
+          in: "query",
+          name: "page",
+          schema: { type: "integer", default: 1 },
+          description: "Page number",
         },
         {
-          in: 'query',
-          name: 'limit',
-          schema: { type: 'integer', default: 10 },
-          description: 'Number of items per page',
+          in: "query",
+          name: "limit",
+          schema: { type: "integer", default: 10 },
+          description: "Number of items per page",
         },
       ],
       responses: {
         200: {
-          description: 'List of users',
+          description: "List of users",
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
                   users: {
-                    type: 'array',
-                    items: { $ref: '#/components/schemas/User' },
+                    type: "array",
+                    items: { $ref: "#/components/schemas/User" },
                   },
                   pagination: {
-                    type: 'object',
+                    type: "object",
                     properties: {
-                      total: { type: 'integer' },
-                      pages: { type: 'integer' },
-                      page: { type: 'integer' },
-                      limit: { type: 'integer' },
+                      total: { type: "integer" },
+                      pages: { type: "integer" },
+                      page: { type: "integer" },
+                      limit: { type: "integer" },
                     },
                   },
                 },
@@ -284,80 +284,80 @@ const manualRoutes = {
             },
           },
         },
-        401: { $ref: '#/components/responses/UnauthorizedError' },
+        401: { $ref: "#/components/responses/UnauthorizedError" },
       },
     },
     {
-      path: '/api/users/{id}',
-      method: 'get',
-      summary: 'Get user by ID',
+      path: "/api/users/{id}",
+      method: "get",
+      summary: "Get user by ID",
       security: [{ bearerAuth: [] }],
       parameters: [
         {
-          in: 'path',
-          name: 'id',
-          schema: { type: 'string', format: 'uuid' },
+          in: "path",
+          name: "id",
+          schema: { type: "string", format: "uuid" },
           required: true,
-          description: 'User ID',
+          description: "User ID",
         },
       ],
       responses: {
         200: {
-          description: 'User details',
+          description: "User details",
           content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/User' },
+            "application/json": {
+              schema: { $ref: "#/components/schemas/User" },
             },
           },
         },
-        404: { $ref: '#/components/responses/NotFoundError' },
+        404: { $ref: "#/components/responses/NotFoundError" },
       },
     },
   ],
   media: [
     {
-      path: '/api/media',
-      method: 'get',
-      summary: 'Get a list of media',
+      path: "/api/media",
+      method: "get",
+      summary: "Get a list of media",
       parameters: [
         {
-          in: 'query',
-          name: 'type',
-          schema: { type: 'string', enum: ['MOVIE', 'GAME', 'MANGA'] },
-          description: 'Media type filter',
+          in: "query",
+          name: "type",
+          schema: { type: "string", enum: ["MOVIE", "GAME", "MANGA"] },
+          description: "Media type filter",
         },
         {
-          in: 'query',
-          name: 'page',
-          schema: { type: 'integer', default: 1 },
-          description: 'Page number',
+          in: "query",
+          name: "page",
+          schema: { type: "integer", default: 1 },
+          description: "Page number",
         },
         {
-          in: 'query',
-          name: 'limit',
-          schema: { type: 'integer', default: 10 },
-          description: 'Number of items per page',
+          in: "query",
+          name: "limit",
+          schema: { type: "integer", default: 10 },
+          description: "Number of items per page",
         },
       ],
       responses: {
         200: {
-          description: 'List of media',
+          description: "List of media",
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
                   media: {
-                    type: 'array',
-                    items: { $ref: '#/components/schemas/Media' },
+                    type: "array",
+                    items: { $ref: "#/components/schemas/Media" },
                   },
                   pagination: {
-                    type: 'object',
+                    type: "object",
                     properties: {
-                      total: { type: 'integer' },
-                      pages: { type: 'integer' },
-                      page: { type: 'integer' },
-                      limit: { type: 'integer' },
+                      total: { type: "integer" },
+                      pages: { type: "integer" },
+                      page: { type: "integer" },
+                      limit: { type: "integer" },
                     },
                   },
                 },
@@ -402,51 +402,51 @@ function generatePathsFromManualRoutes() {
  */
 const options: swaggerJsdoc.Options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'Media Tracking and Recommendation API',
-      version: '1.0.0',
+      title: "Media Tracking and Recommendation API",
+      version: "1.0.0",
       description:
-        'API for discovering, rating, and getting recommendations for Movies, Games, and Manga',
+        "API for discovering, rating, and getting recommendations for Movies, Games, and Manga",
       license: {
-        name: 'MIT',
-        url: 'https://opensource.org/licenses/MIT',
+        name: "MIT",
+        url: "https://opensource.org/licenses/MIT",
       },
       contact: {
-        name: 'API Support',
-        email: 'support@mediarecapi.com',
+        name: "API Support",
+        email: "support@mediarecapi.com",
       },
     },
     servers: [
       {
         url: BASE_URL,
-        description: 'Development server',
+        description: "Development server",
       },
     ],
     components: {
       schemas: manualSchemas,
       securitySchemes: {
         bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
         },
       },
       responses: {
         UnauthorizedError: {
-          description: 'Access token is missing or invalid',
+          description: "Access token is missing or invalid",
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
                   status: {
-                    type: 'string',
-                    example: 'error',
+                    type: "string",
+                    example: "error",
                   },
                   message: {
-                    type: 'string',
-                    example: 'Unauthorized',
+                    type: "string",
+                    example: "Unauthorized",
                   },
                 },
               },
@@ -454,19 +454,19 @@ const options: swaggerJsdoc.Options = {
           },
         },
         NotFoundError: {
-          description: 'Resource not found',
+          description: "Resource not found",
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
                   status: {
-                    type: 'string',
-                    example: 'error',
+                    type: "string",
+                    example: "error",
                   },
                   message: {
-                    type: 'string',
-                    example: 'Resource not found',
+                    type: "string",
+                    example: "Resource not found",
                   },
                 },
               },
@@ -474,30 +474,30 @@ const options: swaggerJsdoc.Options = {
           },
         },
         ValidationError: {
-          description: 'Validation error',
+          description: "Validation error",
           content: {
-            'application/json': {
+            "application/json": {
               schema: {
-                type: 'object',
+                type: "object",
                 properties: {
                   status: {
-                    type: 'string',
-                    example: 'error',
+                    type: "string",
+                    example: "error",
                   },
                   message: {
-                    type: 'string',
-                    example: 'Validation error',
+                    type: "string",
+                    example: "Validation error",
                   },
                   errors: {
-                    type: 'array',
+                    type: "array",
                     items: {
-                      type: 'object',
+                      type: "object",
                       properties: {
                         field: {
-                          type: 'string',
+                          type: "string",
                         },
                         message: {
-                          type: 'string',
+                          type: "string",
                         },
                       },
                     },
@@ -510,13 +510,13 @@ const options: swaggerJsdoc.Options = {
       },
     },
     tags: [
-      { name: 'Auth', description: 'Authentication endpoints' },
-      { name: 'Users', description: 'User management endpoints' },
-      { name: 'Media', description: 'Media endpoints (movies, games, manga)' },
-      { name: 'Ratings', description: 'Rating and review endpoints' },
-      { name: 'Lists', description: 'Custom media lists endpoints' },
-      { name: 'Recommendations', description: 'Recommendation endpoints' },
-      { name: 'Notifications', description: 'Notification endpoints' },
+      { name: "Auth", description: "Authentication endpoints" },
+      { name: "Users", description: "User management endpoints" },
+      { name: "Media", description: "Media endpoints (movies, games, manga)" },
+      { name: "Ratings", description: "Rating and review endpoints" },
+      { name: "Lists", description: "Custom media lists endpoints" },
+      { name: "Recommendations", description: "Recommendation endpoints" },
+      { name: "Notifications", description: "Notification endpoints" },
     ],
     security: [
       {
@@ -527,9 +527,9 @@ const options: swaggerJsdoc.Options = {
   },
   // Path to the API docs
   apis: [
-    './src/api/**/*.routes.ts',
-    './src/api/**/*.controller.ts',
-    './src/types/**/*.ts',
+    "./src/api/**/*.routes.ts",
+    "./src/api/**/*.controller.ts",
+    "./src/types/**/*.ts",
   ],
 };
 
@@ -539,29 +539,29 @@ const options: swaggerJsdoc.Options = {
  */
 async function generateSwagger() {
   try {
-    debug('Starting Swagger documentation generation...');
+    debug("Starting Swagger documentation generation...");
 
     // Find and log available files to debug path issues
-    debug('Scanning for route files...');
-    const routeFiles = glob.sync('./src/api/**/*.routes.ts');
+    debug("Scanning for route files...");
+    const routeFiles = glob.sync("./src/api/**/*.routes.ts");
     debug(`Found ${routeFiles.length} route files:`, routeFiles);
 
-    const controllerFiles = glob.sync('./src/api/**/*.controller.ts');
+    const controllerFiles = glob.sync("./src/api/**/*.controller.ts");
     debug(`Found ${controllerFiles.length} controller files:`, controllerFiles);
 
     // Generate Swagger specification
-    debug('Generating Swagger specification...');
+    debug("Generating Swagger specification...");
     const swaggerSpec: any = swaggerJsdoc(options);
 
     // Add statistics to debug output
     const pathCount = Object.keys(swaggerSpec.paths).length;
     const schemaCount = Object.keys(swaggerSpec.components.schemas).length;
     debug(
-      `Generated documentation with ${pathCount} paths and ${schemaCount} schemas`
+      `Generated documentation with ${pathCount} paths and ${schemaCount} schemas`,
     );
 
     // Create output directory if it doesn't exist
-    const outputDir = path.resolve(process.cwd(), './src/public/docs');
+    const outputDir = path.resolve(process.cwd(), "./src/public/docs");
     debug(`Creating output directory: ${outputDir}`);
 
     if (!fs.existsSync(outputDir)) {
@@ -569,9 +569,9 @@ async function generateSwagger() {
     }
 
     // Write swagger.json file
-    const outputPath = path.join(outputDir, 'swagger.json');
+    const outputPath = path.join(outputDir, "swagger.json");
     debug(`Writing Swagger specification to: ${outputPath}`);
-    fs.writeFileSync(outputPath, JSON.stringify(swaggerSpec, null, 2), 'utf8');
+    fs.writeFileSync(outputPath, JSON.stringify(swaggerSpec, null, 2), "utf8");
 
     console.log(`Swagger documentation generated: ${outputPath}`);
 
@@ -580,7 +580,7 @@ async function generateSwagger() {
 
     return swaggerSpec;
   } catch (error) {
-    console.error('Error generating Swagger documentation:', error);
+    console.error("Error generating Swagger documentation:", error);
     process.exit(1);
   }
 }
@@ -589,7 +589,7 @@ async function generateSwagger() {
  * Create a basic HTML page that loads Swagger UI
  */
 function generateSwaggerUI(swaggerSpec: any, outputDir: string) {
-  const htmlPath = path.join(outputDir, 'index.html');
+  const htmlPath = path.join(outputDir, "index.html");
   debug(`Generating Swagger UI at: ${htmlPath}`);
 
   const html = `
@@ -631,7 +631,7 @@ function generateSwaggerUI(swaggerSpec: any, outputDir: string) {
 </html>
   `;
 
-  fs.writeFileSync(htmlPath, html, 'utf8');
+  fs.writeFileSync(htmlPath, html, "utf8");
   console.log(`Swagger UI generated: ${htmlPath}`);
 }
 
@@ -640,44 +640,44 @@ function generateSwaggerUI(swaggerSpec: any, outputDir: string) {
  * This can be imported and used in your app.ts file
  */
 export function setupSwaggerRoutes(app: Express) {
-  const docsPath = path.resolve(process.cwd(), './src/public/docs');
+  const docsPath = path.resolve(process.cwd(), "./src/public/docs");
 
   // Serve Swagger UI static files
   app.use(
-    '/docs',
+    "/docs",
     (req: any, res: any, next: any) => {
       // Log access for debugging
       console.log(`Swagger docs accessed: ${req.path}`);
       next();
     },
-    express.static(docsPath)
+    express.static(docsPath),
   );
 
-  console.log('Swagger routes set up at /docs');
+  console.log("Swagger routes set up at /docs");
 }
 
 /**
  * Main function to execute the Swagger generation process
  */
 async function main() {
-  console.log('Starting Swagger documentation generation...');
+  console.log("Starting Swagger documentation generation...");
 
   // Generate the Swagger specification
   await generateSwagger();
 
-  console.log('Swagger documentation generation complete!');
+  console.log("Swagger documentation generation complete!");
   console.log(
-    'You can access the documentation at: http://localhost:3000/docs'
+    "You can access the documentation at: http://localhost:3000/docs",
   );
   console.log(
-    'Important: Make sure to add the setupSwaggerRoutes function to your app.ts file.'
+    "Important: Make sure to add the setupSwaggerRoutes function to your app.ts file.",
   );
 }
 
 // Execute the main function when script is run directly
 if (require.main === module) {
   main().catch((error) => {
-    console.error('Error:', error);
+    console.error("Error:", error);
     process.exit(1);
   });
 }

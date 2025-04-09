@@ -75,7 +75,7 @@ describe("RecommendationJob", () => {
 
       // Assertions
       expect(logger.info).toHaveBeenCalledWith(
-        `Found ${mockUsers.length} active users for recommendation processing`
+        `Found ${mockUsers.length} active users for recommendation processing`,
       );
 
       // Check batch processing
@@ -87,17 +87,17 @@ describe("RecommendationJob", () => {
     it("should handle errors during recommendation generation", async () => {
       // Simulate an error
       (mockPrisma.user.findMany as jest.Mock).mockRejectedValue(
-        new Error("Database error")
+        new Error("Database error"),
       );
 
       // Expect the error to be thrown and logged
       await expect(
-        recommendationJob.generateRecommendationsForAllUsers()
+        recommendationJob.generateRecommendationsForAllUsers(),
       ).rejects.toThrow("Database error");
 
       expect(logger.error).toHaveBeenCalledWith(
         "Error generating recommendations:",
-        expect.any(Error)
+        expect.any(Error),
       );
     });
   });

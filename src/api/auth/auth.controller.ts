@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { sendSuccess, sendError } from '../../utils/responseFormatter';
-import authService from './auth.service';
-import asyncHandler from '../../utils/asyncHandler';
-import { AppError } from '../../middlewares/error.middleware';
+import { Request, Response } from "express";
+import { sendSuccess, sendError } from "../../utils/responseFormatter";
+import authService from "./auth.service";
+import asyncHandler from "../../utils/asyncHandler";
+import { AppError } from "../../middlewares/error.middleware";
 
 /**
  * Register a new user
@@ -36,8 +36,8 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       accessToken,
       refreshToken,
     },
-    'User registered successfully',
-    201
+    "User registered successfully",
+    201,
   );
 });
 
@@ -64,7 +64,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       accessToken,
       refreshToken,
     },
-    'Login successful'
+    "Login successful",
   );
 });
 
@@ -73,12 +73,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
  */
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) {
-    throw new AppError('User not authenticated', 401);
+    throw new AppError("User not authenticated", 401);
   }
 
   await authService.logout(req.user.id, req.body.refreshToken);
 
-  sendSuccess(res, null, 'Logout successful');
+  sendSuccess(res, null, "Logout successful");
 });
 
 /**
@@ -87,14 +87,14 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
 export const refreshToken = asyncHandler(
   async (req: Request, res: Response) => {
     if (!req.user) {
-      throw new AppError('User not authenticated', 401);
+      throw new AppError("User not authenticated", 401);
     }
 
     const { refreshToken } = req.body;
 
     const { accessToken, newRefreshToken } = await authService.refreshAuth(
       req.user.id,
-      refreshToken
+      refreshToken,
     );
 
     sendSuccess(
@@ -103,9 +103,9 @@ export const refreshToken = asyncHandler(
         accessToken,
         refreshToken: newRefreshToken,
       },
-      'Token refreshed successfully'
+      "Token refreshed successfully",
     );
-  }
+  },
 );
 
 /**
@@ -113,13 +113,13 @@ export const refreshToken = asyncHandler(
  */
 export const getProfile = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) {
-    throw new AppError('User not authenticated', 401);
+    throw new AppError("User not authenticated", 401);
   }
 
   const user = await authService.getUserById(req.user.id);
 
   if (!user) {
-    throw new AppError('User not found', 404);
+    throw new AppError("User not found", 404);
   }
 
   sendSuccess(
@@ -135,7 +135,7 @@ export const getProfile = asyncHandler(async (req: Request, res: Response) => {
       role: user.role,
       createdAt: user.createdAt,
     },
-    'User profile retrieved successfully'
+    "User profile retrieved successfully",
   );
 });
 
@@ -145,15 +145,15 @@ export const getProfile = asyncHandler(async (req: Request, res: Response) => {
 export const changePassword = asyncHandler(
   async (req: Request, res: Response) => {
     if (!req.user) {
-      throw new AppError('User not authenticated', 401);
+      throw new AppError("User not authenticated", 401);
     }
 
     const { currentPassword, newPassword } = req.body;
 
     await authService.changePassword(req.user.id, currentPassword, newPassword);
 
-    sendSuccess(res, null, 'Password changed successfully');
-  }
+    sendSuccess(res, null, "Password changed successfully");
+  },
 );
 
 export default {

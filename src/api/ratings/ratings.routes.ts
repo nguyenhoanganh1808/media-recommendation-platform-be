@@ -69,7 +69,7 @@ router.use(authenticate);
 router.post(
   "/",
   validate(createRatingValidation),
-  ratingsController.createRating
+  ratingsController.createRating,
 );
 
 /**
@@ -114,7 +114,7 @@ router.get(
   "/me",
   validate(userRatingsQueryValidation),
   userCacheMiddleware({ ttl: 300 }),
-  ratingsController.getUserRatings
+  ratingsController.getUserRatings,
 );
 
 /**
@@ -169,7 +169,7 @@ router.get(
   validate(userRatingsQueryValidation),
   validate(getUserRatingsValidation),
   userCacheMiddleware({ ttl: 300 }),
-  ratingsController.getUserRatings
+  ratingsController.getUserRatings,
 );
 
 /**
@@ -223,7 +223,7 @@ router.get(
   "/media/:mediaId",
   validate(getMediaRatingsValidation),
   userCacheMiddleware({ ttl: 300 }),
-  ratingsController.getMediaRatings
+  ratingsController.getMediaRatings,
 );
 
 /**
@@ -258,7 +258,7 @@ router.get(
   "/:id",
   validate(getRatingValidation),
   userCacheMiddleware({ ttl: 300 }),
-  ratingsController.getRating
+  ratingsController.getRating,
 );
 
 /**
@@ -293,7 +293,7 @@ router.get(
   "/user/media/:mediaId",
   validate(getUserMediaRatingValidation),
   userCacheMiddleware({ ttl: 300 }),
-  ratingsController.getUserMediaRating
+  ratingsController.getUserMediaRating,
 );
 
 /**
@@ -345,7 +345,7 @@ router.get(
 router.put(
   "/:id",
   validate(updateRatingValidation),
-  ratingsController.updateRating
+  ratingsController.updateRating,
 );
 
 /**
@@ -378,7 +378,7 @@ router.delete(
   "/:id",
   validate(deleteRatingValidation),
   checkOwnership("mediaRating", "id"),
-  ratingsController.deleteRating
+  ratingsController.deleteRating,
 );
 
 /**
@@ -411,7 +411,7 @@ router.delete(
   "/admin/:id",
   validate(deleteRatingValidation),
   restrictTo(Role.ADMIN, Role.MODERATOR),
-  ratingsController.deleteRating
+  ratingsController.deleteRating,
 );
 
 export default router;

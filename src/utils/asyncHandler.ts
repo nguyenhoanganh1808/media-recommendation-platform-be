@@ -8,7 +8,7 @@ import { Request, Response, NextFunction } from "express";
  * @returns A function that handles the async controller and catches any errors
  */
 export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);

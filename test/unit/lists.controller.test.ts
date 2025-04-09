@@ -1,17 +1,17 @@
-import { NextFunction, Request, Response } from 'express';
-import * as listController from '../../src/api/lists/lists.controller';
-import * as listService from '../../src/api/lists/lists.service';
-import { sendSuccess } from '../../src/utils/responseFormatter';
-import { AppError } from '../../src/middlewares/error.middleware';
-import { prisma } from '../../src/config/database';
+import { NextFunction, Request, Response } from "express";
+import * as listController from "../../src/api/lists/lists.controller";
+import * as listService from "../../src/api/lists/lists.service";
+import { sendSuccess } from "../../src/utils/responseFormatter";
+import { AppError } from "../../src/middlewares/error.middleware";
+import { prisma } from "../../src/config/database";
 
 // Mock dependencies
-jest.mock('../../src/api/lists/lists.service');
-jest.mock('../../src/utils/responseFormatter');
-jest.mock('../../src/middlewares/error.middleware');
-jest.mock('../../src/config/database');
+jest.mock("../../src/api/lists/lists.service");
+jest.mock("../../src/utils/responseFormatter");
+jest.mock("../../src/middlewares/error.middleware");
+jest.mock("../../src/config/database");
 
-describe('Lists Controller Unit Tests', () => {
+describe("Lists Controller Unit Tests", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockNext: jest.Mock;
@@ -22,10 +22,10 @@ describe('Lists Controller Unit Tests', () => {
   beforeEach(() => {
     mockRequest = {
       user: {
-        id: 'user-123',
-        role: 'USER',
-        email: 'Bx4iA@example.com',
-        username: 'testuser',
+        id: "user-123",
+        role: "USER",
+        email: "Bx4iA@example.com",
+        username: "testuser",
         isActive: true,
       },
       params: {},
@@ -40,10 +40,10 @@ describe('Lists Controller Unit Tests', () => {
     jest.clearAllMocks();
   });
 
-  describe('getUserLists', () => {
-    it('should get lists for authenticated user with default pagination', async () => {
+  describe("getUserLists", () => {
+    it("should get lists for authenticated user with default pagination", async () => {
       // Arrange
-      const mockLists = [{ id: 'list-1', name: 'My List' }];
+      const mockLists = [{ id: "list-1", name: "My List" }];
       const mockPagination = { page: 1, totalPages: 1 };
       mockListService.getListByUser.mockResolvedValue([
         mockLists,
@@ -54,29 +54,29 @@ describe('Lists Controller Unit Tests', () => {
       await listController.getUserLists(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext as NextFunction
+        mockNext as NextFunction,
       );
 
       // Assert
       expect(mockListService.getListByUser).toHaveBeenCalledWith(
-        'user-123',
+        "user-123",
         1,
         0,
-        10
+        10,
       );
       expect(mockSendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockLists,
-        'Lists retrieved successfully',
+        "Lists retrieved successfully",
         200,
-        mockPagination
+        mockPagination,
       );
     });
 
-    it('should use custom pagination when provided', async () => {
+    it("should use custom pagination when provided", async () => {
       // Arrange
-      mockRequest.query = { page: '2', limit: '5' };
-      const mockLists = [{ id: 'list-1', name: 'My List' }];
+      mockRequest.query = { page: "2", limit: "5" };
+      const mockLists = [{ id: "list-1", name: "My List" }];
       const mockPagination = { page: 2, totalPages: 3 };
       mockListService.getListByUser.mockResolvedValue([
         mockLists,
@@ -87,36 +87,36 @@ describe('Lists Controller Unit Tests', () => {
       await listController.getUserLists(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext as NextFunction
+        mockNext as NextFunction,
       );
 
       // Assert
       expect(mockListService.getListByUser).toHaveBeenCalledWith(
-        'user-123',
+        "user-123",
         2,
         5,
-        5
+        5,
       );
       expect(mockSendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockLists,
-        'Lists retrieved successfully',
+        "Lists retrieved successfully",
         200,
-        mockPagination
+        mockPagination,
       );
     });
   });
 
-  describe('getListById', () => {
-    it('should get a specific list by ID', async () => {
+  describe("getListById", () => {
+    it("should get a specific list by ID", async () => {
       // Arrange
-      mockRequest.params = { id: 'list-123' };
+      mockRequest.params = { id: "list-123" };
 
       const mockList = {
-        id: 'list-123',
-        name: 'Test List',
-        userId: 'user-123',
-        description: 'A test list',
+        id: "list-123",
+        name: "Test List",
+        userId: "user-123",
+        description: "A test list",
         isPublic: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -127,36 +127,36 @@ describe('Lists Controller Unit Tests', () => {
       await listController.getListById(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext as NextFunction
+        mockNext as NextFunction,
       );
 
       // Assert
       expect(mockListService.getListById).toHaveBeenCalledWith(
-        'list-123',
-        'user-123'
+        "list-123",
+        "user-123",
       );
       expect(mockSendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockList,
-        'List retrieved successfully'
+        "List retrieved successfully",
       );
     });
   });
 
-  describe('createList', () => {
-    it('should create a new list with provided data', async () => {
+  describe("createList", () => {
+    it("should create a new list with provided data", async () => {
       // Arrange
       mockRequest.body = {
-        name: 'New List',
-        description: 'Description',
+        name: "New List",
+        description: "Description",
         isPublic: true,
       };
       const mockNewList = {
-        id: 'list-new',
-        name: 'New List',
-        description: 'Description',
+        id: "list-new",
+        name: "New List",
+        description: "Description",
         isPublic: true,
-        userId: 'user-123',
+        userId: "user-123",
 
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -167,40 +167,40 @@ describe('Lists Controller Unit Tests', () => {
       await listController.createList(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext as NextFunction
+        mockNext as NextFunction,
       );
 
       // Assert
       expect(mockListService.createList).toHaveBeenCalledWith(
-        'user-123',
-        'New List',
-        'Description',
-        true
+        "user-123",
+        "New List",
+        "Description",
+        true,
       );
       expect(mockSendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockNewList,
-        'List created successfully',
-        201
+        "List created successfully",
+        201,
       );
     });
   });
 
-  describe('updateList', () => {
-    it('should update a list with provided data', async () => {
+  describe("updateList", () => {
+    it("should update a list with provided data", async () => {
       // Arrange
-      mockRequest.params = { id: 'list-123' };
+      mockRequest.params = { id: "list-123" };
       mockRequest.body = {
-        name: 'Updated List',
-        description: 'New description',
+        name: "Updated List",
+        description: "New description",
         isPublic: false,
       };
       const mockUpdatedList = {
-        id: 'list-123',
-        name: 'Updated List',
-        description: 'New description',
+        id: "list-123",
+        name: "Updated List",
+        description: "New description",
         isPublic: false,
-        userId: 'user-123', // <-- Required field
+        userId: "user-123", // <-- Required field
 
         createdAt: new Date(), // <-- Required field
         updatedAt: new Date(), // <-- Required field
@@ -211,33 +211,33 @@ describe('Lists Controller Unit Tests', () => {
       await listController.updateList(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext as NextFunction
+        mockNext as NextFunction,
       );
 
       // Assert
-      expect(mockListService.updateList).toHaveBeenCalledWith('list-123', {
-        name: 'Updated List',
-        description: 'New description',
+      expect(mockListService.updateList).toHaveBeenCalledWith("list-123", {
+        name: "Updated List",
+        description: "New description",
         isPublic: false,
       });
       expect(mockSendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockUpdatedList,
-        'List updated successfully'
+        "List updated successfully",
       );
     });
   });
 
-  describe('addItemToList', () => {
-    it('should add an item to a list', async () => {
+  describe("addItemToList", () => {
+    it("should add an item to a list", async () => {
       // Arrange
-      mockRequest.params = { listId: 'list-123' };
-      mockRequest.body = { mediaId: 'media-456', notes: 'Great movie' };
+      mockRequest.params = { listId: "list-123" };
+      mockRequest.body = { mediaId: "media-456", notes: "Great movie" };
       const mockListItem = {
-        id: 'item-1',
-        listId: 'list-123',
-        mediaId: 'media-456',
-        notes: 'Great movie',
+        id: "item-1",
+        listId: "list-123",
+        mediaId: "media-456",
+        notes: "Great movie",
         createdAt: new Date(),
         updatedAt: new Date(),
         order: 1,
@@ -248,37 +248,37 @@ describe('Lists Controller Unit Tests', () => {
       await listController.addItemToList(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext as NextFunction
+        mockNext as NextFunction,
       );
 
       // Assert
       expect(mockListService.addItemToList).toHaveBeenCalledWith(
-        'list-123',
-        'media-456',
-        'Great movie'
+        "list-123",
+        "media-456",
+        "Great movie",
       );
       expect(mockSendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockListItem,
-        'Item added to list successfully',
-        201
+        "Item added to list successfully",
+        201,
       );
     });
   });
 
-  describe('updateListItem', () => {
-    it('should update a list item', async () => {
+  describe("updateListItem", () => {
+    it("should update a list item", async () => {
       // Arrange
-      mockRequest.params = { itemId: 'item-123' };
-      mockRequest.body = { notes: 'Updated notes' };
+      mockRequest.params = { itemId: "item-123" };
+      mockRequest.body = { notes: "Updated notes" };
       const mockUpdatedItem = {
-        id: 'item-123',
-        notes: 'Updated notes',
+        id: "item-123",
+        notes: "Updated notes",
         createdAt: new Date(),
         updatedAt: new Date(),
-        media: { title: 'Example Media' },
-        listId: 'list-123',
-        mediaId: 'media-123',
+        media: { title: "Example Media" },
+        listId: "list-123",
+        mediaId: "media-123",
         order: 1,
       };
       mockListService.updateListItem.mockResolvedValue(mockUpdatedItem);
@@ -287,53 +287,53 @@ describe('Lists Controller Unit Tests', () => {
       await listController.updateListItem(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext as NextFunction
+        mockNext as NextFunction,
       );
 
       // Assert
       expect(mockListService.updateListItem).toHaveBeenCalledWith(
-        'item-123',
-        'Updated notes',
-        mockRequest.user
+        "item-123",
+        "Updated notes",
+        mockRequest.user,
       );
       expect(mockSendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockUpdatedItem,
-        'List item updated successfully'
+        "List item updated successfully",
       );
     });
   });
 
-  describe('reorderListItems', () => {
-    it('should reorder list items', async () => {
+  describe("reorderListItems", () => {
+    it("should reorder list items", async () => {
       // Arrange
-      mockRequest.params = { listId: 'list-123' };
+      mockRequest.params = { listId: "list-123" };
       mockRequest.body = {
         items: [
-          { id: 'item-1', order: 0 },
-          { id: 'item-2', order: 1 },
+          { id: "item-1", order: 0 },
+          { id: "item-2", order: 1 },
         ],
       };
       const mockUpdatedItems = [
         {
-          id: 'item-1',
+          id: "item-1",
           order: 0,
-          media: { title: 'Example Media' }, // ✅ Required field
-          listId: 'list-123', // ✅ Required field
-          mediaId: 'media-123', // ✅ Required field
+          media: { title: "Example Media" }, // ✅ Required field
+          listId: "list-123", // ✅ Required field
+          mediaId: "media-123", // ✅ Required field
           createdAt: new Date(),
           updatedAt: new Date(),
-          notes: 'Updated notes',
+          notes: "Updated notes",
         },
         {
-          id: 'item-2',
+          id: "item-2",
           order: 1,
-          media: { title: 'Example Media' }, // ✅ Required field
-          listId: 'list-123', // ✅ Required field
-          mediaId: 'media-123', // ✅ Required field
+          media: { title: "Example Media" }, // ✅ Required field
+          listId: "list-123", // ✅ Required field
+          mediaId: "media-123", // ✅ Required field
           createdAt: new Date(),
           updatedAt: new Date(),
-          notes: 'Updated notes',
+          notes: "Updated notes",
         },
       ];
       mockListService.reorderListItems.mockResolvedValue(mockUpdatedItems);
@@ -342,30 +342,30 @@ describe('Lists Controller Unit Tests', () => {
       await listController.reorderListItems(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext as NextFunction
+        mockNext as NextFunction,
       );
 
       // Assert
       expect(mockListService.reorderListItems).toHaveBeenCalledWith(
-        'list-123',
+        "list-123",
         [
-          { id: 'item-1', order: 0 },
-          { id: 'item-2', order: 1 },
-        ]
+          { id: "item-1", order: 0 },
+          { id: "item-2", order: 1 },
+        ],
       );
       expect(mockSendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockUpdatedItems,
-        'List items reordered successfully'
+        "List items reordered successfully",
       );
     });
   });
 
-  describe('getUserPublicLists', () => {
-    it('should get public lists for a specific user', async () => {
+  describe("getUserPublicLists", () => {
+    it("should get public lists for a specific user", async () => {
       // Arrange
-      mockRequest.params = { userId: 'user-456' };
-      const mockLists = [{ id: 'list-1', name: 'Public List', isPublic: true }];
+      mockRequest.params = { userId: "user-456" };
+      const mockLists = [{ id: "list-1", name: "Public List", isPublic: true }];
       const mockPagination = { page: 1, totalPages: 1 };
       mockListService.getUserPublicLists.mockResolvedValue([
         mockLists,
@@ -376,22 +376,22 @@ describe('Lists Controller Unit Tests', () => {
       await listController.getUserPublicLists(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext as NextFunction
+        mockNext as NextFunction,
       );
 
       // Assert
       expect(mockListService.getUserPublicLists).toHaveBeenCalledWith(
-        'user-456',
+        "user-456",
         1,
         0,
-        10
+        10,
       );
       expect(mockSendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockLists,
-        'Public lists retrieved successfully',
+        "Public lists retrieved successfully",
         200,
-        mockPagination
+        mockPagination,
       );
     });
   });

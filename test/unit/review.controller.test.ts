@@ -66,7 +66,7 @@ describe("ReviewController", () => {
       await reviewController.createReview(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
@@ -75,7 +75,7 @@ describe("ReviewController", () => {
         mockResponse,
         mockReview,
         "Review created successfully",
-        201
+        201,
       );
     });
   });
@@ -108,7 +108,7 @@ describe("ReviewController", () => {
       await reviewController.getMediaReviews(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
@@ -116,20 +116,20 @@ describe("ReviewController", () => {
         mediaId,
         page,
         limit,
-        false // includeHidden should be false for regular users
+        false, // includeHidden should be false for regular users
       );
 
       expect(responseFormatter.createPagination).toHaveBeenCalledWith(
         page,
         limit,
-        mockTotal
+        mockTotal,
       );
       expect(responseFormatter.sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockReviews,
         "Media reviews retrieved successfully",
         200,
-        mockPagination
+        mockPagination,
       );
     });
 
@@ -156,7 +156,7 @@ describe("ReviewController", () => {
       await reviewController.getMediaReviews(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
@@ -164,7 +164,7 @@ describe("ReviewController", () => {
         "media-123",
         1, // default page
         10, // default limit
-        true // includeHidden should be true for admin
+        true, // includeHidden should be true for admin
       );
     });
   });
@@ -197,7 +197,7 @@ describe("ReviewController", () => {
       await reviewController.getUserReviews(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
@@ -205,20 +205,20 @@ describe("ReviewController", () => {
         userId,
         page,
         limit,
-        "user-123" // requestingUserId should be the current user's ID
+        "user-123", // requestingUserId should be the current user's ID
       );
 
       expect(responseFormatter.createPagination).toHaveBeenCalledWith(
         page,
         limit,
-        mockTotal
+        mockTotal,
       );
       expect(responseFormatter.sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockReviews,
         "User reviews retrieved successfully",
         200,
-        mockPagination
+        mockPagination,
       );
     });
   });
@@ -239,7 +239,7 @@ describe("ReviewController", () => {
       await reviewController.getReviewById(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
@@ -247,7 +247,7 @@ describe("ReviewController", () => {
       expect(responseFormatter.sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockReview,
-        "Review retrieved successfully"
+        "Review retrieved successfully",
       );
     });
   });
@@ -288,7 +288,7 @@ describe("ReviewController", () => {
       await reviewController.updateReview(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
@@ -296,13 +296,13 @@ describe("ReviewController", () => {
         reviewId,
         userId,
         updateData,
-        userRole
+        userRole,
       );
 
       expect(responseFormatter.sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockUpdatedReview,
-        "Review updated successfully"
+        "Review updated successfully",
       );
     });
   });
@@ -330,20 +330,20 @@ describe("ReviewController", () => {
       await reviewController.deleteReview(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
       expect(reviewService.deleteReview).toHaveBeenCalledWith(
         reviewId,
         userId,
-        userRole
+        userRole,
       );
 
       expect(responseFormatter.sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         null,
-        "Review deleted successfully"
+        "Review deleted successfully",
       );
     });
   });
@@ -368,7 +368,7 @@ describe("ReviewController", () => {
       await reviewController.likeReview(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       // Assert
@@ -376,7 +376,7 @@ describe("ReviewController", () => {
       expect(responseFormatter.sendSuccess).toHaveBeenCalledWith(
         mockResponse,
         mockUpdatedReview,
-        "Review liked successfully"
+        "Review liked successfully",
       );
     });
   });

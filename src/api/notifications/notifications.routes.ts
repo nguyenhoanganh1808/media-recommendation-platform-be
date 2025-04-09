@@ -88,7 +88,7 @@ router.get(
   "/",
   validate(getNotificationsValidation),
   userCacheMiddleware({ ttl: 300 }), // Cache for 5 minutes
-  notificationController.getUserNotifications
+  notificationController.getUserNotifications,
 );
 
 /**
@@ -130,7 +130,7 @@ router.get(
 router.patch(
   "/:id/read",
   validate(markAsReadValidation),
-  notificationController.markAsRead
+  notificationController.markAsRead,
 );
 
 /**
@@ -214,7 +214,7 @@ router.delete("/read", notificationController.deleteAllReadNotifications);
 router.delete(
   "/:id",
   validate(deleteNotificationValidation),
-  notificationController.deleteNotification
+  notificationController.deleteNotification,
 );
 
 /**
@@ -323,7 +323,7 @@ router.get("/settings", notificationController.getNotificationSettings);
 router.put(
   "/settings",
   validate(updateNotificationSettingsValidation),
-  notificationController.updateNotificationSettings
+  notificationController.updateNotificationSettings,
 );
 
 export default router;

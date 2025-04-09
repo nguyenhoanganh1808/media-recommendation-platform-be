@@ -36,7 +36,7 @@ export class ReviewService {
       throw new AppError(
         "You have already reviewed this media",
         409,
-        "REVIEW_EXISTS"
+        "REVIEW_EXISTS",
       );
     }
 
@@ -84,7 +84,7 @@ export class ReviewService {
     mediaId: string,
     page: number = 1,
     limit: number = 10,
-    includeHidden: boolean = false
+    includeHidden: boolean = false,
   ): Promise<{ reviews: MediaReview[]; total: number }> {
     const skip = (page - 1) * limit;
 
@@ -124,7 +124,7 @@ export class ReviewService {
    */
   async getUserMediaReview(
     userId: string,
-    mediaId: string
+    mediaId: string,
   ): Promise<MediaReview | null> {
     const review = await prisma.mediaReview.findFirst({
       where: {
@@ -164,7 +164,7 @@ export class ReviewService {
     userId: string,
     page: number = 1,
     limit: number = 10,
-    requestingUserId?: string
+    requestingUserId?: string,
   ): Promise<{ reviews: MediaReview[]; total: number }> {
     const skip = (page - 1) * limit;
 
@@ -241,7 +241,7 @@ export class ReviewService {
     reviewId: string,
     userId: string,
     data: UpdateReviewData,
-    userRole: Role
+    userRole: Role,
   ): Promise<MediaReview> {
     // Get the review
     const review = await prisma.mediaReview.findUnique({
@@ -261,7 +261,7 @@ export class ReviewService {
       throw new AppError(
         "You do not have permission to update this review",
         403,
-        "PERMISSION_DENIED"
+        "PERMISSION_DENIED",
       );
     }
 
@@ -284,7 +284,7 @@ export class ReviewService {
   async deleteReview(
     reviewId: string,
     userId: string,
-    userRole: Role
+    userRole: Role,
   ): Promise<void> {
     // Get the review
     const review = await prisma.mediaReview.findUnique({

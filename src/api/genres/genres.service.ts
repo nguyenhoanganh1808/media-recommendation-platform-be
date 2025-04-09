@@ -36,7 +36,7 @@ export class GenreService {
       mediaType?: string;
     } = {},
     page = 1,
-    limit = 20
+    limit = 20,
   ): Promise<{ genres: Genre[]; count: number }> {
     const skip = (page - 1) * limit;
 
@@ -93,7 +93,7 @@ export class GenreService {
   async getGenreWithMedia(
     id: string,
     page = 1,
-    limit = 20
+    limit = 20,
   ): Promise<{ genre: Genre | null; media: any[]; totalMedia: number }> {
     const genre = await prisma.genre.findUnique({
       where: { id },
@@ -175,7 +175,7 @@ export class GenreService {
         if (error.code === "P2003") {
           throw new AppError(
             "Cannot delete genre because it is used by media items",
-            400
+            400,
           );
         }
       }
@@ -191,7 +191,7 @@ export class GenreService {
    */
   async addGenreToMedia(
     genreId: string,
-    mediaId: string
+    mediaId: string,
   ): Promise<{ genreId: string; mediaId: string }> {
     try {
       await prisma.genreOnMedia.create({
@@ -207,7 +207,7 @@ export class GenreService {
         if (error.code === "P2002") {
           throw new AppError(
             "This genre is already associated with this media",
-            409
+            409,
           );
         }
         if (error.code === "P2003") {
@@ -226,7 +226,7 @@ export class GenreService {
    */
   async removeGenreFromMedia(
     genreId: string,
-    mediaId: string
+    mediaId: string,
   ): Promise<boolean> {
     try {
       await prisma.genreOnMedia.delete({

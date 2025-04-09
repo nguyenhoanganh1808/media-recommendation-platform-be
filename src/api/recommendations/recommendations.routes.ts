@@ -77,7 +77,7 @@ router.get(
   authenticate,
   validate(getRecommendationsValidation),
   userCacheMiddleware({ ttl: 3600 }), // Cache for 1 hour
-  recommendationsController.getRecommendations
+  recommendationsController.getRecommendations,
 );
 
 /**
@@ -136,7 +136,7 @@ router.get(
     ttl: 1800,
     cacheCondition: () => true, // Cache for both auth and non-auth users
   }),
-  recommendationsController.getTrendingRecommendations
+  recommendationsController.getTrendingRecommendations,
 );
 
 /**
@@ -191,7 +191,7 @@ router.get(
   authenticate,
   validate(getMediaBasedRecommendationsValidation),
   userCacheMiddleware({ ttl: 3600 }),
-  recommendationsController.getMediaBasedRecommendations
+  recommendationsController.getMediaBasedRecommendations,
 );
 
 /**
@@ -274,7 +274,7 @@ router.put(
   authenticate,
   restrictTo(Role.USER, Role.ADMIN),
   validate(updateUserPreferencesValidation),
-  recommendationsController.updateUserPreferences
+  recommendationsController.updateUserPreferences,
 );
 
 export default router;

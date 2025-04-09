@@ -85,7 +85,7 @@ router.post(
   "/register",
   authRateLimiter,
   validate(authValidation.registerValidation),
-  authController.register
+  authController.register,
 );
 
 /**
@@ -149,7 +149,7 @@ router.post(
   "/login",
   authRateLimiter,
   validate(authValidation.loginValidation),
-  authController.login
+  authController.login,
 );
 
 /**
@@ -191,7 +191,7 @@ router.post(
   "/logout",
   authenticate,
   validate(authValidation.logoutValidation),
-  authController.logout
+  authController.logout,
 );
 
 /**
@@ -236,7 +236,7 @@ router.post(
   "/refresh-token",
   authenticateRefreshToken,
   validate(authValidation.refreshTokenValidation),
-  authController.refreshToken
+  authController.refreshToken,
 );
 
 /**
@@ -287,7 +287,7 @@ router.get(
   "/profile",
   authenticate,
   updateLastLogin,
-  authController.getProfile
+  authController.getProfile,
 );
 
 /**
@@ -337,7 +337,7 @@ router.post(
   "/change-password",
   authenticate,
   validate(authValidation.changePasswordValidation),
-  authController.changePassword
+  authController.changePassword,
 );
 
 export default router;

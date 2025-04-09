@@ -1,6 +1,6 @@
-import { createClient } from 'redis';
-import { config } from './env';
-import { logger } from './logger';
+import { createClient } from "redis";
+import { config } from "./env";
+import { logger } from "./logger";
 
 // Create Redis client
 const redisClient = createClient({
@@ -8,13 +8,13 @@ const redisClient = createClient({
 });
 
 // Connect to Redis
-redisClient.on('connect', () => {
-  logger.info('Redis client connected');
+redisClient.on("connect", () => {
+  logger.info("Redis client connected");
 });
 
 // Error handling
-redisClient.on('error', (err) => {
-  logger.error('Redis client error:', err);
+redisClient.on("error", (err) => {
+  logger.error("Redis client error:", err);
 });
 
 // Connect to Redis
@@ -22,7 +22,7 @@ const connectRedis = async (): Promise<void> => {
   try {
     await redisClient.connect();
   } catch (error) {
-    logger.error('Error connecting to Redis:', error);
+    logger.error("Error connecting to Redis:", error);
     process.exit(1);
   }
 };
@@ -31,9 +31,9 @@ const connectRedis = async (): Promise<void> => {
 const disconnectRedis = async (): Promise<void> => {
   try {
     await redisClient.disconnect();
-    logger.info('Redis client disconnected');
+    logger.info("Redis client disconnected");
   } catch (error) {
-    logger.error('Error disconnecting from Redis:', error);
+    logger.error("Error disconnecting from Redis:", error);
   }
 };
 
@@ -42,7 +42,7 @@ const getCache = async (key: string): Promise<string | null> => {
   try {
     return await redisClient.get(key);
   } catch (error) {
-    logger.error('Redis get error:', error);
+    logger.error("Redis get error:", error);
     return null;
   }
 };
@@ -50,12 +50,12 @@ const getCache = async (key: string): Promise<string | null> => {
 const setCache = async (
   key: string,
   value: string,
-  expireInSeconds = config.REDIS_TTL
+  expireInSeconds = config.REDIS_TTL,
 ): Promise<void> => {
   try {
     await redisClient.set(key, value, { EX: expireInSeconds });
   } catch (error) {
-    logger.error('Redis set error:', error);
+    logger.error("Redis set error:", error);
   }
 };
 
@@ -63,16 +63,16 @@ const deleteCache = async (key: string): Promise<void> => {
   try {
     await redisClient.del(key);
   } catch (error) {
-    logger.error('Redis delete error:', error);
+    logger.error("Redis delete error:", error);
   }
 };
 
 const flushCache = async (): Promise<void> => {
   try {
     await redisClient.flushAll();
-    logger.info('Redis cache flushed');
+    logger.info("Redis cache flushed");
   } catch (error) {
-    logger.error('Redis flush error:', error);
+    logger.error("Redis flush error:", error);
   }
 };
 

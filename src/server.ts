@@ -39,10 +39,10 @@ async function startServer() {
       .createServer(httpsOptions, app)
       .listen(HTTPS_PORT, () => {
         logger.info(
-          `HTTPS server running on port ${HTTPS_PORT} in ${config.NODE_ENV} mode`
+          `HTTPS server running on port ${HTTPS_PORT} in ${config.NODE_ENV} mode`,
         );
         logger.info(
-          `🔗 API Documentation available at https://localhost:${HTTPS_PORT}/docs`
+          `🔗 API Documentation available at https://localhost:${HTTPS_PORT}/docs`,
         );
       });
 

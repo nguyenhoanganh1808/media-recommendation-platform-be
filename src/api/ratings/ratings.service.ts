@@ -13,7 +13,7 @@ export const createRating = async (
   userId: string,
   mediaId: string,
   rating: number,
-  review?: string
+  review?: string,
 ): Promise<MediaRating> => {
   // Check if media exists
   const media = await prisma.media.findUnique({
@@ -38,7 +38,7 @@ export const createRating = async (
     throw new AppError(
       "You have already rated this media. Please update your rating instead.",
       409,
-      "RATING_EXISTS"
+      "RATING_EXISTS",
     );
   }
 
@@ -88,7 +88,7 @@ export const createRating = async (
 export const updateRating = async (
   ratingId: string,
   userId: string,
-  rating: number
+  rating: number,
 ): Promise<MediaRating> => {
   // Check if rating exists and belongs to user
   const existingRating = await prisma.mediaRating.findUnique({
@@ -103,7 +103,7 @@ export const updateRating = async (
     throw new AppError(
       "You can only update your own ratings",
       403,
-      "UNAUTHORIZED"
+      "UNAUTHORIZED",
     );
   }
 
@@ -151,7 +151,7 @@ export const updateRating = async (
  */
 export const deleteRating = async (
   ratingId: string,
-  userId: string
+  userId: string,
 ): Promise<void> => {
   // Check if rating exists and belongs to user
   const existingRating = await prisma.mediaRating.findUnique({
@@ -217,7 +217,7 @@ export const getRatingById = async (ratingId: string): Promise<MediaRating> => {
  */
 export const getUserMediaRating = async (
   userId: string,
-  mediaId: string
+  mediaId: string,
 ): Promise<MediaRating | null> => {
   // Check if media exists
   const media = await prisma.media.findUnique({
@@ -245,7 +245,7 @@ export const getUserMediaRating = async (
 export const getMediaRatings = async (
   mediaId: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ): Promise<{ ratings: MediaRating[]; pagination: any }> => {
   const skip = (page - 1) * limit;
 
@@ -282,7 +282,7 @@ export const getUserRatings = async (
   userId: string,
   page: number = 1,
   limit: number = 10,
-  mediaId?: string
+  mediaId?: string,
 ): Promise<{ ratings: MediaRating[]; pagination: any }> => {
   const skip = (page - 1) * limit;
 

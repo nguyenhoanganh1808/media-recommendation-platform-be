@@ -15,7 +15,7 @@ export const createList = async (
   userId: string,
   name: string,
   description?: string,
-  isPublic: boolean = false
+  isPublic: boolean = false,
 ): Promise<MediaList> => {
   const newList = await prisma.mediaList.create({
     data: {
@@ -41,7 +41,7 @@ export const updateList = async (
     name?: string;
     description?: string | null;
     isPublic?: boolean;
-  }
+  },
 ): Promise<MediaList> => {
   const list = await prisma.mediaList.findUnique({
     where: { id: listId },
@@ -71,7 +71,7 @@ export const updateList = async (
 export const addItemToList = async (
   listId: string,
   mediaId: string,
-  notes?: string
+  notes?: string,
 ): Promise<MediaListItem> => {
   // Check if the list exists
   const list = await prisma.mediaList.findUnique({
@@ -137,7 +137,7 @@ export const addItemToList = async (
  */
 export const removeItemFromList = async (
   itemId: string,
-  userId: string
+  userId: string,
 ): Promise<void> => {
   const item = await prisma.mediaListItem.findUnique({
     where: { id: itemId },
@@ -170,7 +170,7 @@ export const removeItemFromList = async (
  */
 export const reorderListItems = async (
   listId: string,
-  items: Array<{ id: string; order: number }>
+  items: Array<{ id: string; order: number }>,
 ): Promise<MediaListItem[]> => {
   const list = await prisma.mediaList.findUnique({
     where: { id: listId },
@@ -191,8 +191,8 @@ export const reorderListItems = async (
         data: {
           order: item.order,
         },
-      })
-    )
+      }),
+    ),
   );
 
   // Clear list caches
@@ -251,7 +251,7 @@ export const getPopularLists = async (limit: number = 10): Promise<any[]> => {
 export const shareList = async (
   listId: string,
   sharedByUserId: string,
-  sharedWithUserId: string
+  sharedWithUserId: string,
 ): Promise<void> => {
   // Check if the list exists and is public
   const list = await prisma.mediaList.findUnique({
@@ -300,7 +300,7 @@ export const getListByUser = async (
   userId: string,
   page: number,
   skip: number,
-  limit: number
+  limit: number,
 ): Promise<any> => {
   const [lists, total] = await Promise.all([
     prisma.mediaList.findMany({
@@ -337,7 +337,7 @@ export const getListByUser = async (
 
 export const getListById = async (
   id: string,
-  userId: string
+  userId: string,
 ): Promise<MediaList> => {
   const list = await prisma.mediaList.findUnique({
     where: { id },
@@ -407,7 +407,7 @@ export const getListById = async (
 export const updateListItem = async (
   itemId: string,
   notes: string,
-  user: Express.User
+  user: Express.User,
 ) => {
   const item = await prisma.mediaListItem.findUnique({
     where: { id: itemId },
@@ -455,7 +455,7 @@ export const getUserPublicLists = async (
   userId: string,
   page: number,
   skip: number,
-  limit: number
+  limit: number,
 ) => {
   const [lists, total] = await Promise.all([
     prisma.mediaList.findMany({

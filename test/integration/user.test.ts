@@ -101,7 +101,7 @@ describe("User API", () => {
       expect(response.body.data).toHaveProperty("id", userId);
       expect(response.body.data).toHaveProperty(
         "email",
-        "testUserUser@example.com"
+        "testUserUser@example.com",
       );
       expect(response.body.data).not.toHaveProperty("password");
     });
