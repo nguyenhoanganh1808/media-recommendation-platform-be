@@ -1,15 +1,38 @@
 // media.service.ts
+import { MediaStatus, MediaType, Prisma } from "@prisma/client";
+
 import { prisma } from "../../config/database";
 import { createPagination } from "../../utils/responseFormatter";
 
 interface MediaQueryParams {
   page: number;
   limit: number;
-  type?: string;
+  type?: MediaType;
   genre?: string;
   search?: string;
   sortBy: string;
   sortOrder: string;
+}
+
+interface CreateMediaInput {
+  title: string;
+  description?: string | null;
+  releaseDate?: Date | string | null;
+  mediaType: MediaType; // adjust based on your enum
+  status?: MediaStatus;
+  coverImage?: string | null;
+  backdropImage?: string | null;
+  // Media-specific fields
+  duration?: number | null; // Movies
+  director?: string | null; // Movies
+  developer?: string | null; // Games
+  publisher?: string | null; // Games
+  platforms?: string[]; // Games - platform IDs
+  author?: string | null; // Manga
+  artist?: string | null; // Manga
+  volumeCount?: number | null; // Manga
+  isCompleted?: boolean | null; // Manga
+  genres?: string[]; // genre IDs
 }
 
 // Get all media with filtering and pagination
@@ -23,11 +46,11 @@ export const getAllMedia = async ({
   sortOrder,
 }: MediaQueryParams) => {
   // Build filters
-  const filters: any = {};
+  const filters: Prisma.MediaWhereInput = {};
   if (type) filters.mediaType = type;
 
   // Handle search
-  const searchFilter = search
+  const searchFilter: Prisma.MediaWhereInput = search
     ? { title: { contains: search, mode: "insensitive" } }
     : {};
 
@@ -77,7 +100,7 @@ export const getMediaById = async (id: string) => {
 };
 
 // Create new media
-export const createMedia = async (mediaData: any) => {
+export const createMedia = async (mediaData: CreateMediaInput) => {
   const {
     title,
     description,
@@ -119,7 +142,7 @@ export const createMedia = async (mediaData: any) => {
       ...(genres && genres.length > 0
         ? {
             genres: {
-              create: genres.map((genreId: string) => ({
+              create: genres.map((genreId) => ({
                 genre: { connect: { id: genreId } },
               })),
             },
@@ -127,14 +150,14 @@ export const createMedia = async (mediaData: any) => {
         : {}),
       // If platforms are provided for games
       ...(mediaType === "GAME" && platforms && platforms.length > 0
-        ? { platforms: { connect: platforms.map((id: string) => ({ id })) } }
+        ? { platforms: { connect: platforms.map((id) => ({ id })) } }
         : {}),
     },
   });
 };
 
 // Update media
-export const updateMedia = async (id: string, mediaData: any) => {
+export const updateMedia = async (id: string, mediaData: CreateMediaInput) => {
   const {
     title,
     description,
