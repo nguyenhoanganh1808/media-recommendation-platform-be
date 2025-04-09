@@ -26,7 +26,7 @@ export function sendUserNotification(
     type: NotificationType;
     title: string;
     message: string;
-    data?: any;
+    data?: unknown;
     createdAt: Date;
   }
 ) {
