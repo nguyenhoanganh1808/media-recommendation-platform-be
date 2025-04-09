@@ -4,10 +4,11 @@ import { Role } from "@prisma/client";
 
 import { AppError } from "./error.middleware";
 import { prisma } from "../config/database";
-import asyncHandler from "../utils/asyncHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 
 // Define a custom type to extend Express Request
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface User {
       id: string;
@@ -28,7 +29,7 @@ export const authenticate = (
   passport.authenticate(
     "jwt",
     { session: false },
-    (err: Error, user: Express.User, info: any) => {
+    (err: Error, user: Express.User, _info: unknown) => {
       if (err) {
         return next(err);
       }
@@ -59,7 +60,7 @@ export const authenticateRefreshToken = (
   passport.authenticate(
     "jwt-refresh",
     { session: false },
-    (err: Error, user: Express.User, info: any) => {
+    (err: Error, user: Express.User, _info: unknown) => {
       if (err) {
         return next(err);
       }
@@ -111,8 +112,9 @@ export const checkOwnership = (
 
       const resourceId = req.params[paramIdField];
 
-      // Dynamically get the model from Prisma
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const model = prisma[resourceModel as keyof typeof prisma] as any;
+
       if (!model) {
         return next(new AppError("Invalid resource model", 500));
       }

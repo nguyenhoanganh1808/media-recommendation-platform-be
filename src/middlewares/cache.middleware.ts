@@ -58,7 +58,7 @@ export const cacheMiddleware = (options: CacheOptions = {}) => {
       const originalJson = res.json;
 
       // Override res.json to cache the response
-      res.json = function (body: any): Response {
+      res.json = function (body: unknown): Response {
         // Restore original json function
         res.json = originalJson;
 

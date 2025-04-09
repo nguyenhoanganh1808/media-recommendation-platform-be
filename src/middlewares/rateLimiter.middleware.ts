@@ -1,6 +1,6 @@
 import { Request } from "express";
-import rateLimit from "express-rate-limit";
-import RedisStore from "rate-limit-redis";
+import { rateLimit } from "express-rate-limit";
+import { RedisStore } from "rate-limit-redis";
 
 import { config } from "../config/env";
 import { redisClient } from "../config/redis";
