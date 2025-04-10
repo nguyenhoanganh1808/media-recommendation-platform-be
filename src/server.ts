@@ -32,8 +32,8 @@ async function startServer() {
 
     // Create HTTPS server
     const httpsOptions = {
-      key: fs.readFileSync(path.join(__dirname, "../cert/key.pem")), // Go up from `src` to root
-      cert: fs.readFileSync(path.join(__dirname, "../cert/cert.pem")),
+      key: fs.readFileSync(path.join(__dirname, "./cert/key.pem")),
+      cert: fs.readFileSync(path.join(__dirname, "./cert/cert.pem")),
     };
 
     const server = https
