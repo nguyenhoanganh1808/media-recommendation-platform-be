@@ -6,7 +6,7 @@ npm-debug.log
 # Build artifacts / Environment files
 dist
 .env*
-!.env.example # Allow example env files if you have them
+!.env.example
 
 # Docker specific
 Dockerfile
@@ -24,5 +24,4 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Other (adjust as needed)
 README.md
