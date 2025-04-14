@@ -1,0 +1,28 @@
+# Node specific
+node_modules
+npm-debug.log
+*.log
+
+# Build artifacts / Environment files
+dist
+.env*
+!.env.example # Allow example env files if you have them
+
+# Docker specific
+Dockerfile
+.dockerignore
+
+# Git specific
+.git
+.gitignore
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDE specific
+.vscode/
+.idea/
+
+# Other (adjust as needed)
+README.md
