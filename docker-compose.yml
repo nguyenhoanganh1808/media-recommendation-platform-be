@@ -1,4 +1,4 @@
-version: "3.8"
+# version: "3.8"
 services:
   postgres:
     image: postgres:15
@@ -38,6 +38,20 @@ services:
       interval: 5s
       timeout: 2s
       retries: 20
+
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: media-recommendation-api
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - media-network
 
 volumes:
   postgres_data:
