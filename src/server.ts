@@ -7,7 +7,7 @@ import app from "./app";
 import { logger } from "./config/logger";
 import { config } from "./config/env";
 import { connectDB } from "./config/database";
-import { connectRedis } from "./config/redis";
+// import { connectRedis } from "./config/redis";
 import { initializeJobs } from "./jobs";
 import { initializeSocket } from "./config/socket";
 
@@ -18,7 +18,7 @@ async function startServer() {
   try {
     // Initialize database and Redis connections first
     await connectDB();
-    await connectRedis();
+    // await connectRedis();
 
     // Initialize jobs
     initializeJobs();
