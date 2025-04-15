@@ -5,6 +5,8 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
+RUN apt-get update -y && apt-get install -y openssl
+
 COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --frozen-lockfile
@@ -17,17 +19,17 @@ RUN pnpm build
 
 FROM node:slim
 
+RUN apt-get update -y && apt-get install -y openssl
+
 WORKDIR /app
 
-
 ENV NODE_ENV=production
-
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package.json ./package.json
 
-EXPOSE 3000
+EXPOSE 3443
 
-CMD ["pnpm", "start"]
+CMD ["node", "dist/src/server.js"]
