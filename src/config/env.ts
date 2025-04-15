@@ -84,7 +84,6 @@ export const config = {
   TZ: process.env.TZ || "UTC",
 };
 
-// Export the environment type for easier type checking
 export type Env = "development" | "test" | "production";
 
 // Export a function to check if the application is in a specific environment
