@@ -2,15 +2,16 @@ import * as fs from "fs";
 import * as path from "path";
 import * as glob from "glob";
 import swaggerJsdoc from "swagger-jsdoc";
+import express, { Express } from "express";
+
 import { config } from "../src/config/env";
 import { logger } from "../src/config/logger";
-import express, { Express } from "express";
 
 // Base server URL from environment variables or default
 const BASE_URL = config.SERVER_URL || "http://localhost:3000";
 
 // Create debug logger
-const debug = (message: string, ...args: any[]) => {
+const debug = (message: string, ...args: unknown[]) => {
   logger.info(`[Swagger Debug] ${message}`, ...args);
 };
 
