@@ -59,7 +59,6 @@ export const config = {
 
   // Media API keys for external services
   TMDB_API_KEY: process.env.TMDB_API_KEY,
-  MAL_CLIENT_ID: process.env.MAL_CLIENT_ID,
   RAWG_API_KEY: process.env.RAWG_API_KEY,
 
   // Email configuration (for notifications)

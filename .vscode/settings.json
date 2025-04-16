@@ -10,8 +10,10 @@
     "loglevel",
     "newkey",
     "Prefs",
+    "RAWG",
     "Rengular",
     "testuser",
+    "TMDB",
     "tsparser",
     "userratelimit"
   ]
