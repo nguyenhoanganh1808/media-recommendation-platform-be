@@ -85,5 +85,4 @@ export const config = {
 
 export type Env = "development" | "test" | "production";
 
-// Export a function to check if the application is in a specific environment
 export const isEnv = (env: Env): boolean => config.NODE_ENV === env;
