@@ -64,13 +64,13 @@ jobs:
       - name: Generate Prisma Client And Create Table
         run: pnpm prisma:migrate --name init
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_DUMMY }}
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
 
       - name: Run Unit/Integration Tests
         run: pnpm test
         env:
           NODE_ENV: test
-          DATABASE_URL: ${{ secrets.DATABASE_URL_DUMMY }}
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           REDIS_HOST: ${{ secrets.REDIS_HOST_DUMMY }}
           REDIS_URL: ${{ secrets.REDIS_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
