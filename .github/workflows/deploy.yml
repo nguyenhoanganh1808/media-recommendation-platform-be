@@ -63,6 +63,8 @@ jobs:
 
       - name: Generate Prisma Client And Create Table
         run: pnpm prisma migrate --name init
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DUMMY }}
 
       - name: Run Unit/Integration Tests
         run: pnpm test
