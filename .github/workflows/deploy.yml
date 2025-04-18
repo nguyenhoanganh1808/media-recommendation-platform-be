@@ -186,7 +186,7 @@ jobs:
               -p ${{ env.APP_CONTAINER_PORT }}:${{ env.APP_CONTAINER_PORT }} \
               --restart unless-stopped \
               -e NODE_ENV=production \
-              -e DATABASE_URL="postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}?schema=public&sslmode=prefer" `# Use secrets; added sslmode=prefer` \
+              -e DATABASE_URL="postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}?schema=public&sslmode=prefer" \
               -e REDIS_URL=${{ secrets.REDIS_URL }} \
               -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
               -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
