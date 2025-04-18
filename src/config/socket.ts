@@ -1,6 +1,6 @@
 // src/config/socket.ts
 import { Server as SocketServer } from "socket.io";
-import http from "https";
+import http from "http";
 
 import { logger } from "./logger";
 import { verifyToken } from "../utils/jwt";

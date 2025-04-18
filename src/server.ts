@@ -1,6 +1,3 @@
-import https from "https";
-import fs from "fs";
-import path from "path";
 import http from "http";
 
 import app from "./app";
@@ -12,7 +9,6 @@ import { initializeJobs } from "./jobs";
 import { initializeSocket } from "./config/socket";
 
 const PORT = config.PORT;
-const HTTPS_PORT = config.HTTPS_PORT;
 
 async function startServer() {
   try {
@@ -23,29 +19,14 @@ async function startServer() {
     // Initialize jobs
     initializeJobs();
 
-    // Create HTTP server (for redirects to HTTPS)
-    if (config.NODE_ENV === "production") {
-      http.createServer(app).listen(PORT, () => {
-        logger.info(`HTTP server running on port ${PORT} (redirects to HTTPS)`);
-      });
-    }
-
-    // Create HTTPS server
-    const httpsOptions = {
-      key: fs.readFileSync(path.join(__dirname, "./cert/key.pem")),
-      cert: fs.readFileSync(path.join(__dirname, "./cert/cert.pem")),
-    };
-
-    const server = https
-      .createServer(httpsOptions, app)
-      .listen(HTTPS_PORT, () => {
-        logger.info(
-          `HTTPS server running on port ${HTTPS_PORT} in ${config.NODE_ENV} mode`,
-        );
-        logger.info(
-          `🔗 API Documentation available at https://localhost:${HTTPS_PORT}/docs`,
-        );
-      });
+    const server = http.createServer(app).listen(PORT, () => {
+      logger.info(
+        `HTTPS server running on port ${PORT} in ${config.NODE_ENV} mode`,
+      );
+      logger.info(
+        `🔗 API Documentation available at http://localhost:${PORT}/docs`,
+      );
+    });
 
     // Initialize Socket.io
     initializeSocket(server);
