@@ -9,7 +9,7 @@ env:
   DOCKERHUB_IMAGE_NAME: zoddstorm/media-recommendation-api
   AWS_REGION: ap-southeast-1
   NODE_VERSION: "23"
-  APP_CONTAINER_PORT: 3443
+  APP_CONTAINER_PORT: 3000
   APP_CONTAINER_NAME: media-recommendation-api-container
 
 jobs:
