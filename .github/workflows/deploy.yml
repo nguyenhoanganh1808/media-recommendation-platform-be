@@ -215,7 +215,6 @@ jobs:
               -e DB_PORT=5432 \
               -e REDIS_PORT=6379 \
               -e TZ=UTC \
-              
               ${{ env.DOCKERHUB_IMAGE_NAME }}:${{ github.sha }}
 
             echo "Waiting for container to start..."
