@@ -29,7 +29,7 @@ export const config = {
   // Server configuration
   PORT: parseInt(process.env.PORT || "3000", 10),
   HTTPS_PORT: parseInt(process.env.HTTPS_PORT || "3443", 10),
-  API_PREFIX: process.env.API_PREFIX || "/api/v1",
+  API_PREFIX: process.env.API_PREFIX || "/api",
   CORS_ORIGIN: process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(",")
     : "*",
