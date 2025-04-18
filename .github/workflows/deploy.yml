@@ -70,6 +70,7 @@ jobs:
           NODE_ENV: test
           DATABASE_URL: ${{ secrets.DATABASE_URL_DUMMY }}
           REDIS_HOST: ${{ secrets.REDIS_HOST_DUMMY }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
 
   build_and_push:
     name: Build and Push Docker Image
