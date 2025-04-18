@@ -61,12 +61,15 @@ jobs:
       - name: Run Linter check
         run: pnpm lint
 
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
+
       - name: Run Unit/Integration Tests
         run: pnpm test
         env:
           NODE_ENV: test
-          DATABASE_URL: ${{ secrets.DATABASE_URL_DUMMY || 'dummy_db_url' }}
-          REDIS_HOST: ${{ secrets.REDIS_HOST_DUMMY || 'dummy_redis_host' }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DUMMY }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST_DUMMY }}
 
   build_and_push:
     name: Build and Push Docker Image
