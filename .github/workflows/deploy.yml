@@ -71,6 +71,9 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DUMMY }}
           REDIS_HOST: ${{ secrets.REDIS_HOST_DUMMY }}
           REDIS_URL: ${{ secrets.REDIS_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRES_IN: 1d
+          JWT_REFRESH_EXPIRES_IN: 7d,
 
   build_and_push:
     name: Build and Push Docker Image
