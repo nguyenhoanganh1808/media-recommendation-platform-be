@@ -62,7 +62,7 @@ jobs:
         run: pnpm lint
 
       - name: Generate Prisma Client And Create Table
-        run: pnpm prisma generate --name init
+        run: pnpm prisma migrate --name init
 
       - name: Run Unit/Integration Tests
         run: pnpm test
