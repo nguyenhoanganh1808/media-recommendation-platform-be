@@ -90,13 +90,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up certificate files
-        run: |
-          mkdir -p src/cert
-          echo "${{ secrets.CERT_PEM }}" > src/cert/cert.pem
-          echo "${{ secrets.KEY_PEM }}" > src/cert/key.pem
-          chmod 600 src/cert/key.pem
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
