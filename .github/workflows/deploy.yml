@@ -244,10 +244,10 @@ jobs:
             echo ${{ secrets.DOCKERHUB_TOKEN }} | sudo docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
             echo "Pulling latest images for services..."
-            sudo docker compose -f docker-compose.prod.yml --env-file .env.prod pull
+            sudo docker-compose -f docker-compose.prod.yml --env-file .env.prod pull
 
             echo "Starting services with Docker Compose..."
-            sudo docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans
+            sudo docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans
 
             echo "Waiting for application container to start..."
             sleep 15 # Adjust if needed
