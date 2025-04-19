@@ -1,16 +1,14 @@
-version: "3.8"
-
 services:
   app:
     image: ${DOCKERHUB_IMAGE_NAME}:${GITHUB_SHA:-latest}
-    container_name: ${APP_CONTAINER_NAME} # Use consistent name
+    container_name: ${APP_CONTAINER_NAME}
     restart: unless-stopped
     env_file:
       - .env.prod
 
   # Service for the Nginx Reverse Proxy
   nginx:
-    image: nginx:stable-alpine # Use official stable Alpine image
+    image: nginx:stable-alpine
     container_name: nginx-proxy
     restart: unless-stopped
     ports:
