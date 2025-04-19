@@ -130,11 +130,49 @@ jobs:
       contents: read
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create production env file
+        run: |
+          echo "Creating .env.prod file..."
+          echo "NODE_ENV=production" > .env.prod
+          echo "DATABASE_URL=postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}?schema=public&sslmode=prefer" >> .env.prod
+          echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env.prod
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env.prod
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env.prod
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env.prod
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env.prod
+          echo "JWT_EXPIRES_IN=1d" >> .env.prod
+          echo "JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}" >> .env.prod
+          echo "JWT_REFRESH_EXPIRES_IN=7d" >> .env.prod
+          echo "RATE_LIMIT_WINDOW_MS=900000" >> .env.prod
+          echo "RATE_LIMIT_MAX=100" >> .env.prod
+          echo "LOG_LEVEL=info" >> .env.prod
+          echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" >> .env.prod
+          echo "RAWG_API_KEY=${{ secrets.RAWG_API_KEY }}" >> .env.prod
+          echo "EMAIL_FROM=${{ secrets.EMAIL_FROM }}" >> .env.prod
+          echo "SMTP_HOST=smtp.gmail.com" >> .env.prod
+          echo "SMTP_PORT=587" >> .env.prod
+          echo "SMTP_USER=${{ secrets.SMTP_USER }}" >> .env.prod
+          echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env.prod
+          echo "UPLOAD_DIRECTORY=uploads" >> .env.prod
+          echo "MAX_FILE_SIZE=5000000" >> .env.prod
+          echo "RECOMMENDATION_BATCH_SIZE=100" >> .env.prod
+          echo "RECOMMENDATION_UPDATE_INTERVAL=\"0 */6 * * *\"" >> .env.prod
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env.prod
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env.prod
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env.prod
+          echo "DB_PORT=5432" >> .env.prod
+          echo "TZ=UTC" >> .env.prod
+          echo "Generated .env.prod:"
+          cat .env.prod
 
       # --- Deploy using SSH Action ---
       - name: Deploy to EC2 instance via SSH
@@ -144,76 +182,79 @@ jobs:
           username: ${{ secrets.EC2_SSH_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
+          script_stop: true
           script: |
             # === Deployment Script on EC2 Instance ===
             set -e # Exit immediately if a command exits with a non-zero status.
+            APP_DIR=~/app
 
-            echo "Starting deployment..."
+            echo "Deploying to $APP_DIR"
+            mkdir -p $APP_DIR/nginx/conf.d # Ensure directories exist
 
-            # Ensure Docker is running
-            sudo systemctl start docker || { echo "Failed to start docker"; exit 1; }
+            # === Copy files from GitHub Runner to EC2 ===
+            # SCP Action could also be used, but this works with appleboy/ssh-action
+            echo "Copying deployment files..."
 
-            # Login to Docker Hub (needed for pulling image)
-            echo ${{ secrets.DOCKERHUB_TOKEN }} | sudo docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin || { echo "Docker Hub login failed"; exit 1; }
+      - name: Copy docker-compose.prod.yml
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_SSH_HOST }}
+          username: ${{ secrets.EC2_SSH_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: "docker-compose.prod.yml"
+          target: "~/app/" # Target directory defined above
+      - name: Copy Nginx config
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_SSH_HOST }}
+          username: ${{ secrets.EC2_SSH_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: "nginx/conf.d/default.conf"
+          target: "~/app/nginx/conf.d/"
+      - name: Copy .env.prod file
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_SSH_HOST }}
+          username: ${{ secrets.EC2_SSH_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: ".env.prod" # The file created in the previous step
+          target: "~/app/"
+      - name: Run deployment commands on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_SSH_HOST }}
+          username: ${{ secrets.EC2_SSH_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script_stop: true
+          script: |
+            set -e # Ensure script stops on error
+            APP_DIR=~/app 
+            cd $APP_DIR # Navigate to the app directory
 
-            # Pull the specific image version built in this workflow run
-            echo "Pulling image ${{ env.DOCKERHUB_IMAGE_NAME }}:${{ github.sha }}"
-            sudo docker pull ${{ env.DOCKERHUB_IMAGE_NAME }}:${{ github.sha }} || { echo "Docker pull failed"; exit 1; }
+            echo "Setting environment variables for Docker Compose..."
+            export DOCKERHUB_IMAGE_NAME=${{ env.DOCKERHUB_IMAGE_NAME }}
+            export GITHUB_SHA=${{ github.sha }}
+            export APP_CONTAINER_NAME=${{ env.APP_CONTAINER_NAME }}
 
-            # Stop existing container if it's running
-            if [ "$(sudo docker ps -q -f name=${{ env.APP_CONTAINER_NAME }})" ]; then
-                echo "Stopping existing container..."
-                sudo docker stop ${{ env.APP_CONTAINER_NAME }} || echo "Failed to stop container (already stopped?)"
-            fi
+            echo "Logging into Docker Hub..."
+            echo ${{ secrets.DOCKERHUB_TOKEN }} | sudo docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            # Remove existing container if it exists
-            if [ "$(sudo docker ps -aq -f name=${{ env.APP_CONTAINER_NAME }})" ]; then
-                echo "Removing existing container..."
-                sudo docker rm ${{ env.APP_CONTAINER_NAME }} || echo "Failed to remove container (already removed?)"
-            fi
+            echo "Pulling latest images for services..."
+            sudo docker compose -f docker-compose.prod.yml --env-file .env.prod pull
 
-            # Run the new container
-            echo "Starting new container..."
-            sudo docker run -d \
-              --name ${{ env.APP_CONTAINER_NAME }} \
-              -p ${{ env.APP_CONTAINER_PORT }}:${{ env.APP_CONTAINER_PORT }} \
-              --restart unless-stopped \
-              -e NODE_ENV=production \
-              -e DATABASE_URL="postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}?schema=public&sslmode=prefer" \
-              -e REDIS_URL=${{ secrets.REDIS_URL }} \
-              -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
-              -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
-              -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
-              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e JWT_EXPIRES_IN=1d \
-              -e JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }} \
-              -e JWT_REFRESH_EXPIRES_IN=7d \
-              -e RATE_LIMIT_WINDOW_MS=900000 \
-              -e RATE_LIMIT_MAX=100 \
-              -e LOG_LEVEL=info \
-              -e TMDB_API_KEY=${{ secrets.TMDB_API_KEY }} \
-              -e RAWG_API_KEY=${{ secrets.RAWG_API_KEY }} \
-              -e EMAIL_FROM=${{ secrets.EMAIL_FROM }} \
-              -e SMTP_HOST=smtp.gmail.com \
-              -e SMTP_PORT=587 \
-              -e SMTP_USER=${{ secrets.SMTP_USER }} \
-              -e SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }} \
-              -e UPLOAD_DIRECTORY=uploads \
-              -e MAX_FILE_SIZE=5000000 \
-              -e RECOMMENDATION_BATCH_SIZE=100 \
-              -e RECOMMENDATION_UPDATE_INTERVAL="0 */6 * * *" \
-              -e DB_USER=${{ secrets.DB_USER }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              -e DB_NAME=${{ secrets.DB_NAME }} \
-              -e DB_PORT=5432 \
-              -e REDIS_PORT=6379 \
-              -e TZ=UTC \
-              ${{ env.DOCKERHUB_IMAGE_NAME }}:${{ github.sha }}
+            echo "Starting services with Docker Compose..."
+            sudo docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans
 
-            echo "Waiting for container to start..."
-            sleep 15
+            echo "Waiting for application container to start..."
+            sleep 15 # Adjust if needed
 
             echo "Applying database migrations..."
+            # Execute migration inside the 'app' container managed by compose
+            # Use the container name explicitly for clarity
             sudo docker exec ${{ env.APP_CONTAINER_NAME }} npx prisma migrate deploy || { echo "Prisma migrate deploy failed!"; exit 1; }
 
             echo "Cleaning up old Docker images..."
