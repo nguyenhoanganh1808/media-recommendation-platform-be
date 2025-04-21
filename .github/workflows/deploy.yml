@@ -212,8 +212,8 @@ jobs:
           username: ${{ secrets.EC2_SSH_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          source: "./nginx/conf.d/*"
-          target: "~/app/nginx/conf.d/"
+          source: "./nginx/conf.d/default.conf"
+          target: "~/app/nginx/conf.d/default.conf"
 
       - name: Copy .env.prod file
         uses: appleboy/scp-action@v0.1.7
