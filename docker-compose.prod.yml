@@ -5,6 +5,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env.prod
+    networks:
+      - app-network
 
   # Service for the Nginx Reverse Proxy
   nginx:
@@ -16,6 +18,27 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
     depends_on:
       - app
+    networks:
+      - app-network
+
+    # Certbot service for SSL certificates
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    depends_on:
+      - nginx
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
