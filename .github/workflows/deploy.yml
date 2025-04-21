@@ -188,9 +188,6 @@ jobs:
             set -e # Exit immediately if a command exits with a non-zero status.
             APP_DIR=~/app
 
-            echo "Deploying to $APP_DIR"
-            mkdir -p $APP_DIR/nginx/conf.d # Ensure directories exist
-
             # === Copy files from GitHub Runner to EC2 ===
             # SCP Action could also be used, but this works with appleboy/ssh-action
             echo "Copying deployment files..."
@@ -213,7 +210,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           source: "./nginx/conf.d/default.conf"
-          target: "~/app/nginx/conf.d/default.conf"
+          target: "~/app/"
 
       - name: Copy .env.prod file
         uses: appleboy/scp-action@v0.1.7
