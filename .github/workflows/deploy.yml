@@ -213,6 +213,7 @@ jobs:
           port: 22
           source: "nginx/conf.d/default.conf"
           target: "~/app/nginx/conf.d/"
+
       - name: Copy .env.prod file
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -234,11 +235,6 @@ jobs:
             set -e # Ensure script stops on error
             APP_DIR=~/app 
             cd $APP_DIR # Navigate to the app directory
-
-            echo "Setting environment variables for Docker Compose..."
-            export DOCKERHUB_IMAGE_NAME=${{ env.DOCKERHUB_IMAGE_NAME }}
-            export GITHUB_SHA=${{ github.sha }}
-            export APP_CONTAINER_NAME=${{ env.APP_CONTAINER_NAME }}
 
             echo "Logging into Docker Hub..."
             echo ${{ secrets.DOCKERHUB_TOKEN }} | sudo docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
