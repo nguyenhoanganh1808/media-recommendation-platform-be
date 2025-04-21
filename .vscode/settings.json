@@ -5,11 +5,7 @@
     "apikeyratelimit",
     "appleboy",
     "Buildx",
-    "certbot",
-    "certonly",
-    "chickenkiller",
     "DOCKERHUB",
-    "fullchain",
     "gdvb",
     "healthcheck",
     "isready",
@@ -21,7 +17,6 @@
     "oozv",
     "pnpx",
     "Prefs",
-    "privkey",
     "RAWG",
     "Rengular",
     "testuser",
@@ -29,7 +24,6 @@
     "tsparser",
     "userratelimit",
     "vtdn",
-    "webroot",
     "zoddstorm"
   ]
 }

@@ -235,9 +235,6 @@ jobs:
             APP_DIR=~/app 
             cd $APP_DIR # Navigate to the app directory
 
-            # Create required directories
-            mkdir -p nginx/conf.d certbot/www certbot/conf nginx/ssl
-
             echo "Setting environment variables for Docker Compose..."
             export DOCKERHUB_IMAGE_NAME=${{ env.DOCKERHUB_IMAGE_NAME }}
             export GITHUB_SHA=${{ github.sha }}
@@ -248,31 +245,6 @@ jobs:
 
             echo "Pulling latest images for services..."
             sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod pull
-
-            # Check if SSL certificates already exist
-            if [ ! -d "certbot/conf/live/media-recommendation.chickenkiller.com" ]; then
-              echo "SSL certificates not found. Setting up SSL..."
-              
-              # Start nginx first
-              sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d nginx
-              
-              # Wait for nginx to start
-              sleep 5
-              
-              # Request initial certificate
-              timeout 90 sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod run --rm certbot certonly \
-                --webroot \
-                --webroot-path=/var/www/certbot \
-                --email nguyenhoanganh.it2003@gmail.com \
-                --agree-tos \
-                --no-eff-email \
-                -d media-recommendation.chickenkiller.com || echo "Certbot timed out, continuing anyway"
-                
-              # Restart nginx to load certificates
-              sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod restart nginx
-            else
-              echo "SSL certificates found. Skipping initial setup."
-            fi
 
             echo "Starting services with Docker Compose..."
             sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans
