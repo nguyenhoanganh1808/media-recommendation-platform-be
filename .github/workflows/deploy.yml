@@ -188,9 +188,6 @@ jobs:
             set -e # Exit immediately if a command exits with a non-zero status.
             APP_DIR=~/app
 
-            # Create nginx config directory if it doesn't exist
-            mkdir -p nginx/conf.d
-
             # === Copy files from GitHub Runner to EC2 ===
             # SCP Action could also be used, but this works with appleboy/ssh-action
             echo "Copying deployment files..."
