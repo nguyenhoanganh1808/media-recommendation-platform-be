@@ -263,13 +263,13 @@ jobs:
               sleep 5
               
               # Request initial certificate
-              sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod run --rm certbot certonly \
+              timeout 90 sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod run --rm certbot certonly \
                 --webroot \
                 --webroot-path=/var/www/certbot \
                 --email nguyenhoanganh.it2003@gmail.com \
                 --agree-tos \
                 --no-eff-email \
-                -d media-recommendation.chickenkiller.com
+                -d media-recommendation.chickenkiller.com || echo "Certbot timed out, continuing anyway"
                 
               # Restart nginx to load certificates
               sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod restart nginx
