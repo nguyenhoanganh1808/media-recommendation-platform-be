@@ -236,14 +236,19 @@ jobs:
             APP_DIR=~/app 
             cd $APP_DIR # Navigate to the app directory
 
+            echo "Setting environment variables for Docker Compose..."
+            export DOCKERHUB_IMAGE_NAME=${{ env.DOCKERHUB_IMAGE_NAME }}
+            export GITHUB_SHA=${{ github.sha }}
+            export APP_CONTAINER_NAME=${{ env.APP_CONTAINER_NAME }}
+
             echo "Logging into Docker Hub..."
             echo ${{ secrets.DOCKERHUB_TOKEN }} | sudo docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
             echo "Pulling latest images for services..."
-            sudo docker-compose -f docker-compose.prod.yml --env-file .env.prod pull
+            sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod pull
 
             echo "Starting services with Docker Compose..."
-            sudo docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans
+            sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans
 
             echo "Waiting for application container to start..."
             sleep 15 # Adjust if needed
