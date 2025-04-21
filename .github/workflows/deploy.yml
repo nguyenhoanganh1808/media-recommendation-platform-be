@@ -204,6 +204,7 @@ jobs:
           port: 22
           source: "docker-compose.prod.yml"
           target: "~/app/" # Target directory defined above
+
       - name: Copy Nginx config
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -211,7 +212,7 @@ jobs:
           username: ${{ secrets.EC2_SSH_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          source: "nginx/conf.d/default.conf"
+          source: "./nginx/conf.d/*"
           target: "~/app/nginx/conf.d/"
 
       - name: Copy .env.prod file
