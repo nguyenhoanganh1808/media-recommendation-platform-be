@@ -7,6 +7,7 @@
     "appleboy",
     "Buildx",
     "certbot",
+    "certonly",
     "chickenkiller",
     "DOCKERHUB",
     "EECDH",
@@ -30,6 +31,7 @@
     "tsparser",
     "userratelimit",
     "vtdn",
+    "webroot",
     "zoddstorm"
   ]
 }
