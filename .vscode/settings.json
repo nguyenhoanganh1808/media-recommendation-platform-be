@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "AESGCM",
     "akhileshns",
     "anotheruser",
     "apikeyratelimit",
@@ -8,6 +9,8 @@
     "certbot",
     "chickenkiller",
     "DOCKERHUB",
+    "EECDH",
+    "fullchain",
     "gdvb",
     "healthcheck",
     "isready",
@@ -19,6 +22,7 @@
     "oozv",
     "pnpx",
     "Prefs",
+    "privkey",
     "RAWG",
     "Rengular",
     "testuser",
