@@ -222,55 +222,6 @@ jobs:
           source: ".env.prod" # The file created in the previous step
           target: "~/app/"
 
-      - name: Create directories for Certbot
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_SSH_HOST }}
-          username: ${{ secrets.EC2_SSH_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            mkdir -p ~/app/certbot/conf
-            mkdir -p ~/app/certbot/www
-
-      - name: Initial SSL certificate setup
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_SSH_HOST }}
-          username: ${{ secrets.EC2_SSH_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            cd ~/app
-
-            # Check if the certificate already exists
-            if [ ! -d "./certbot/conf/live/media-recommendation.chickenkiller.com" ]; then
-              echo "Certificates don't exist yet. Starting initial setup..."
-              
-              # Start nginx container temporarily to perform the initial verification
-              sudo docker-compose -f docker-compose.prod.yml up -d nginx
-              
-              # Wait for nginx to start
-              sleep 5
-              
-              # Run certbot to obtain the initial certificate
-              sudo docker run --rm \
-                -v $PWD/certbot/conf:/etc/letsencrypt \
-                -v $PWD/certbot/www:/var/www/certbot \
-                --network app_network \
-                certbot/certbot \
-                certonly --webroot \
-                --webroot-path=/var/www/certbot \
-                --email ${{ secrets.ADMIN_EMAIL }} \
-                --agree-tos \
-                --no-eff-email \
-                -d media-recommendation.chickenkiller.com
-                
-              echo "Initial certificate obtained."
-            else
-              echo "Certificates already exist. Skipping initial setup."
-            fi
-
       - name: Run deployment commands on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
