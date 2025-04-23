@@ -7,8 +7,9 @@ services:
       - .env.prod
     networks:
       - app_network
+    expose:
+      - "3000"
 
-  # Service for the Nginx Reverse Proxy
   nginx:
     image: nginx:stable-alpine
     container_name: nginx-proxy
@@ -19,13 +20,31 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
-      - /opt/certbot/www:/var/www/certbot:rw
+      - /opt/certbot/www:/var/www/certbot:ro
     depends_on:
       - app
     networks:
       - app_network
-    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    command: '/bin/sh -c ''while :; do sleep 12h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot_service
+    restart: unless-stopped
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:rw
+      - /opt/certbot/www:/var/www/certbot:rw
+    command: 'certonly --webroot -w /var/www/certbot --email nguyenhoanganh.it2003@@gmail.com -d media-recommendation.chickenkiller.com --agree-tos --no-eff-email --force-renewal --deploy-hook "docker exec nginx-proxy nginx -s reload"'
+
+    depends_on:
+      - nginx
+    networks:
+      - app_network
 
 networks:
   app_network:
     driver: bridge
+
+volumes:
+  letsencrypt_certs:
+  certbot_www:

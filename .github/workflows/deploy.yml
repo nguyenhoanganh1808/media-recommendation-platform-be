@@ -235,6 +235,11 @@ jobs:
             APP_DIR=~/app 
             cd $APP_DIR # Navigate to the app directory
 
+            echo "Creating required directories for Certbot if they don't exist..."
+            sudo mkdir -p /etc/letsencrypt
+            sudo mkdir -p /opt/certbot/www
+
+
             echo "Setting environment variables for Docker Compose..."
             export DOCKERHUB_IMAGE_NAME=${{ env.DOCKERHUB_IMAGE_NAME }}
             export GITHUB_SHA=${{ github.sha }}
@@ -246,18 +251,28 @@ jobs:
             echo "Pulling latest images for services..."
             sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod pull
 
+            echo "Stopping and removing old containers (if any)..."
+            # Stop existing services before starting new ones to avoid port conflicts
+            sudo -E docker-compose -f docker-compose.prod.yml down --remove-orphans || true
+
             echo "Starting services with Docker Compose..."
             sudo -E docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans
 
             echo "Waiting for application container to start..."
-            sleep 15 # Adjust if needed
+            sleep 30 # Adjust if needed
 
             echo "Applying database migrations..."
-            # Execute migration inside the 'app' container managed by compose
-            # Use the container name explicitly for clarity
-            sudo docker exec ${{ env.APP_CONTAINER_NAME }} npx prisma migrate deploy || { echo "Prisma migrate deploy failed!"; exit 1; }
+            # Check if container exists before trying to exec
+            if sudo docker ps -q -f name=^/${APP_CONTAINER_NAME}$; then
+              sudo docker exec ${{ env.APP_CONTAINER_NAME }} npx prisma migrate deploy || { echo "Prisma migrate deploy failed!"; exit 1; }
+            else
+              echo "Application container ${{ env.APP_CONTAINER_NAME }} not found. Skipping migrations."
+              # Decide if this should be a failure: exit 1;
+            fi
 
             echo "Cleaning up old Docker images..."
             sudo docker image prune -af
 
-            echo "Deployment successful!"
+            echo "Deployment successful! HTTPS should be available shortly."
+            echo "Check Certbot logs: sudo docker logs certbot_service"
+            echo "Check Nginx logs: sudo docker logs nginx-proxy"
