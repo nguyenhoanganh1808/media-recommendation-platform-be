@@ -34,7 +34,7 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:rw
       - /opt/certbot/www:/var/www/certbot:rw
-    command: sh /certbot-renew.sh
+    entrypoint: sh /certbot-renew.sh
     depends_on:
       - nginx
     networks:
