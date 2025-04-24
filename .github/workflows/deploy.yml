@@ -210,7 +210,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           source: "./nginx/conf.d/default.conf"
-          target: "~/app/"
+          target: "~/app/nginx/conf.d/"
 
       - name: Copy .env.prod file
         uses: appleboy/scp-action@v0.1.7
@@ -238,7 +238,6 @@ jobs:
             echo "Creating required directories for Certbot if they don't exist..."
             sudo mkdir -p /etc/letsencrypt
             sudo mkdir -p /opt/certbot/www
-
 
             echo "Setting environment variables for Docker Compose..."
             export DOCKERHUB_IMAGE_NAME=${{ env.DOCKERHUB_IMAGE_NAME }}
