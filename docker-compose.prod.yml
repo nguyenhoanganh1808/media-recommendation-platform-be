@@ -34,7 +34,7 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:rw
       - /opt/certbot/www:/var/www/certbot:rw
-    command: 'certonly --webroot -w /var/www/certbot --email nguyenhoanganh.it2003@@gmail.com -d media-recommendation.chickenkiller.com --agree-tos --no-eff-email --force-renewal --deploy-hook "docker exec nginx-proxy nginx -s reload"'
+    command: "certonly --webroot -w /var/www/certbot --email nguyenhoanganh.it2003@@gmail.com -d media-recommendation.chickenkiller.com --agree-tos --no-eff-email --force-renewal"
 
     depends_on:
       - nginx
