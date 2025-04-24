@@ -34,12 +34,7 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:rw
       - /opt/certbot/www:/var/www/certbot:rw
-    command: >
-      sh -c "while true; do \
-        certbot renew --webroot -w /var/www/certbot --quiet; \
-        sleep 12h; \
-      done"
-
+    command: sh /certbot-renew.sh
     depends_on:
       - nginx
     networks:
