@@ -238,7 +238,6 @@ jobs:
             echo "Creating required directories for Certbot if they don't exist..."
             sudo mkdir -p /etc/letsencrypt
             sudo mkdir -p /opt/certbot/www
-            sudo mkdir -p nginx/conf.d
 
             echo "Setting environment variables for Docker Compose..."
             export DOCKERHUB_IMAGE_NAME=${{ env.DOCKERHUB_IMAGE_NAME }}

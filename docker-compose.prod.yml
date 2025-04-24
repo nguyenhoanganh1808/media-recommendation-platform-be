@@ -18,7 +18,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /opt/certbot/www:/var/www/certbot:ro
     depends_on:
@@ -34,7 +34,11 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:rw
       - /opt/certbot/www:/var/www/certbot:rw
-    command: "certonly --webroot -w /var/www/certbot --email nguyenhoanganh.it2003@@gmail.com -d media-recommendation.chickenkiller.com --agree-tos --no-eff-email --force-renewal"
+    command: >
+      sh -c "while true; do \
+        certbot renew --webroot -w /var/www/certbot --quiet; \
+        sleep 12h; \
+      done"
 
     depends_on:
       - nginx
