@@ -211,13 +211,12 @@ The backend infrastructure provides a robust and scalable API to support these f
     TZ=UTC
    ```
 
-````
-
 5. Initialize the database:
+
 ```bash
 npx prisma migrate dev
 npx prisma generate
-````
+```
 
 6. Seed the database with initial data (optional):
    ```bash
