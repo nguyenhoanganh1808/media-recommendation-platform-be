@@ -159,70 +159,57 @@ The backend infrastructure provides a robust and scalable API to support these f
    ```
 
 4. Configure the `.env` file with your specific settings:
+
    ```
-   # Node Environment
-   NODE_ENV=development
-   SERVER_URL=http://localhost:3000
+   # Server Configuration
+
+    PORT=3000
+    HTTPS_PORT=3443
+    API_PREFIX=/api
+    CORS_ORIGIN=http://localhost:3000,http://localhost:8080
+
+    # Database Configuration
+    DATABASE_URL=postgresql://username:password@localhost:5432/media_tracking
+
+    # Redis Configuration
+    REDIS_URL=redis://localhost:6379
+    REDIS_TTL=3600
+
+    # JWT Configuration
+    JWT_SECRET=your_jwt_secret_key
+    JWT_EXPIRES_IN=1d
+    JWT_REFRESH_SECRET=your_jwt_refresh_secret_key
+    JWT_REFRESH_EXPIRES_IN=7d
+
+    # Rate Limiting
+    RATE_LIMIT_WINDOW_MS=900000
+    RATE_LIMIT_MAX=100
+
+    # Logging
+    LOG_LEVEL=info
+
+    # Media API Keys for External Services
+    TMDB_API_KEY=your_tmdb_api_key
+    RAWG_API_KEY=your_rawg_api_key
+
+    # Email Configuration (for notifications)
+    EMAIL_FROM=noreply@mediatracksystem.com
+    SMTP_HOST=smtp.example.com
+    SMTP_PORT=587
+    SMTP_USER=your_smtp_username
+    SMTP_PASSWORD=your_smtp_password
+
+    # File Upload Configuration
+    UPLOAD_DIRECTORY=uploads
+    MAX_FILE_SIZE=5000000
+
+    # Recommendation Engine Configuration
+    RECOMMENDATION*BATCH_SIZE=100
+    RECOMMENDATION_UPDATE_INTERVAL=0 */6 \_ \* \*
+
+    # Timezone
+    TZ=UTC
    ```
-
-# Server Configuration
-
-PORT=3000
-HTTPS_PORT=3443
-API_PREFIX=/api
-CORS_ORIGIN=http://localhost:3000,http://localhost:8080
-
-# Database Configuration
-
-DATABASE_URL=postgresql://username:password@localhost:5432/media_tracking
-
-# Redis Configuration
-
-REDIS_URL=redis://localhost:6379
-REDIS_TTL=3600
-
-# JWT Configuration
-
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRES_IN=1d
-JWT_REFRESH_SECRET=your_jwt_refresh_secret_key
-JWT_REFRESH_EXPIRES_IN=7d
-
-# Rate Limiting
-
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX=100
-
-# Logging
-
-LOG_LEVEL=info
-
-# Media API Keys for External Services
-
-TMDB_API_KEY=your_tmdb_api_key
-RAWG_API_KEY=your_rawg_api_key
-
-# Email Configuration (for notifications)
-
-EMAIL_FROM=noreply@mediatracksystem.com
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER=your_smtp_username
-SMTP_PASSWORD=your_smtp_password
-
-# File Upload Configuration
-
-UPLOAD_DIRECTORY=uploads
-MAX_FILE_SIZE=5000000
-
-# Recommendation Engine Configuration
-
-RECOMMENDATION*BATCH_SIZE=100
-RECOMMENDATION_UPDATE_INTERVAL=0 */6 \_ \* \*
-
-# Timezone
-
-TZ=UTC
 
 ````
 
