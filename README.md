@@ -214,8 +214,8 @@ The backend infrastructure provides a robust and scalable API to support these f
 5. Initialize the database:
 
 ```bash
-npx prisma migrate dev
-npx prisma generate
+  npx prisma migrate dev
+  npx prisma generate
 ```
 
 6. Seed the database with initial data (optional):
@@ -314,9 +314,9 @@ We welcome contributions to the Media Tracking and Recommendation System! Please
 - Make sure all tests pass before submitting pull requests
 - Reference relevant issues in pull requests and commits
 
-## License
+<!-- ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. -->
 
 ## Contact
 
