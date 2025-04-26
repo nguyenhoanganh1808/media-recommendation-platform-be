@@ -179,26 +179,26 @@ async function seedPlatforms() {
 // Seed users
 async function seedUsers() {
   const userData = [
-    {
-      email: "admin@example.com",
-      username: "admin",
-      password: await hashPassword("adminPassword123"),
-      firstName: "Admin",
-      lastName: "User",
-      bio: "System administrator",
-      role: Role.ADMIN,
-      isActive: true,
-    },
-    {
-      email: "moderator@example.com",
-      username: "moderator",
-      password: await hashPassword("moderatorPassword123"),
-      firstName: "Mod",
-      lastName: "User",
-      bio: "Content moderator",
-      role: Role.MODERATOR,
-      isActive: true,
-    },
+    // {
+    //   email: "admin@example.com",
+    //   username: "admin",
+    //   password: await hashPassword("adminPassword123"),
+    //   firstName: "Admin",
+    //   lastName: "User",
+    //   bio: "System administrator",
+    //   role: Role.ADMIN,
+    //   isActive: true,
+    // },
+    // {
+    //   email: "moderator@example.com",
+    //   username: "moderator",
+    //   password: await hashPassword("moderatorPassword123"),
+    //   firstName: "Mod",
+    //   lastName: "User",
+    //   bio: "Content moderator",
+    //   role: Role.MODERATOR,
+    //   isActive: true,
+    // },
     {
       email: "user@example.com",
       username: "user",
