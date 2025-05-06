@@ -34,7 +34,6 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:rw
       - /opt/certbot/www:/var/www/certbot:rw
-    entrypoint: sh -c
     command: >
       sh -c "while true; do \
         certbot renew --webroot -w /var/www/certbot --quiet; \
