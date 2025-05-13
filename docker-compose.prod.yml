@@ -34,9 +34,8 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:rw
       - /opt/certbot/www:/var/www/certbot:rw
-    entrypoint: ""
     command: >
-      sh -c "certbot renew --webroot -w /var/www/certbot --quiet && sleep 1d && exec certbot renew --webroot -w /var/www/certbot --quiet"
+      sh -c "trap 'exit 0' SIGTERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h; done"
     depends_on:
       - nginx
     networks:

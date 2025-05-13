@@ -1,8 +1,5 @@
 # 📌 Media Tracking and Recommendation System
 
-<!-- [![Build Status](https://img.shields.io/github/workflow/status/nguyenhoanganh1808/media-recommendation-platform-be/CI)](https://github.com/hoanganhng/media-tracking) -->
-<!-- [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) -->
-
 [![Node.js](https://img.shields.io/badge/Node.js-v18.x-green.svg)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v15.x-blue.svg)](https://www.postgresql.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-v5.x-purple.svg)](https://www.prisma.io/)
@@ -15,8 +12,6 @@
 - [Installation & Setup](#installation--setup)
 - [Usage](#usage)
 - [API Documentation](#api-documentation)
-<!-- - [Contributing](#contributing) -->
-- [License](#license)
 - [Contact](#contact)
 
 ## Project Overview
@@ -293,30 +288,6 @@ http://localhost:3000/api/docs
 ```
 
 This provides a comprehensive interface for exploring and testing all available API endpoints.
-
-<!-- ## Contributing
-
-We welcome contributions to the Media Tracking and Recommendation System! Please follow these steps to contribute:
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run tests to ensure everything works (`npm test`)
-5. Commit your changes (`git commit -m 'Add some amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request -->
-
-### Contribution Guidelines
-
-- Follow the existing code style and conventions
-- Write and update tests for new features
-- Update documentation as needed
-- Make sure all tests pass before submitting pull requests
-- Reference relevant issues in pull requests and commits
-
-<!-- ## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. -->
 
 ## Contact
 
